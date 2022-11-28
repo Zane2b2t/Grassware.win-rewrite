@@ -1,3 +1,6 @@
+# This workflow will build a Java project with Gradle
+# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-gradle
+
 name: Java CI with Gradle
 
 on: [push,pull_request]
@@ -24,5 +27,5 @@ jobs:
 
     - uses: actions/upload-artifact@v2
       with:
-        name: Grassware.win
-        path: build/libs/*-release.jar
+        name: Package
+        path: build/libs
