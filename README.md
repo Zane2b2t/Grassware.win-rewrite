@@ -14,6 +14,7 @@ This project was made for the popular group, Grassers. Hence the name Grassware.
 
 #### Grassware.win Contributors
 * alpha432 (client base)
+* zpisstige (client basev2)
 * Zane2b2t (head developer, pro paster, maintainer)
 * Rat2b2t (that one guy that always starts off with the readme)
 
