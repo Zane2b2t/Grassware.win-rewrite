@@ -1,0 +1,21 @@
+{
+  "required": true,
+  "compatibilityLevel": "JAVA_8",
+  "package": "me.alpha432.oyvey.mixin.mixins",
+  "refmap": "mixins.oyvey.refmap.json",
+  "mixins": [
+    "IMinecraft",
+    "MixinChunkRenderDispatcher",
+    "MixinEntityPlayerSP",
+    "MixinEntityRenderer",
+    "MixinGuiIngame",
+    "MixinGuiMainMenu",
+    "MixinGuiNewChat",
+    "MixinLayerHeldItem",
+    "MixinMinecraft",
+    "MixinNetworkManager",
+    "MixinParticleManager",
+    "MixinRender",
+    "MixinRenderArmor"
+  ]
+}
