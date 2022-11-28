@@ -27,5 +27,5 @@ jobs:
 
     - uses: actions/upload-artifact@v2
       with:
-        name: OyVey-build
+        name: Grassware-release
         path: build/libs
