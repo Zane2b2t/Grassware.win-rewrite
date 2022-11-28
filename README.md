@@ -17,7 +17,7 @@ This project was made for the popular group, Grassers. Hence the name Grassware.
 * Zane2b2t (head developer, pro paster, maintainer)
 * Rat2b2t (that one guy that always starts off with the readme)
 
-## Changelogs
+## Features
 * Combat <br>Aura (KillAura), AutoCrystal, Offhand
 * Movement <br>NoSlow, ReverseStep, Speed, Sprint, Step, Velocity
 * Player <br>WallPhase (OP)
