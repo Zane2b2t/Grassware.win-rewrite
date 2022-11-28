@@ -5,7 +5,7 @@
 * [Information](#Information)
     * [About](#About)
 * [Grassware.win Contributors](#Grassware.winContributors)
-* [Changelogs](#Features)
+* [Features](#Features)
 * [Installation](#Installing)
 
 #### About
