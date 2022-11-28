@@ -7,10 +7,10 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import org.lwjgl.opengl.Display;
 
-@Mod(modid = "oyvey", name = "OyVey", version = "0.0.3")
+@Mod(modid = "grassware", name = "GrassWare", version = "0.0.4")
 public class OyVey {
-    public static final String MODNAME = "OyVey";
-    public static final String MODVER = "0.0.3";
+    public static final String MODNAME = "GrassWare";
+    public static final String MODVER = "0.0.4";
     public static EventBus eventBus;
     public static ThreadManager threadManager;
     public static HoleManager holeManager;
@@ -47,7 +47,7 @@ public class OyVey {
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
-        Display.setTitle("OyVey v0.0.3");
+        Display.setTitle("Grassware v0.0.4");
         OyVey.load();
     }
 }
