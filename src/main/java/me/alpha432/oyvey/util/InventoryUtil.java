@@ -18,8 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class InventoryUtil
-        implements Util {
+public class InventoryUtil implements MC {
     public static void switchToHotbarSlot(int slot, boolean silent) {
         if (InventoryUtil.mc.player.inventory.currentItem == slot || slot < 0) {
             return;
