@@ -30,6 +30,7 @@ public class OyVey {
         textManager = new TextManager();
         commandManager = new CommandManager();
         friendManager = new FriendManager();
+        inventoryManager = new InventoryManager();
         moduleManager = new ModuleManager();
         eventManager = new EventManager();
         fileManager = new FileManager();
