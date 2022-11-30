@@ -17,7 +17,7 @@ import java.util.Arrays;
 
 public class ClickGui extends Module {
     public static ClickGui Instance;
-    public final ModeSetting mode = register("Mode", "Static", Arrays.asList("Static", "Rainbow", "Gradient"));
+    public final ModeSetting mode = register("Mode", "Static", Arrays.asList("Static", "Gradient"));
     public final IntSetting red = register("Red", 68, 0, 255).invokeVisibility(z -> mode.getValue().equals("Static"));
     public final IntSetting green = register("Green", 0, 0, 255).invokeVisibility(z -> mode.getValue().equals("Static"));
     public final IntSetting blue = register("Blue", 152, 0, 255).invokeVisibility(z -> mode.getValue().equals("Static"));
