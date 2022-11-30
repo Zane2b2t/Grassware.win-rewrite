@@ -17,6 +17,7 @@ public class OyVey {
     public static CommandManager commandManager;
     public static FriendManager friendManager;
     public static ModuleManager moduleManager;
+    public static InventoryManager inventoryManager;
     public static ColorManager colorManager;
     public static FileManager fileManager;
     public static ConfigManager configManager;
