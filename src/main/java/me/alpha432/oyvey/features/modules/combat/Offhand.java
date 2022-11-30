@@ -28,7 +28,7 @@ public class Offhand extends Module {
             return -1;
         }
         final int totem = inventorySlot(Items.TOTEM_OF_UNDYING);
-        if (mc.player.getHealth() + mc.player.getAbsorptionAmount() < health.getValue()) {
+        if (mc.player.getHealth() + mc.player.getAbsorptionAmount() <= health.getValue()) {
             return totem;
         }
         if (mc.player.getHeldItemMainhand().getItem().equals(Items.DIAMOND_SWORD)) {
