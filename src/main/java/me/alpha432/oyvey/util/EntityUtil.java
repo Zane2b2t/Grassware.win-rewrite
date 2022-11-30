@@ -1,5 +1,6 @@
 package me.alpha432.oyvey.util;
 
+import me.alpha432.oyvey.OyVey;
 import me.alpha432.oyvey.features.modules.Module;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
@@ -14,7 +15,7 @@ public class EntityUtil implements MC {
         final TreeMap<Float, EntityPlayer> map = new TreeMap<>();
         mc.world.playerEntities.stream().filter(e -> !e.equals(mc.player) && !e.isDead).forEach(entityPlayer -> {
             final float distance = entityPlayer.getDistance(mc.player);
-            if (distance < range) {
+            if (distance < range && !OyVey.friendManager.isFriend(entityPlayer.getName())) {
                 map.put(distance, entityPlayer);
             }
         });
