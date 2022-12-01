@@ -33,7 +33,7 @@ public class AutoCrystal extends Module {
     public void onUpdatePlayerWalking(final UpdatePlayerWalkingEvent event) {
         placedPos = null;
         final EntityPlayer entityPlayer = EntityUtil.entityPlayer(targetRange.getValue());
-        if (entityPlayer == null || System.currentTimeMillis() - sys > delay.getValue()) {
+        if (entityPlayer == null || System.currentTimeMillis() - sys <= delay.getValue()) {
             return;
         }
         final EnumHand enumHand = mc.player.getHeldItem(EnumHand.MAIN_HAND).getItem().equals(Items.END_CRYSTAL) ? EnumHand.MAIN_HAND : mc.player.getHeldItem(EnumHand.OFF_HAND).getItem().equals(Items.END_CRYSTAL) ? EnumHand.OFF_HAND : null;
