@@ -38,7 +38,7 @@ public class Module extends Feature {
             OyVey.eventBus.registerListener(this);
             onToggle();
             onEnable();
-            Command.sendRemovableMessage(OyVey.commandManager.getClientMessage() + " " + ChatFormatting.WHITE + name + " has been " + ChatFormatting.GREEN + "Enabled", 1);
+            Command.sendRemovableMessage(OyVey.commandManager.getClientMessage() + " " + ChatFormatting.WHITE + name + " Turned " + ChatFormatting.GREEN + "ON", 1);
             enabled.invokeValue(true);
         }
     }
@@ -48,7 +48,7 @@ public class Module extends Feature {
             OyVey.eventBus.unregisterListener(this);
             onToggle();
             onDisable();
-            Command.sendRemovableMessage(OyVey.commandManager.getClientMessage() + " " + ChatFormatting.WHITE + name + " has been " + ChatFormatting.RED + "Disabled", 1);
+            Command.sendRemovableMessage(OyVey.commandManager.getClientMessage() + " " + ChatFormatting.WHITE + name + " Turned " + ChatFormatting.RED + "OFF", 1);
             enabled.invokeValue(false);
         }
     }
