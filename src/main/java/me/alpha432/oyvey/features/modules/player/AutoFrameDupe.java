@@ -12,14 +12,11 @@ import net.minecraft.util.EnumHand;
 
 public class AutoFrameDupe extends Module {
     private final Setting<Boolean> shulkersonly  = this.register(new Setting<Boolean>("ShulkersOnly", true));
-    private final Setting<Integer> range  = this.register(new Setting<Integer>("Range", 5, 0, 6));
-    private final Setting<Integer> turns  = this.register(new Setting<Integer>("Turns", 1, 0, 5));
-    private final Setting<Integer> ticks  = this.register(new Setting<Integer>("Ticks", 10, 1, 20));
+    private final IntSetting range = register("Range", 5, 1, 10);
+    private final IntSetting turns = register("Turns", 5, 1, 10);
+    private final IntSetting ticks = register("Ticks", 10, 1, 20);
     private int timeoutTicks = 0;
 
-    public AutoFrameDupe() {
-        super("AutoFrameDupe", "For cool servers like 8b8t.me and more!", Module.Category.PLAYER, true, false ,false);
-    }
 
     @Override
     public void onUpdate() {
