@@ -1,4 +1,4 @@
-package me.alpha432.oyvey.features.modules.misc;
+package me.alpha432.oyvey.features.modules.player;
 
 import me.alpha432.oyvey.features.modules.Module;
 import me.alpha432.oyvey.features.setting.Setting;
@@ -18,7 +18,7 @@ public class AutoFrameDupe extends Module {
     private int timeoutTicks = 0;
 
     public AutoFrameDupe() {
-        super("AutoFrameDupe", "For cool servers like 8b8t.me and more!", Module.Category.MISC, true, false ,false);
+        super("AutoFrameDupe", "For cool servers like 8b8t.me and more!", Module.Category.PLAYER, true, false ,false);
     }
 
     @Override
