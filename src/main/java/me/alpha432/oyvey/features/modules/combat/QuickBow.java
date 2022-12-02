@@ -10,7 +10,7 @@ import net.minecraft.util.math.BlockPos;
 
 public class QuickBow extends Module {
     public QuickBow() {
-        super("QuickBow", Category.COMBAT, "Releases bow at a very high speed");
+        super ("QuickBow", Category.COMBAT, "Releases bow at a very high speed");
     }
 
     @Override
@@ -18,7 +18,7 @@ public class QuickBow extends Module {
         if (nullCheck())
             return;
 
-        if (InventoryUtil.getHeldItem(Items.BOW) && mc.player.isHandActive() && mc.player.getItemInUseMaxCount() >= 3) {
+        if (InventoryUtil2.getHeldItem(Items.BOW) && mc.player.isHandActive() && mc.player.getItemInUseMaxCount() >= 3) {
             mc.player.connection.sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.RELEASE_USE_ITEM, BlockPos.ORIGIN, mc.player.getHorizontalFacing()));
             mc.player.connection.sendPacket(new CPacketPlayerTryUseItem(mc.player.getActiveHand()));
             mc.player.stopActiveHand();
