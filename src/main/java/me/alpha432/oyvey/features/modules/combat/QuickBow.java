@@ -1,7 +1,7 @@
 package me.alpha432.oyvey.module.modules.combat;
 
 import me.alpha432.oyvey.features.modules.Module;
-import me.alpha432.oyvey.util.player.InventoryUtil;
+import me.alpha432.oyvey.util.InventoryUtil;
 import net.minecraft.init.Items;
 import net.minecraft.network.play.client.CPacketPlayerDigging;
 import net.minecraft.network.play.client.CPacketPlayerTryUseItem;
