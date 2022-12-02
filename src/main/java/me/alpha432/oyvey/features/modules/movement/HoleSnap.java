@@ -1,7 +1,7 @@
 package me.alpha432.oyvey.features.modules.movement;
 
 import java.util.Comparator;
-import me.alpha432.oyvey.Oyvey;
+import me.alpha432.oyvey.OyVey;
 import me.alpha432.oyvey.event.events.PacketEvent;
 import me.alpha432.oyvey.util.*;
 import me.alpha432.oyvey.util.Timer;
