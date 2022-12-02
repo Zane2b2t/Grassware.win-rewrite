@@ -10,7 +10,7 @@ import java.util.LinkedList;
 
 public class CommandManager extends Feature {
     private final ArrayList<Command> commands = new ArrayList<>();
-    private String prefix = ".";
+    private String prefix = "!";
 
     public CommandManager() {
         super("Command");
@@ -58,7 +58,7 @@ public class CommandManager extends Feature {
     }
 
     public String getClientMessage() {
-        return ChatFormatting.DARK_PURPLE + "<OyVey>";
+        return ChatFormatting.DARK_PURPLE + "[Grassware.win]";
     }
 
     public String getPrefix() {
