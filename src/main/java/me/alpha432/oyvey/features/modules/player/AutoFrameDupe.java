@@ -12,14 +12,14 @@ import net.minecraft.item.ItemShulkerBox;
 import net.minecraft.util.EnumHand;
 
 public class AutoFrameDupe extends Module {
-    private final Setting<Boolean> shulkersonly  = this.register(new Setting<Boolean>("ShulkersOnly", true));
+    private final BooleanSetting shulkeronly = register("ShulkerOnly", false);
     private final IntSetting range = register("Range", 5, 1, 10);
     private final IntSetting turns = register("Turns", 5, 1, 10);
     private final IntSetting ticks = register("Ticks", 10, 1, 20);
     private int timeoutTicks = 0;
 
 
-    @Override
+    // @Override
     public void onUpdate() {
         if (Util.mc.player != null && Util.mc.world != null) {
             if (shulkersonly.getValue()) {
