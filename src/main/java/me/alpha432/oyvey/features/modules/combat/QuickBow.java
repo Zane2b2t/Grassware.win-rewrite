@@ -9,12 +9,7 @@ import net.minecraft.util.math.BlockPos;
 
 
 public class QuickBow extends Module {
-     public QuickBow() {
-        super("QuickBow", "Best CA on the market", Category.COMBAT, true, false, false);
-        instance = this;
-    }
-
-    @Override
+    
     public void onUpdate() {
         if (nullCheck())
             return;
