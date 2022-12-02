@@ -2,6 +2,7 @@ package me.alpha432.oyvey.features.modules.player;
 
 import me.alpha432.oyvey.features.modules.Module;
 import me.alpha432.oyvey.features.setting.impl.IntSetting;
+import me.alpha432.oyvey.features.setting.impl.BooleanSetting;
 import me.alpha432.oyvey.features.setting.Setting;
 import me.alpha432.oyvey.util.Util;
 import net.minecraft.entity.Entity;
