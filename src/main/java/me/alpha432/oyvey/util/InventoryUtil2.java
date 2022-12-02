@@ -11,7 +11,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.CPacketHeldItemChange;
 
 
-public class InventoryUtil implements MixinInterface {
+public class InventoryUtil2 implements MC {
 
     public static boolean getHeldItem(Item item) {
         return mc.player.getHeldItemMainhand().getItem().equals(item) || mc.player.getHeldItemOffhand().getItem().equals(item);
