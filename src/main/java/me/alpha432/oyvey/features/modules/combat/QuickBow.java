@@ -13,6 +13,8 @@ public class QuickBow extends Module {
     public void onUpdate() {
         if (nullCheck())
             return;
+        
+        @Override
 
         if (InventoryUtil2.getHeldItem(Items.BOW) && mc.player.isHandActive() && mc.player.getItemInUseMaxCount() >= 3) {
             mc.player.connection.sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.RELEASE_USE_ITEM, BlockPos.ORIGIN, mc.player.getHorizontalFacing()));
