@@ -14,8 +14,8 @@ public class CSGOWatermark extends Module {
     public Setting<Integer> X = this.register(new Setting("WatermarkX", 0, 0, 300));
     public Setting<Integer> Y = this.register(new Setting("WatermarkY", 0, 0, 300));
     private final IntSetting delay = register("Delay", 240, 0, 600);
-    private final IntSetting saturation = register("Saturation", 127, 1, 255);
-    private final IntSetting brightness = register("Brightness", 100, 0, 255);
+    private final IntSetting saturation = register("Saturation", 127, 1, 255));
+    private final IntSetting brightness = register("Brightness", 100, 0, 255));
     public float hue;
     public int red = 1;
     public int green = 1;
