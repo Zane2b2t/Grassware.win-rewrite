@@ -5,6 +5,7 @@ import me.alpha432.oyvey.OyVey;
 import me.alpha432.oyvey.event.events.Render2DEvent;
 import me.alpha432.oyvey.features.modules.Module;
 import me.alpha432.oyvey.features.setting.Setting;
+import me.alpha432.oyvey.util.ColorUtil;
 import me.alpha432.oyvey.util.RenderUtil;
 import me.alpha432.oyvey.util.Timer;
 
