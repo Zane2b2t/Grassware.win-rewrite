@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public class ConfigManager implements MC {
     public final  ArrayList<Feature> features = new ArrayList<>();
-    public String config = "oyvey/config/";
+    public String config = "grassware/config/";
 
     public static void setValueFromJson(final Setting<?> setting, final JsonElement element) {
         if (setting instanceof BooleanSetting) {
@@ -79,11 +79,11 @@ public class ConfigManager implements MC {
     }
 
     public void loadConfig(final String name) {
-        final List<File> files = Arrays.stream(Objects.requireNonNull(new File("oyvey").listFiles())).filter(File::isDirectory).collect(Collectors.toList());
-        if (files.contains(new File("oyvey/" + name + "/"))) {
-            this.config = "oyvey/" + name + "/";
+        final List<File> files = Arrays.stream(Objects.requireNonNull(new File("grassware").listFiles())).filter(File::isDirectory).collect(Collectors.toList());
+        if (files.contains(new File("grassware/" + name + "/"))) {
+            this.config = "grassware/" + name + "/";
         } else {
-            this.config = "oyvey/config/";
+            this.config = "grassware/config/";
         }
         OyVey.friendManager.onLoad();
         for (Feature feature : this.features) {
@@ -97,12 +97,12 @@ public class ConfigManager implements MC {
     }
 
     public boolean configExists(final String name) {
-        final List<File> files = Arrays.stream(Objects.requireNonNull(new File("oyvey").listFiles())).filter(File::isDirectory).collect(Collectors.toList());
-        return files.contains(new File("oyvey/" + name + "/"));
+        final List<File> files = Arrays.stream(Objects.requireNonNull(new File("grassware").listFiles())).filter(File::isDirectory).collect(Collectors.toList());
+        return files.contains(new File("grassware/" + name + "/"));
     }
 
     public void saveConfig(final String name) {
-        this.config = "oyvey/" + name + "/";
+        this.config = "grassware/" + name + "/";
         File path = new File(this.config);
         if (!path.exists())
             path.mkdir();
@@ -118,18 +118,18 @@ public class ConfigManager implements MC {
     }
 
     public void saveCurrentConfig() {
-        File currentConfig = new File("oyvey/currentconfig.txt");
+        File currentConfig = new File("grassware/currentconfig.txt");
         try {
             if (currentConfig.exists()) {
                 FileWriter writer = new FileWriter(currentConfig);
                 String tempConfig = this.config.replaceAll("/", "");
-                writer.write(tempConfig.replaceAll("oyvey", ""));
+                writer.write(tempConfig.replaceAll("grassware", ""));
                 writer.close();
             } else {
                 currentConfig.createNewFile();
                 FileWriter writer = new FileWriter(currentConfig);
                 String tempConfig = this.config.replaceAll("/", "");
-                writer.write(tempConfig.replaceAll("oyvey", ""));
+                writer.write(tempConfig.replaceAll("grassware", ""));
                 writer.close();
             }
         } catch (Exception e) {
@@ -138,7 +138,7 @@ public class ConfigManager implements MC {
     }
 
     public String loadCurrentConfig() {
-        File currentConfig = new File("oyvey/currentconfig.txt");
+        File currentConfig = new File("grassware/currentconfig.txt");
         String name = "config";
         try {
             if (currentConfig.exists()) {
