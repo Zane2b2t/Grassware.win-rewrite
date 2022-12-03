@@ -12,7 +12,7 @@ import java.nio.file.Paths;
 public class FileManager extends Feature {
 
     public FileManager() {
-        Path base = getMkDirectory(getRoot(), "oyvey");
+        Path base = getMkDirectory(getRoot(), "grassware");
         getMkDirectory(base, "pvp");
         for (Module.Category category : OyVey.moduleManager.getCategories()) {
             Path config = getMkDirectory(base, "config");
