@@ -11,11 +11,11 @@ import me.alpha432.oyvey.util.Timer;
 public class CSGOWatermark extends Module {
 
     Timer delayTimer = new Timer();
-    public Setting<Integer> X = this.register(new Setting("WatermarkX", 0, 0, 300));
-    public Setting<Integer> Y = this.register(new Setting("WatermarkY", 0, 0, 300));
+    public Setting<Integer> X = this.register(new Setting("WatermarkX", 0, 0, 300);
+    public Setting<Integer> Y = this.register(new Setting("WatermarkY", 0, 0, 300);
     private final IntSetting delay = register("Delay", 240, 0, 600);
-    private final IntSetting saturation = register("Saturation", 127, 1, 255));
-    private final IntSetting brightness = register("Brightness", 100, 0, 255));
+    private final IntSetting saturation = register("Saturation", 127, 1, 255);
+    private final IntSetting brightness = register("Brightness", 100, 0, 255);
     public float hue;
     public int red = 1;
     public int green = 1;
@@ -36,5 +36,5 @@ public class CSGOWatermark extends Module {
         RenderUtil.drawRectangleCorrectly(X.getValue(), Y.getValue(), textWidth + 8, textHeight + 4,
         RenderUtil.drawRectangleCorrectly(X.getValue(), Y.getValue(), textWidth + 8, 1, 
         OyVey.textManager.drawString(message, X.getValue() + 3, Y.getValue() + 3, 
-    }
-}
+    })
+
