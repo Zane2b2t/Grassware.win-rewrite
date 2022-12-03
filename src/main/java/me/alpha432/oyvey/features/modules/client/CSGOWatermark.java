@@ -27,10 +27,10 @@ public class CSGOWatermark extends Module {
         String message = "Grassware.win v" + OyVey.MODVER + " | " + mc.player.getName() + " | " + OyVey.serverManager.getPing() + "ms";
         int textWidth = OyVey.textManager.getStringWidth(message); // taken from wurst+ 3
         int textHeight = mc.fontRenderer.FONT_HEIGHT; // taken from wurst+ 3
-        RenderUtil.drawRectangleCorrectly(X.getValue() - 4, Y.getValue() - 4, textWidth + 16, textHeight + 12));
-        RenderUtil.drawRectangleCorrectly(X.getValue(), Y.getValue(), textWidth + 4, textHeight + 4)); 
-        RenderUtil.drawRectangleCorrectly(X.getValue(), Y.getValue(), textWidth + 8, textHeight + 4));
-        RenderUtil.drawRectangleCorrectly(X.getValue(), Y.getValue(), textWidth + 8, 1)); 
+        RenderUtil.drawRectangleCorrectly(X.getValue() - 4, Y.getValue() - 4, textWidth + 16, textHeight + 12);
+        RenderUtil.drawRectangleCorrectly(X.getValue(), Y.getValue(), textWidth + 4, textHeight + 4); 
+        RenderUtil.drawRectangleCorrectly(X.getValue(), Y.getValue(), textWidth + 8, textHeight + 4);
+        RenderUtil.drawRectangleCorrectly(X.getValue(), Y.getValue(), textWidth + 8, 1); 
         OyVey.textManager.drawString(message, X.getValue() + 3, Y.getValue() + 3);
     }
 }
