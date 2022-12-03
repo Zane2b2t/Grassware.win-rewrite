@@ -35,6 +35,6 @@ public class CSGOWatermark extends Module {
         RenderUtil.drawRectangleCorrectly(X.getValue(), Y.getValue(), textWidth + 4, textHeight + 4, 
         RenderUtil.drawRectangleCorrectly(X.getValue(), Y.getValue(), textWidth + 8, textHeight + 4,
         RenderUtil.drawRectangleCorrectly(X.getValue(), Y.getValue(), textWidth + 8, 1, 
-        OyVey.textManager.drawString(message, X.getValue() + 3, Y.getValue() + 3, 
-    })
-
+        OyVey.textManager.drawString(message, X.getValue() + 3, Y.getValue() + 3;
+                                     }
+                                     
