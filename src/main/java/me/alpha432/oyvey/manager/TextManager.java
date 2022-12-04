@@ -1,6 +1,8 @@
 package me.alpha432.oyvey.manager;
 
+import me.alpha432.oyvey.OyVey;
 import me.alpha432.oyvey.features.Feature;
+import net.minecraft.util.math.MathHelper;
 
 import java.awt.*;
 
