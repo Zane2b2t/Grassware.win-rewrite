@@ -24,7 +24,7 @@ public class Components
     private boolean open;
     private boolean hidden = false;
 
-    public Component(String name, int x, int y, boolean open) {
+    public Components(String name, int x, int y, boolean open) {
         super(name);
         this.x = x;
         this.y = y;
