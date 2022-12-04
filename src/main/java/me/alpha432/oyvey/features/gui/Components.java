@@ -10,7 +10,7 @@ import net.minecraft.init.SoundEvents;
 
 import java.util.ArrayList;
 
-public class Component
+public class Components
         extends Feature {
     public static int[] counter1 = new int[]{1};
     private final ArrayList<Item> items = new ArrayList<>();
