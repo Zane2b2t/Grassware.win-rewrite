@@ -32,6 +32,8 @@ public class ClickGui extends Module {
     public final IntSetting gradientRed2 = register("Red2", 68, 0, 255).invokeVisibility(z -> mode.getValue().equals("Gradient"));
     public final IntSetting gradientGreen2 = register("Green2", 255, 0, 255).invokeVisibility(z -> mode.getValue().equals("Gradient"));
     public final IntSetting gradientBlue2 = register("Blue2", 152, 0, 255).invokeVisibility(z -> mode.getValue().equals("Gradient"));
+    
+    private final BooleanSetting snowing = register("Snowing", false);
 
     public ClickGui() {
         bind.invokeValue(Keyboard.KEY_O);
