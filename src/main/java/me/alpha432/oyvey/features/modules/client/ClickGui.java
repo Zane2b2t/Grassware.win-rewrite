@@ -5,6 +5,7 @@ import me.alpha432.oyvey.event.events.Render3DEvent;
 import me.alpha432.oyvey.event.events.TickEvent;
 import me.alpha432.oyvey.features.gui.OyVeyGui;
 import me.alpha432.oyvey.features.modules.Module;
+import me.alpha432.oyvey.features.setting.impl.BooleanSetting;
 import me.alpha432.oyvey.features.setting.impl.FloatSetting;
 import me.alpha432.oyvey.features.setting.impl.IntSetting;
 import me.alpha432.oyvey.features.setting.impl.ModeSetting;
