@@ -8,7 +8,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import org.lwjgl.opengl.Display;
 
-@Mod(modid = "grassware", name = "GrassWare", version = "1.0")
+@Mod(modid = "grassware", name = "GrassWare", version = GrassWare.MODVER)
 public class GrassWare {
     public static final String MODNAME = "GrassWare";
     public static final String MODVER = "1.0";
@@ -42,7 +42,7 @@ public class GrassWare {
         configManager.init();
         AltGui.loadAlts();
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            configManager.saveConfig(GrassWare.configManager.config.replaceFirst("oyvey/", ""));
+            configManager.saveConfig(GrassWare.configManager.config.replaceFirst("grassware/", ""));
             AltGui.saveAlts();
         }));
     }
@@ -50,7 +50,7 @@ public class GrassWare {
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
-        Display.setTitle("Grassware v0.0.4");
+        Display.setTitle("Grassware" + GrassWare.MODVER);
         GrassWare.load();
     }
 }
