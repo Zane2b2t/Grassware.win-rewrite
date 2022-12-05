@@ -1,4 +1,4 @@
-# GrassWare.win rewrite! | a rewrite of a rename of a continuation of a continuation of a weird client!
+# GrassWare.win rewrite!
 
 <!-- TABLE OF CONTENTS -->
 ## Table of Contents
@@ -16,6 +16,7 @@ This project was made for the popular group, Grassers. Hence the name Grassware.
 * alpha432 (client base)
 * zpisstige (client basev2)
 * Zane2b2t (head developer, pro paster, maintainer)
+* Hockeyl8[https://github.com/hockeyl8] (Stuff)
 * Rat2b2t (that one guy that always starts off with the readme)
 
 ## Features
@@ -38,5 +39,4 @@ only put the mod jar in the `/mods` folder!
 4. Launch Minecraft using the Forge profile. GrassWare.win should now be loaded.
 
 <p align="center">
-Thanks @Rat2b2t for the amazing readme!!!!!1
 </p>

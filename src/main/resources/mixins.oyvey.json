@@ -1,21 +1,21 @@
 {
   "required": true,
   "compatibilityLevel": "JAVA_8",
-  "package": "me.alpha432.oyvey.mixin.mixins",
+  "package": "me.zane.grassware.mixin.mixins",
   "refmap": "mixins.oyvey.refmap.json",
   "mixins": [
-    "IMinecraft",
-    "MixinChunkRenderDispatcher",
-    "MixinEntityPlayerSP",
-    "MixinEntityRenderer",
-    "MixinGuiIngame",
-    "MixinGuiMainMenu",
-    "MixinGuiNewChat",
-    "MixinLayerHeldItem",
-    "MixinMinecraft",
-    "MixinNetworkManager",
-    "MixinParticleManager",
-    "MixinRender",
-    "MixinRenderArmor"
+    "me.zane.grassware.mixin.mixins.IMinecraft",
+    "me.zane.grassware.mixin.mixins.MixinChunkRenderDispatcher",
+    "me.zane.grassware.mixin.mixins.MixinEntityPlayerSP",
+    "me.zane.grassware.mixin.mixins.MixinEntityRenderer",
+    "me.zane.grassware.mixin.mixins.MixinGuiIngame",
+    "me.zane.grassware.mixin.mixins.MixinGuiMainMenu",
+    "me.zane.grassware.mixin.mixins.MixinGuiNewChat",
+    "me.zane.grassware.mixin.mixins.MixinLayerHeldItem",
+    "me.zane.grassware.mixin.mixins.MixinMinecraft",
+    "me.zane.grassware.mixin.mixins.MixinNetworkManager",
+    "me.zane.grassware.mixin.mixins.MixinParticleManager",
+    "me.zane.grassware.mixin.mixins.MixinRender",
+    "me.zane.grassware.mixin.mixins.MixinRenderArmor"
   ]
 }
