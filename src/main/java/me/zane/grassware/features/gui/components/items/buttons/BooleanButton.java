@@ -1,7 +1,7 @@
 package me.zane.grassware.features.gui.components.items.buttons;
 
 import me.zane.grassware.GrassWare;
-import me.zane.grassware.features.gui.OyVeyGui;
+import me.zane.grassware.features.gui.GrassWareGui;
 import me.zane.grassware.features.modules.client.ClickGui;
 import me.zane.grassware.features.setting.impl.BooleanSetting;
 import me.zane.grassware.util.RenderUtil;
@@ -27,7 +27,7 @@ public class BooleanButton
         } else {
             RenderUtil.rect(x, y, x + width + 7.4f, y + height - 0.5f, isHovering(mouseX, mouseY) ? new Color(0, 0, 0, 75) : new Color(0, 0, 0, 50));
         }
-        GrassWare.textManager.renderString(getName(), x + 2.3f, y - 1.7f - OyVeyGui.getClickGui().getTextOffset(), getState() ? Color.WHITE : new Color(-5592406));
+        GrassWare.textManager.renderString(getName(), x + 2.3f, y - 1.7f - GrassWareGui.getClickGui().getTextOffset(), getState() ? Color.WHITE : new Color(-5592406));
     }
 
     @Override

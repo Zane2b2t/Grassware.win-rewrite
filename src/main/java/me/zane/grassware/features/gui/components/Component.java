@@ -2,7 +2,7 @@ package me.zane.grassware.features.gui.components;
 
 import me.zane.grassware.GrassWare;
 import me.zane.grassware.features.Feature;
-import me.zane.grassware.features.gui.OyVeyGui;
+import me.zane.grassware.features.gui.GrassWareGui;
 import me.zane.grassware.features.gui.components.items.Item;
 import me.zane.grassware.features.gui.components.items.buttons.Button;
 import me.zane.grassware.features.modules.client.ClickGui;
@@ -55,7 +55,7 @@ public class Component extends Feature {
         if (open) {
             RenderUtil.rect(x, y + 12.0f, x + width, (y + height) + totalItemHeight, new Color(0, 0, 0, 150));
         }
-        GrassWare.textManager.renderString(getName(), x + 3.0f, y - 4.0f - OyVeyGui.getClickGui().getTextOffset(), Color.WHITE);
+        GrassWare.textManager.renderString(getName(), x + 3.0f, y - 4.0f - GrassWareGui.getClickGui().getTextOffset(), Color.WHITE);
         if (open) {
             float y = (getY() + getHeight()) - 3.0f;
             for (Item item : getItems()) {
@@ -73,7 +73,7 @@ public class Component extends Feature {
         if (mouseButton == 0 && isHovering(mouseX, mouseY)) {
             x2 = x - mouseX;
             y2 = y - mouseY;
-            OyVeyGui.getClickGui().getComponents().forEach(component -> {
+            GrassWareGui.getClickGui().getComponents().forEach(component -> {
                 if (component.drag) {
                     component.drag = false;
                 }

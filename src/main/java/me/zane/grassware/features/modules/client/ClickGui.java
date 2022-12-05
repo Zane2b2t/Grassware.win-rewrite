@@ -3,7 +3,7 @@ package me.zane.grassware.features.modules.client;
 import me.zane.grassware.event.bus.EventListener;
 import me.zane.grassware.event.events.Render3DEvent;
 import me.zane.grassware.event.events.TickEvent;
-import me.zane.grassware.features.gui.OyVeyGui;
+import me.zane.grassware.features.gui.GrassWareGui;
 import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.features.setting.impl.BooleanSetting;
 import me.zane.grassware.features.setting.impl.FloatSetting;
@@ -60,7 +60,7 @@ public class ClickGui extends Module {
 
     @Override
     public void onEnable() {
-        mc.displayGuiScreen(OyVeyGui.getClickGui());
+        mc.displayGuiScreen(GrassWareGui.getClickGui());
     }
 
     @Override
@@ -70,7 +70,7 @@ public class ClickGui extends Module {
 
     @EventListener
     public void onTick(final TickEvent event) {
-        if (!(mc.currentScreen instanceof OyVeyGui)) {
+        if (!(mc.currentScreen instanceof GrassWareGui)) {
             disable();
         }
     }

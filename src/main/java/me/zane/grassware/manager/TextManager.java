@@ -12,10 +12,6 @@ public class TextManager extends Feature {
         renderString(text, x, y, color, false);
     }
 
-    public void drawStringWithShadow(String text, float x, float y, int color) {
-        this.drawString(text, x, y, color, true);
-    }
-
     public void renderStringShadowOnly(String text, float x, float y) {
         renderString(text, x + 0.5f, y + 0.5f, new Color(0, 0, 0, 0), false);
     }

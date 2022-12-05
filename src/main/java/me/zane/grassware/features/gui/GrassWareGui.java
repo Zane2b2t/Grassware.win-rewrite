@@ -12,24 +12,24 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 
-public class OyVeyGui extends GuiScreen {
-    private static OyVeyGui INSTANCE = new OyVeyGui();
+public class GrassWareGui extends GuiScreen {
+    private static GrassWareGui INSTANCE = new GrassWareGui();
     private final ArrayList<Component> components = new ArrayList<>();
 
-    public OyVeyGui() {
+    public GrassWareGui() {
         setInstance();
         load();
     }
 
-    public static OyVeyGui getInstance() {
+    public static GrassWareGui getInstance() {
         if (INSTANCE == null) {
-            INSTANCE = new OyVeyGui();
+            INSTANCE = new GrassWareGui();
         }
         return INSTANCE;
     }
 
-    public static OyVeyGui getClickGui() {
-        return OyVeyGui.getInstance();
+    public static GrassWareGui getClickGui() {
+        return GrassWareGui.getInstance();
     }
 
     private void setInstance() {

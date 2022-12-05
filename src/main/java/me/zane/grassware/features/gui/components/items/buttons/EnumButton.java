@@ -1,7 +1,7 @@
 package me.zane.grassware.features.gui.components.items.buttons;
 
 import me.zane.grassware.GrassWare;
-import me.zane.grassware.features.gui.OyVeyGui;
+import me.zane.grassware.features.gui.GrassWareGui;
 import me.zane.grassware.features.modules.client.ClickGui;
 import me.zane.grassware.features.setting.impl.ModeSetting;
 import me.zane.grassware.util.RenderUtil;
@@ -22,8 +22,8 @@ public class EnumButton extends Button {
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         RenderUtil.rectGuiTex(x, y, x + width + 7.4f, y + height - 0.5f, isHovering(mouseX, mouseY) ? ClickGui.Instance.getColorAlpha() : ClickGui.Instance.getColor());
-        GrassWare.textManager.renderString(getName(), x + 2.3f, y - 1.7f - OyVeyGui.getClickGui().getTextOffset(), Color.WHITE);
-        GrassWare.textManager.renderString(setting.getValue() + "", x + 2.3f + GrassWare.textManager.stringWidth(getName() + " "), y - 1.7f - OyVeyGui.getClickGui().getTextOffset(), Color.GRAY);
+        GrassWare.textManager.renderString(getName(), x + 2.3f, y - 1.7f - GrassWareGui.getClickGui().getTextOffset(), Color.WHITE);
+        GrassWare.textManager.renderString(setting.getValue() + "", x + 2.3f + GrassWare.textManager.stringWidth(getName() + " "), y - 1.7f - GrassWareGui.getClickGui().getTextOffset(), Color.GRAY);
     }
 
     @Override

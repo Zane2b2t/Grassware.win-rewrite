@@ -1,7 +1,7 @@
 package me.zane.grassware.features.gui.components.items.buttons;
 
 import me.zane.grassware.GrassWare;
-import me.zane.grassware.features.gui.OyVeyGui;
+import me.zane.grassware.features.gui.GrassWareGui;
 import me.zane.grassware.features.gui.components.Component;
 import me.zane.grassware.features.gui.components.items.Item;
 import me.zane.grassware.features.modules.client.ClickGui;
@@ -27,7 +27,7 @@ public class Button extends Item {
         } else {
             RenderUtil.rect(x, y, x + width, y + height - 0.5f, isHovering(mouseX, mouseY) ? new Color(0, 0, 0, 75) : new Color(0, 0, 0, 50));
         }
-        GrassWare.textManager.renderString(getName(), x + 2.3f, y - 2.0f - OyVeyGui.getClickGui().getTextOffset(), getState() ? Color.WHITE : new Color(-5592406));
+        GrassWare.textManager.renderString(getName(), x + 2.3f, y - 2.0f - GrassWareGui.getClickGui().getTextOffset(), getState() ? Color.WHITE : new Color(-5592406));
     }
 
     @Override
@@ -56,7 +56,7 @@ public class Button extends Item {
     }
 
     public boolean isHovering(int mouseX, int mouseY) {
-        for (Component component : OyVeyGui.getClickGui().getComponents()) {
+        for (Component component : GrassWareGui.getClickGui().getComponents()) {
             if (!component.drag) continue;
             return false;
         }

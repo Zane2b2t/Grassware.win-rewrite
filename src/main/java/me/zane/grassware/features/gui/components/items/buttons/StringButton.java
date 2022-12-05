@@ -2,7 +2,7 @@ package me.zane.grassware.features.gui.components.items.buttons;
 
 import com.mojang.realmsclient.gui.ChatFormatting;
 import me.zane.grassware.GrassWare;
-import me.zane.grassware.features.gui.OyVeyGui;
+import me.zane.grassware.features.gui.GrassWareGui;
 import me.zane.grassware.features.setting.impl.StringSetting;
 import me.zane.grassware.util.RenderUtil;
 import me.zane.grassware.util.Timer;
@@ -35,9 +35,9 @@ public class StringButton extends Button {
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         RenderUtil.rect(x, y, x + width + 7.4f, y + height - 0.5f, !isHovering(mouseX, mouseY) ? new Color(0, 0, 0, 75) : new Color(0, 0, 0, 50));
         if (isListening) {
-            GrassWare.textManager.renderString(currentString.getString() + typingIcon(), x + 2.3f, y - 1.7f - (float) OyVeyGui.getClickGui().getTextOffset(), getState() ? Color.WHITE : new Color(-5592406));
+            GrassWare.textManager.renderString(currentString.getString() + typingIcon(), x + 2.3f, y - 1.7f - (float) GrassWareGui.getClickGui().getTextOffset(), getState() ? Color.WHITE : new Color(-5592406));
         } else {
-            GrassWare.textManager.renderString((setting.getName().equals("Buttons") ? "Buttons " : (setting.getName().equals("Prefix") ? "Prefix  " + ChatFormatting.GRAY : "")) + setting.getValue(), x + 2.3f, y - 1.7f - OyVeyGui.getClickGui().getTextOffset(), getState() ? Color.WHITE : new Color(-5592406));
+            GrassWare.textManager.renderString((setting.getName().equals("Buttons") ? "Buttons " : (setting.getName().equals("Prefix") ? "Prefix  " + ChatFormatting.GRAY : "")) + setting.getValue(), x + 2.3f, y - 1.7f - GrassWareGui.getClickGui().getTextOffset(), getState() ? Color.WHITE : new Color(-5592406));
         }
     }
 

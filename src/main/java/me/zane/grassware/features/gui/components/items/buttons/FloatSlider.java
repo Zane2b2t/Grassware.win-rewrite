@@ -1,7 +1,7 @@
 package me.zane.grassware.features.gui.components.items.buttons;
 
 import me.zane.grassware.GrassWare;
-import me.zane.grassware.features.gui.OyVeyGui;
+import me.zane.grassware.features.gui.GrassWareGui;
 import me.zane.grassware.features.gui.components.Component;
 import me.zane.grassware.features.modules.client.ClickGui;
 import me.zane.grassware.features.setting.impl.FloatSetting;
@@ -25,8 +25,8 @@ public class FloatSlider
         dragSetting(mouseX, mouseY);
         RenderUtil.rect(x, y, x + width + 7.4f, y + height - 0.5f, !isHovering(mouseX, mouseY) ? new Color(0, 0, 0, 75) : new Color(0, 0, 0, 50));
         RenderUtil.rectGuiTex(x, y, setting.getValue() <= setting.min ? x : x + (width + 7.4f) * partialMultiplier(), y + height - 0.5f, isHovering(mouseX, mouseY) ? ClickGui.Instance.getColorAlpha() : ClickGui.Instance.getColor());
-        GrassWare.textManager.renderString(getName(), x + 2.3f, y - 1.7f - OyVeyGui.getClickGui().getTextOffset(), Color.WHITE);
-        GrassWare.textManager.renderString(setting.getValue() + "", x + 2.3f + GrassWare.textManager.stringWidth(getName() + " "), y - 1.7f - OyVeyGui.getClickGui().getTextOffset(), Color.GRAY);
+        GrassWare.textManager.renderString(getName(), x + 2.3f, y - 1.7f - GrassWareGui.getClickGui().getTextOffset(), Color.WHITE);
+        GrassWare.textManager.renderString(setting.getValue() + "", x + 2.3f + GrassWare.textManager.stringWidth(getName() + " "), y - 1.7f - GrassWareGui.getClickGui().getTextOffset(), Color.GRAY);
     }
 
     @Override
@@ -39,7 +39,7 @@ public class FloatSlider
 
     @Override
     public boolean isHovering(int mouseX, int mouseY) {
-        for (Component component : OyVeyGui.getClickGui().getComponents()) {
+        for (Component component : GrassWareGui.getClickGui().getComponents()) {
             if (!component.drag) continue;
             return false;
         }
