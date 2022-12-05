@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public class ConfigManager implements MC {
-    public final  ArrayList<Feature> features = new ArrayList<>();
+    public final ArrayList<Feature> features = new ArrayList<>();
     public String config = "grassware/config/";
 
     public static void setValueFromJson(final Setting<?> setting, final JsonElement element) {
@@ -65,7 +65,7 @@ public class ConfigManager implements MC {
                     try {
                         setValueFromJson(setting, element);
                         if (setting instanceof BooleanSetting && setting.getName().equals("Enabled") && ((BooleanSetting) setting).getValue()) {
-                            if (feature instanceof ClickGui){
+                            if (feature instanceof ClickGui) {
                                 ((BooleanSetting) setting).invokeValue(false);
                             } else {
                                 GrassWare.eventBus.registerListener(feature);

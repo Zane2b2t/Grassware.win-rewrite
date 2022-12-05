@@ -92,7 +92,7 @@ public class HoleESP extends Module {
                 }
             } else {
                 RenderUtil.boxShader(bb.minX, bb.minY, bb.minZ, bb.maxX, bb.maxY - 1 + size, bb.maxZ, color);
-                RenderUtil.renderGradientLine(bb.minX, bb.minY, bb.minZ, bb.maxX, bb.maxY - 1 + size,  bb.maxZ, color);
+                RenderUtil.renderGradientLine(bb.minX, bb.minY, bb.minZ, bb.maxX, bb.maxY - 1 + size, bb.maxZ, color);
             }
         }
     }

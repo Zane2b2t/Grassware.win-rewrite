@@ -11,14 +11,14 @@ public class NoRender extends Module {
     private final BooleanSetting overlays = register("Overlays", false);
 
     @EventListener
-    public void onHurCam(final HurtCamEvent event){
-        if (hurtCam.getValue()){
+    public void onHurCam(final HurtCamEvent event) {
+        if (hurtCam.getValue()) {
             event.setCancelled(true);
         }
     }
 
     @EventListener
-    public void onOverlay(final OverlayEvent event){
+    public void onOverlay(final OverlayEvent event) {
         if (overlays.getValue()) {
             event.setCancelled(true);
         }

@@ -15,7 +15,7 @@ public class Timer implements MC {
         return time / 1000000L;
     }
 
-    public long getTime(){
+    public long getTime() {
         return getMs(this.time);
     }
 }

@@ -6,6 +6,7 @@ import net.minecraft.util.ResourceLocation;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+
 import static org.lwjgl.opengl.GL20.*;
 
 public class ShaderUtil implements MC {
@@ -77,7 +78,6 @@ public class ShaderUtil implements MC {
         }
         return shader;
     }
-
 
 
     public static String readInputStream(final InputStream inputStream) {

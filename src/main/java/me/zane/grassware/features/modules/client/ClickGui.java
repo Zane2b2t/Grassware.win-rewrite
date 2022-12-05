@@ -31,7 +31,7 @@ public class ClickGui extends Module {
     public final IntSetting gradientRed2 = register("Red2", 68, 0, 255).invokeVisibility(z -> mode.getValue().equals("Gradient"));
     public final IntSetting gradientGreen2 = register("Green2", 255, 0, 255).invokeVisibility(z -> mode.getValue().equals("Gradient"));
     public final IntSetting gradientBlue2 = register("Blue2", 152, 0, 255).invokeVisibility(z -> mode.getValue().equals("Gradient"));
-    
+
     private final BooleanSetting snowing = register("Snowing", false);
 
     public ClickGui() {
@@ -55,7 +55,7 @@ public class ClickGui extends Module {
     }
 
     @EventListener
-    public void onRender3D(final Render3DEvent event){
+    public void onRender3D(final Render3DEvent event) {
     }
 
     @Override
@@ -64,7 +64,7 @@ public class ClickGui extends Module {
     }
 
     @Override
-    public void onDisable(){
+    public void onDisable() {
         mc.displayGuiScreen(null);
     }
 

@@ -33,7 +33,7 @@ public class BlockUtil implements MC {
         return new double[]{MathHelper.wrapDegrees(yaw), MathHelper.wrapDegrees(pitch)};
     }
 
-    public static BlockPos center(){
+    public static BlockPos center() {
         return new BlockPos(Math.floor(mc.player.posX), Math.floor(mc.player.posY), Math.floor(mc.player.posZ));
     }
 
@@ -48,11 +48,11 @@ public class BlockUtil implements MC {
     @SuppressWarnings("ConstantConditions")
     public static float calculatePosDamage(final double posX, final double posY, final double posZ, final Entity entity) {
         final float doubleSize = 12.0F;
-        final double size = entity.getDistance(posX, posY, posZ) /  doubleSize;
+        final double size = entity.getDistance(posX, posY, posZ) / doubleSize;
         final Vec3d vec3d = new Vec3d(posX, posY, posZ);
         final double blockDensity = entity.world.getBlockDensity(vec3d, entity.getEntityBoundingBox());
         final double value = (1.0D - size) * blockDensity;
-        final float damage = (float) ((int) ((value * value + value) / 2.0D * 7.0D *  doubleSize + 1.0D));
+        final float damage = (float) ((int) ((value * value + value) / 2.0D * 7.0D * doubleSize + 1.0D));
         double finalDamage = 1.0D;
 
         if (entity instanceof EntityLivingBase) {

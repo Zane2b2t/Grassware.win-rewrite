@@ -11,6 +11,7 @@ import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.play.server.SPacketEntityStatus;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,7 +28,7 @@ public class PopESP extends Module {
         }
         for (final Map.Entry<EntityPlayer, Long> entry : new HashMap<>(playerList).entrySet()) {
             final float alpha = (System.currentTimeMillis() - entry.getValue()) / 1000.0f;
-            if (alpha > 1.0f){
+            if (alpha > 1.0f) {
                 playerList.remove(entry.getKey());
                 continue;
             }
@@ -97,12 +98,12 @@ public class PopESP extends Module {
     }
 
     @Override
-    public void onEnable(){
+    public void onEnable() {
         invokeEntity(mc.player);
     }
 
     private void invokeEntity(final EntityPlayer entityPlayer) {
-        if (entityPlayer.equals(mc.player)){
+        if (entityPlayer.equals(mc.player)) {
             return;
         }
         final EntityOtherPlayerMP player = new EntityOtherPlayerMP(mc.world, mc.player.getGameProfile());

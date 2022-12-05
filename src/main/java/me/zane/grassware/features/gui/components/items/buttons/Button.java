@@ -22,8 +22,8 @@ public class Button extends Item {
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         state = getState();
-        if (state){
-            RenderUtil.rectGuiTex(x, y, x + width, y + height - 0.5f, isHovering(mouseX, mouseY) ? ClickGui.Instance.getColorAlpha() :  ClickGui.Instance.getColor());
+        if (state) {
+            RenderUtil.rectGuiTex(x, y, x + width, y + height - 0.5f, isHovering(mouseX, mouseY) ? ClickGui.Instance.getColorAlpha() : ClickGui.Instance.getColor());
         } else {
             RenderUtil.rect(x, y, x + width, y + height - 0.5f, isHovering(mouseX, mouseY) ? new Color(0, 0, 0, 75) : new Color(0, 0, 0, 50));
         }

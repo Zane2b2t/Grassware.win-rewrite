@@ -8,7 +8,7 @@ import net.minecraft.util.MovementInput;
 public class NoSlow extends Module {
 
     @EventListener
-    public void onItemInputUpdate(final ItemInputUpdateEvent event){
+    public void onItemInputUpdate(final ItemInputUpdateEvent event) {
         if (slowed()) {
             final MovementInput movementInput = event.movementInput;
             movementInput.moveForward /= 0.2f;

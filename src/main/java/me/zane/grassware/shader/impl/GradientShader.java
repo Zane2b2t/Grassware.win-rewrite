@@ -24,10 +24,11 @@ public class GradientShader implements MC {
         shader.setUniformf("mix", opacity);
     }
 
-    public static void setup(){
+    public static void setup() {
         setup(ClickGui.Instance.step.getValue(), ClickGui.Instance.speed.getValue(), ClickGui.Instance.getGradient()[0], ClickGui.Instance.getGradient()[1]);
     }
-    public static void setup(final float opacity){
+
+    public static void setup(final float opacity) {
         setup(ClickGui.Instance.step.getValue(), ClickGui.Instance.speed.getValue(), ClickGui.Instance.getGradient()[0], ClickGui.Instance.getGradient()[1], opacity);
     }
 

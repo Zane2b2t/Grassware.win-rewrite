@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 @Mixin(Minecraft.class)
 public interface IMinecraft {
 
-	@Accessor("session")
-	void setSession(Session session);
+    @Accessor("session")
+    void setSession(Session session);
 
 }

@@ -46,10 +46,10 @@ public class MixinEntityPlayerSP extends AbstractClientPlayer {
     }
 
     @Inject(method = "onUpdateWalkingPlayer", at = @At("HEAD"), cancellable = true)
-    private void onUpdateWalkingPlayer(final CallbackInfo ci){
+    private void onUpdateWalkingPlayer(final CallbackInfo ci) {
         final UpdatePlayerWalkingEvent updatePlayerWalkingEvent = new UpdatePlayerWalkingEvent();
         GrassWare.eventBus.invoke(updatePlayerWalkingEvent);
-        if (updatePlayerWalkingEvent.isCancelled()){
+        if (updatePlayerWalkingEvent.isCancelled()) {
             ci.cancel();
         }
     }

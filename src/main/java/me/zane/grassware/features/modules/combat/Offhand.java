@@ -18,7 +18,7 @@ public class Offhand extends Module {
     @EventListener
     public void onTick(final TickEvent event) {
         final int slot = slot();
-        if (slot != -1){
+        if (slot != -1) {
             swapItem(slot);
         }
     }

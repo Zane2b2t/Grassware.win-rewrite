@@ -24,7 +24,7 @@ public class NameTags extends Module {
     private final FloatSetting scale = register("Scale", 1.5f, 0.1f, 10.0f);
 
     @EventListener
-    public void onNameplate(final NameplateEvent event){
+    public void onNameplate(final NameplateEvent event) {
         if (event.entity instanceof EntityPlayer) {
             event.setCancelled(true);
         }
@@ -34,7 +34,7 @@ public class NameTags extends Module {
     public void onRender3D(final Render3DEvent event) {
         final float scaleVal = this.scale.getValue() / 1000.0f;
         for (final EntityPlayer entityPlayer : mc.world.playerEntities) {
-            if (entityPlayer.equals(mc.player)){
+            if (entityPlayer.equals(mc.player)) {
                 continue;
             }
             final Vec3d vec = RenderUtil.interpolateEntity(entityPlayer);

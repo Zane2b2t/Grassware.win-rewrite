@@ -19,6 +19,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+
 import java.util.TreeMap;
 
 public class AutoCrystal extends Module {
@@ -61,8 +62,8 @@ public class AutoCrystal extends Module {
     }
 
     @EventListener
-    public void onRender3D(final Render3DEvent event){
-        if (placedPos != null){
+    public void onRender3D(final Render3DEvent event) {
+        if (placedPos != null) {
             GradientShader.setup(opacity.getValue());
             RenderUtil.boxShader(placedPos);
             RenderUtil.outlineShader(placedPos);
@@ -75,11 +76,11 @@ public class AutoCrystal extends Module {
 
         MC.mc.world.loadedEntityList.stream().filter(entity -> entity instanceof EntityEnderCrystal && !(MC.mc.player.getDistance(entity) > 5.0f)).map(entity -> (EntityEnderCrystal) entity).forEach(entityEnderCrystal -> {
             final float selfDamage = BlockUtil.calculateEntityDamage(entityEnderCrystal, MC.mc.player);
-            if (selfDamage > maximumDamage.getValue()){
+            if (selfDamage > maximumDamage.getValue()) {
                 return;
             }
             final float enemyDamage = BlockUtil.calculateEntityDamage(entityEnderCrystal, entityPlayer);
-            if (enemyDamage < minimumDamage.getValue()){
+            if (enemyDamage < minimumDamage.getValue()) {
                 return;
             }
             final float damage = enemyDamage - selfDamage;
@@ -100,18 +101,18 @@ public class AutoCrystal extends Module {
         final TreeMap<Float, BlockPos> map = new TreeMap<>();
 
         BlockUtil.getBlocksInRadius(targetRange.getValue()).stream().filter(BlockUtil::valid).forEach(pos -> {
-            if (Math.sqrt(MC.mc.player.getDistanceSq(pos)) > 5.0f){
+            if (Math.sqrt(MC.mc.player.getDistanceSq(pos)) > 5.0f) {
                 return;
             }
             if (!MC.mc.world.getEntitiesWithinAABB(EntityPlayer.class, new AxisAlignedBB(new BlockPos(pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5))).isEmpty()) {
                 return;
             }
             final float selfDamage = BlockUtil.calculatePosDamage(pos, MC.mc.player);
-            if (selfDamage > maximumDamage.getValue()){
+            if (selfDamage > maximumDamage.getValue()) {
                 return;
             }
             final float enemyDamage = BlockUtil.calculatePosDamage(pos, entityPlayer);
-            if (enemyDamage < minimumDamage.getValue()){
+            if (enemyDamage < minimumDamage.getValue()) {
                 return;
             }
             final float damage = enemyDamage - selfDamage;

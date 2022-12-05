@@ -22,7 +22,7 @@ public class MixinGuiMainMenu extends GuiScreen {
     }
 
     @Inject(method = "mouseClicked", at = @At("HEAD"))
-    private void mouseClicked(final int mouseX, final int mouseY, final int mouseButton, final CallbackInfo ci){
+    private void mouseClicked(final int mouseX, final int mouseY, final int mouseButton, final CallbackInfo ci) {
         AltGui.mouseClicked(mouseX, mouseY, mouseButton);
     }
 }

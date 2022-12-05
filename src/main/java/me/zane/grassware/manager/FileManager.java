@@ -19,7 +19,7 @@ public class FileManager extends Feature {
             getMkDirectory(config, category.getName());
         }
     }
-    
+
     private Path lookupPath(Path root, String... paths) {
         return Paths.get(root.toString(), paths);
     }

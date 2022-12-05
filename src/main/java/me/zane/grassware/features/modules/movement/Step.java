@@ -7,7 +7,7 @@ import me.zane.grassware.features.modules.Module;
 public class Step extends Module {
 
     @Override
-    public void onDisable(){
+    public void onDisable() {
         mc.player.stepHeight = 0.6f;
     }
 

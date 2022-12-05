@@ -25,7 +25,7 @@ public class Speed extends Module {
     public void onKey(final KeyEvent event) {
         if (event.key == switchBind.getValue()) {
             mode.invokeValue(mode.getValue().equals("Strafe") ? "OnGround" : "Strafe");
-            Command.sendRemovableMessage( ChatFormatting.WHITE + "Speed mode switched to " + ChatFormatting.BOLD + mode.getValue(), 1);
+            Command.sendRemovableMessage(ChatFormatting.WHITE + "Speed mode switched to " + ChatFormatting.BOLD + mode.getValue(), 1);
         }
     }
 

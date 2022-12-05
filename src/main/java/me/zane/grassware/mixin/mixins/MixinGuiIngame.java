@@ -26,7 +26,7 @@ public class MixinGuiIngame {
     private void renderHotbar(final ScaledResolution sr, final float partialTicks, final CallbackInfo ci) {
         final RenderHotbarEvent renderHotbarEvent = new RenderHotbarEvent(sr);
         GrassWare.eventBus.invoke(renderHotbarEvent);
-        if (renderHotbarEvent.isCancelled()){
+        if (renderHotbarEvent.isCancelled()) {
             ci.cancel();
         }
     }

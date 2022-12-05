@@ -23,9 +23,9 @@ public class Aura extends Module {
     private float i = 0.0f;
 
     @EventListener
-    public void onRender3DPre(final Render3DPreEvent event){
+    public void onRender3DPre(final Render3DPreEvent event) {
         final EntityPlayer entityPlayer = EntityUtil.entityPlayer(5.0f);
-        if (entityPlayer == null || !mc.player.getHeldItemMainhand().getItem().equals(Items.DIAMOND_SWORD)){
+        if (entityPlayer == null || !mc.player.getHeldItemMainhand().getItem().equals(Items.DIAMOND_SWORD)) {
             return;
         }
 
@@ -62,7 +62,7 @@ public class Aura extends Module {
         glDisable(GL_BLEND);
         glPopMatrix();
 
-        if (!timer.passedMs(650)){
+        if (!timer.passedMs(650)) {
             return;
         }
         mc.player.connection.sendPacket(new CPacketUseEntity(entityPlayer));

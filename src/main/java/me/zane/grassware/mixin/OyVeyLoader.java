@@ -28,7 +28,8 @@ public class OyVeyLoader
         return null;
     }
 
-    public void injectData(final Map<String, Object> map) {}
+    public void injectData(final Map<String, Object> map) {
+    }
 
     public String getAccessTransformerClass() {
         return null;

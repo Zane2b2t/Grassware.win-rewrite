@@ -7,8 +7,8 @@ import me.zane.grassware.features.modules.Module;
 public class ReverseStep extends Module {
 
     @EventListener
-    public void onTick(final TickEvent event){
-        if (mc.player.onGround){
+    public void onTick(final TickEvent event) {
+        if (mc.player.onGround) {
             mc.player.motionY = -2.0f;
         }
     }

@@ -15,10 +15,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinRender<T extends Entity> implements MC {
 
     @Inject(method = "renderEntityOnFire", at = @At("HEAD"), cancellable = true)
-    private void renderEntityOnFire(Entity entity, double x, double y, double z, float partialTicks, CallbackInfo ci){
+    private void renderEntityOnFire(Entity entity, double x, double y, double z, float partialTicks, CallbackInfo ci) {
         final FireEvent fireEvent = new FireEvent();
         GrassWare.eventBus.invoke(fireEvent);
-        if (fireEvent.isCancelled()){
+        if (fireEvent.isCancelled()) {
             ci.cancel();
         }
     }

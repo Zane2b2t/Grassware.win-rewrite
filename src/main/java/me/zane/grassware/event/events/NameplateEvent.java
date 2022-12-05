@@ -6,7 +6,7 @@ import net.minecraft.entity.Entity;
 public class NameplateEvent extends Event {
     public final Entity entity;
 
-    public NameplateEvent(final Entity entity){
+    public NameplateEvent(final Entity entity) {
         this.entity = entity;
     }
 }

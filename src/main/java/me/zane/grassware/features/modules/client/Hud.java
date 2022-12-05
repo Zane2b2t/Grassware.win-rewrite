@@ -82,8 +82,8 @@ public class Hud extends Module {
     }
 
     @EventListener
-    public void onRenderHotbar(final RenderHotbarEvent event){
-        if (!customHotbar.getValue()){
+    public void onRenderHotbar(final RenderHotbarEvent event) {
+        if (!customHotbar.getValue()) {
             return;
         }
         final ScaledResolution scaledResolution = event.scaledResolution;
@@ -91,7 +91,7 @@ public class Hud extends Module {
         final float height = scaledResolution.getScaledHeight();
         GradientShader.setup();
         float x = -81.0f;
-        for (int i = 0; i < 9; i++){
+        for (int i = 0; i < 9; i++) {
             RenderUtil.texturedOutline(centerX + x, height - 18.0f, centerX + x + 18.0f, height);
             x += 18.0f;
         }
@@ -99,7 +99,7 @@ public class Hud extends Module {
 
         x = -81.0f;
         for (int i = 0; i < 9; i++) {
-            if (mc.player.inventory.currentItem == i){
+            if (mc.player.inventory.currentItem == i) {
                 RenderUtil.rect(centerX + x + 1, height - 17.0f, centerX + x + 17.0f, height - 1, new Color(0, 0, 0, 150));
             }
             final ItemStack itemStack = mc.player.inventory.getStackInSlot(i);
@@ -120,6 +120,7 @@ public class Hud extends Module {
         }
         event.setCancelled(true);
     }
+
     @EventListener
     public void onRenderPotionEffects(final RenderPotionEffectsEvent event) {
         event.setCancelled(true);

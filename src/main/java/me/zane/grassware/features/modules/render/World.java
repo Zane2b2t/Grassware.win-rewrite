@@ -36,27 +36,27 @@ public class World extends Module {
         if (fullGamma.getValue() && mc.gameSettings.gammaSetting != 1000) {
             mc.gameSettings.gammaSetting = 1000;
         }
-        if (customFov.getValue()){
+        if (customFov.getValue()) {
             mc.gameSettings.setOptionFloatValue(GameSettings.Options.FOV, fov.getValue());
         }
     }
 
     @EventListener
-    public void onPacketReceive(final PacketEvent.Receive event){
+    public void onPacketReceive(final PacketEvent.Receive event) {
         if (noEffects.getValue() && event.getPacket() instanceof SPacketEffect) {
             event.setCancelled(true);
         }
     }
 
     @EventListener
-    public void onParticle(final ParticleEvent event){
-        if (noParticles.getValue()){
+    public void onParticle(final ParticleEvent event) {
+        if (noParticles.getValue()) {
             event.setCancelled(true);
         }
     }
 
     @EventListener
-    public void onChunkLoad(final ChunkLoadEvent event){
+    public void onChunkLoad(final ChunkLoadEvent event) {
         event.delay = chunkDelay.getValue().longValue();
     }
 

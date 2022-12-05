@@ -12,7 +12,7 @@ public class InventoryUtils
     public static int getHotbarItemSlot(Item item) {
         int slot = -1;
         for (int i = 0; i < 9; ++i) {
-            if (!InventoryUtils.mc.player.inventory.getStackInSlot(i).getItem().equals((Object)item)) continue;
+            if (!InventoryUtils.mc.player.inventory.getStackInSlot(i).getItem().equals(item)) continue;
             slot = i;
             break;
         }
@@ -22,7 +22,7 @@ public class InventoryUtils
     public static int getHotbarItemSlot2(Item item) {
         int slot = -1;
         for (int i = 0; i < 9; ++i) {
-            if (!InventoryUtils.mc.player.inventory.getStackInSlot(i).getItem().equals((Object)item)) continue;
+            if (!InventoryUtils.mc.player.inventory.getStackInSlot(i).getItem().equals(item)) continue;
             slot = i;
             break;
         }
@@ -41,7 +41,7 @@ public class InventoryUtils
     }
 
     public static void switchToSlotGhost(int slot) {
-        InventoryUtils.mc.player.connection.sendPacket((Packet)new CPacketHeldItemChange(slot));
+        InventoryUtils.mc.player.connection.sendPacket(new CPacketHeldItemChange(slot));
     }
 
     public static void switchToSlotGhost(Item item) {
@@ -50,14 +50,14 @@ public class InventoryUtils
 
     public static int getItemCount(Item item) {
         int count = 0;
-        count = InventoryUtils.mc.player.inventory.mainInventory.stream().filter(itemStack -> itemStack.getItem().equals((Object)item)).mapToInt(ItemStack::getCount).sum();
+        count = InventoryUtils.mc.player.inventory.mainInventory.stream().filter(itemStack -> itemStack.getItem().equals(item)).mapToInt(ItemStack::getCount).sum();
         return count;
     }
 
     public static int getInventoryItemSlot(Item item) {
         int slot = -1;
         for (int i = 45; i > 0; --i) {
-            if (!InventoryUtils.mc.player.inventory.getStackInSlot(i).getItem().equals((Object)item)) continue;
+            if (!InventoryUtils.mc.player.inventory.getStackInSlot(i).getItem().equals(item)) continue;
             slot = i;
             break;
         }
@@ -73,12 +73,12 @@ public class InventoryUtils
             return;
         }
         if (!moving && startMoving) {
-            InventoryUtils.mc.playerController.windowClick(0, slot < 9 ? slot + 36 : slot, 0, ClickType.PICKUP, (EntityPlayer)InventoryUtils.mc.player);
+            InventoryUtils.mc.playerController.windowClick(0, slot < 9 ? slot + 36 : slot, 0, ClickType.PICKUP, InventoryUtils.mc.player);
             moving = true;
             startMoving = false;
         }
         if (moving) {
-            InventoryUtils.mc.playerController.windowClick(0, 45, 0, ClickType.PICKUP, (EntityPlayer)InventoryUtils.mc.player);
+            InventoryUtils.mc.playerController.windowClick(0, 45, 0, ClickType.PICKUP, InventoryUtils.mc.player);
             moving = false;
             returning = true;
         }
@@ -89,7 +89,7 @@ public class InventoryUtils
                 break;
             }
             if (returnSlot != -1) {
-                InventoryUtils.mc.playerController.windowClick(0, returnSlot < 9 ? returnSlot + 36 : returnSlot, 0, ClickType.PICKUP, (EntityPlayer)InventoryUtils.mc.player);
+                InventoryUtils.mc.playerController.windowClick(0, returnSlot < 9 ? returnSlot + 36 : returnSlot, 0, ClickType.PICKUP, InventoryUtils.mc.player);
             }
             returning = false;
         }
@@ -104,18 +104,18 @@ public class InventoryUtils
             return;
         }
         if (!moving && startMoving) {
-            InventoryUtils.mc.playerController.windowClick(0, slot < 9 ? slot + 36 : slot, 0, ClickType.PICKUP, (EntityPlayer)InventoryUtils.mc.player);
+            InventoryUtils.mc.playerController.windowClick(0, slot < 9 ? slot + 36 : slot, 0, ClickType.PICKUP, InventoryUtils.mc.player);
             moving = true;
             startMoving = false;
         }
         if (moving) {
-            InventoryUtils.mc.playerController.windowClick(0, 45, 0, ClickType.PICKUP, (EntityPlayer)InventoryUtils.mc.player);
+            InventoryUtils.mc.playerController.windowClick(0, 45, 0, ClickType.PICKUP, InventoryUtils.mc.player);
             moving = false;
             returning = true;
         }
         if (returning) {
             if (returnSlot != -1) {
-                InventoryUtils.mc.playerController.windowClick(0, returnSlot < 9 ? returnSlot + 36 : returnSlot, 0, ClickType.PICKUP, (EntityPlayer)InventoryUtils.mc.player);
+                InventoryUtils.mc.playerController.windowClick(0, returnSlot < 9 ? returnSlot + 36 : returnSlot, 0, ClickType.PICKUP, InventoryUtils.mc.player);
             }
             returning = false;
         }
@@ -134,17 +134,17 @@ public class InventoryUtils
         boolean moving = false;
         boolean returning = false;
         if (!moving && startMoving) {
-            InventoryUtils.mc.playerController.windowClick(0, slot < 9 ? slot + 36 : slot, 0, ClickType.PICKUP, (EntityPlayer)InventoryUtils.mc.player);
+            InventoryUtils.mc.playerController.windowClick(0, slot < 9 ? slot + 36 : slot, 0, ClickType.PICKUP, InventoryUtils.mc.player);
             moving = true;
             startMoving = false;
         }
         if (moving) {
-            InventoryUtils.mc.playerController.windowClick(0, slotOut < 9 ? slotOut + 36 : slotOut, 0, ClickType.PICKUP, (EntityPlayer)InventoryUtils.mc.player);
+            InventoryUtils.mc.playerController.windowClick(0, slotOut < 9 ? slotOut + 36 : slotOut, 0, ClickType.PICKUP, InventoryUtils.mc.player);
             moving = false;
             returning = true;
         }
         if (returning) {
-            InventoryUtils.mc.playerController.windowClick(0, slot < 9 ? slot + 36 : slot, 0, ClickType.PICKUP, (EntityPlayer)InventoryUtils.mc.player);
+            InventoryUtils.mc.playerController.windowClick(0, slot < 9 ? slot + 36 : slot, 0, ClickType.PICKUP, InventoryUtils.mc.player);
             returning = false;
         }
         startMoving = true;

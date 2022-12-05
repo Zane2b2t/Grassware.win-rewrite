@@ -12,11 +12,11 @@ public abstract class Setting<T> {
         this.value = value;
     }
 
-    public String getName(){
+    public String getName() {
         return name;
     }
 
-    public T getValue(){
+    public T getValue() {
         return value;
     }
 
