@@ -3,6 +3,7 @@ package me.zane.grassware.features.modules.combat;
 import me.zane.grassware.event.bus.EventListener;
 import me.zane.grassware.event.events.Render3DEvent;
 import me.zane.grassware.event.events.UpdatePlayerWalkingEvent;
+import me.zane.grassware.event.events.TickEvent;
 import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.features.setting.impl.FloatSetting;
 import me.zane.grassware.shader.impl.GradientShader;
