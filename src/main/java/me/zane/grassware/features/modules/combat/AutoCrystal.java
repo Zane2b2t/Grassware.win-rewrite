@@ -33,7 +33,7 @@ public class AutoCrystal extends Module {
     private long sys;
 
     @EventListener
-    public void onUpdatePlayerWalking(final UpdatePlayerWalkingEvent event) {
+    public void TickEvent(final TickEvent event) {
         placedPos = null;
         final EntityPlayer entityPlayer = EntityUtil.entityPlayer(targetRange.getValue());
         if (entityPlayer == null || System.currentTimeMillis() - sys <= delay.getValue()) {
