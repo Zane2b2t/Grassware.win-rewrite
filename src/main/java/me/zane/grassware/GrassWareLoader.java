@@ -7,10 +7,10 @@ import org.spongepowered.asm.mixin.Mixins;
 
 import java.util.Map;
 
-public class OyVeyLoader
+public class GrassWareLoader
         implements IFMLLoadingPlugin {
 
-    public OyVeyLoader() {
+    public GrassWareLoader() {
         MixinBootstrap.init();
         Mixins.addConfiguration("mixins.oyvey.json");
         MixinEnvironment.getDefaultEnvironment().setObfuscationContext("searge");
