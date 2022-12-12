@@ -3,6 +3,9 @@ package me.zane.grassware.features.modules.render;
 
 import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.event.bus.EventListener;
+import me.zane.grassware.features.modules.client.ClickGui;
+import me.zane.grassware.shader.impl.GradientShader;
+
 
 import java.util.HashMap;
 import java.util.Map;
