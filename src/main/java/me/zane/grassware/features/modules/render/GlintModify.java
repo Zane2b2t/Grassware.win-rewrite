@@ -29,7 +29,7 @@ public class GlintModify extends Module {
                     Math.max(0.0f, 1.0f - alpha)
             );
           
-        }
+        
     }
 }
     
