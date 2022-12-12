@@ -1,6 +1,7 @@
 package me.zane.grassware.features.modules.player;
 
 import me.zane.grassware.features.modules.Module;
+import me.zane.grassware.event.EventListener;
 import me.zane.grassware.features.setting.impl.IntSetting;
 import me.zane.grassware.features.setting.impl.BooleanSetting;
 import me.zane.grassware.util.Util;
@@ -19,7 +20,7 @@ public class AutoFrameDupe extends Module {
     private int timeoutTicks = 0;
 
 
-    // @Override
+     @EventListener
     public void onUpdate() {
         if (Util.mc.player != null && Util.mc.world != null) {
             if (shulkersonly.getValue()) {
