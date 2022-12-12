@@ -1,7 +1,7 @@
 package me.zane.grassware.features.modules.player;
 
 import me.zane.grassware.features.modules.Module;
-import me.zane.grassware.event.EventListener;
+import me.zane.grassware.event.bus.EventListener;
 import me.zane.grassware.features.setting.impl.IntSetting;
 import me.zane.grassware.features.setting.impl.BooleanSetting;
 import me.zane.grassware.util.Util;
