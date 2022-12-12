@@ -20,12 +20,7 @@ public class GlintModify extends Module {
         if (mc.gameSettings.thirdPersonView != 0) {
             return;
         }
-        for (final Map.Entry<EntityPlayer, Long> entry : new HashMap<>(playerList).entrySet()) {
-            final float alpha = (System.currentTimeMillis() - entry.getValue()) / 1000.0f;
-            if (alpha > 1.0f) {
-                playerList.remove(entry.getKey());
-                continue;
-            }
+
             GradientShader.setup(
                     ClickGui.Instance.step.getValue(),
                     ClickGui.Instance.speed.getValue(),
