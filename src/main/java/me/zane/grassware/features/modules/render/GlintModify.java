@@ -1,41 +1,59 @@
 
 package me.zane.grassware.features.modules.render;
 
-import java.awt.Color;
 import me.zane.grassware.features.modules.Module;
-import me.zane.grassware.features.setting.Setting;
 import me.zane.grassware.event.bus.EventListener;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class GlintModify extends Module {
+    
+     @EventListener
+    public void onRender3D(final Render3DEvent event) {
+        if (mc.gameSettings.thirdPersonView != 0) {
+            return;
+        }
+        for (final Map.Entry<EntityPlayer, Long> entry : new HashMap<>(playerList).entrySet()) {
+            final float alpha = (System.currentTimeMillis() - entry.getValue()) / 1000.0f;
+            if (alpha > 1.0f) {
+                playerList.remove(entry.getKey());
+                continue;
+            }
+            GradientShader.setup(
+                    ClickGui.Instance.step.getValue(),
+                    ClickGui.Instance.speed.getValue(),
+                    ClickGui.Instance.getGradient()[0],
+                    ClickGui.Instance.getGradient()[1],
+                    Math.max(0.0f, 1.0f - alpha)
+            );
+            glPushMatrix();
+            glEnable(GL_BLEND);
+            glDisable(GL_TEXTURE_2D);
+            glDisable(GL_DEPTH_TEST);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            mc.getRenderManager().renderEntityStatic(entry.getKey(), mc.getRenderPartialTicks(), false);
+            glEnable(GL_DEPTH_TEST);
+            glEnable(GL_TEXTURE_2D);
+            glDisable(GL_BLEND);
+            glPopMatrix();
 
-    public Setting<Integer> red = this.register(new Setting<Integer>("Red", 255, 0, 255));
-    public Setting<Integer> green = this.register(new Setting<Integer>("Green", 255, 0, 255));
-    public Setting<Integer> blue = this.register(new Setting<Integer>("Blue", 255, 0, 255));
-    public Setting<Boolean> rainbow = this.register(new Setting<Boolean>("Rainbow", false));
-
-    public GlintModify() {
-        super("GlintModify", "Changes the enchant glint color.", Module.Category.RENDER, true, false, true);
-    }
-
-    public static Color getColor(long offset, float fade) {
-        float hue = (float)(System.nanoTime() + offset) / 1.0E10f % 1.0f;
-        long color = Long.parseLong(Integer.toHexString(Color.HSBtoRGB(hue, 1.0f, 1.0f)), 16);
-        Color c = new Color((int)color);
-        return new Color((float)c.getRed() / 255.0f * fade, (float)c.getGreen() / 255.0f * fade, (float)c.getBlue() / 255.0f * fade, (float)c.getAlpha() / 255.0f);
-    }
-
-    @EventListener
-    public void onUpdate() {
-        if (this.rainbow.getValue().booleanValue()) {
-            this.cycleRainbow();
+            glPushMatrix();
+            glEnable(GL_BLEND);
+            glDisable(GL_TEXTURE_2D);
+            glDisable(GL_DEPTH_TEST);
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+            glEnable(GL_LINE_SMOOTH);
+            glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+            glLineWidth(lineWidth.getValue());
+            mc.getRenderManager().renderEntityStatic(entry.getKey(), mc.getRenderPartialTicks(), false);
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+            glEnable(GL_DEPTH_TEST);
+            glEnable(GL_TEXTURE_2D);
+            glDisable(GL_BLEND);
+            glPopMatrix();
+            GradientShader.finish();
         }
     }
 
-    public void cycleRainbow() {
-        float[] tick_color = new float[]{(float)(System.currentTimeMillis() % 11520L) / 11520.0f};
-        int color_rgb_o = Color.HSBtoRGB(tick_color[0], 0.8f, 0.8f);
-        this.red.setValue(color_rgb_o >> 16 & 0xFF);
-        this.green.setValue(color_rgb_o >> 8 & 0xFF);
-        this.blue.setValue(color_rgb_o & 0xFF);
-    }
-}
+    
