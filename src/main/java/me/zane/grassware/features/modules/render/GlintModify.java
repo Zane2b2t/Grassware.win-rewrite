@@ -58,5 +58,5 @@ public class GlintModify extends Module {
             GradientShader.finish();
         }
     }
-
+}
     
