@@ -161,7 +161,7 @@ public class AltGui implements MC {
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public static void saveAlts() {
-        File file = new File("oyvey/alts.txt");
+        File file = new File("grassware/alts.txt");
         try {
             if (!file.exists()) {
                 file.createNewFile();
@@ -178,7 +178,7 @@ public class AltGui implements MC {
     }
 
     public static void loadAlts() {
-        File file = new File("oyvey/alts.txt");
+        File file = new File("grassware/alts.txt");
         try {
             if (file.exists()) {
                 final ScaledResolution scaledResolution = new ScaledResolution(mc);

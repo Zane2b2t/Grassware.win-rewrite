@@ -1,4 +1,4 @@
-package me.zane.grassware.mixin;
+package me.zane.grassware;
 
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 import org.spongepowered.asm.launch.MixinBootstrap;
@@ -12,7 +12,7 @@ public class GrassWareLoader
 
     public GrassWareLoader() {
         MixinBootstrap.init();
-        Mixins.addConfiguration("mixins.oyvey.json");
+        Mixins.addConfiguration("mixins.grassware.json");
         MixinEnvironment.getDefaultEnvironment().setObfuscationContext("searge");
     }
 

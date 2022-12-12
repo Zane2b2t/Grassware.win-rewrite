@@ -25,18 +25,18 @@ public class MixinGuiNewChat implements MC {
 
     @Redirect(method = "drawChat", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/FontRenderer;drawStringWithShadow(Ljava/lang/String;FFI)I"))
     private int drawStringWithShadow(FontRenderer instance, String text, float x, float y, int color) {
-        if (text.contains("<OyVey>")) {
+        if (text.contains("<grassware>")) {
             if (!ClickGui.Instance.mode.getValue().equals("Static")) {
                 BlackShader.setup();
-                GrassWare.textManager.renderStringShadowOnly("<OyVey>", x, y);
+                GrassWare.textManager.renderStringShadowOnly("<grassware>", x, y);
                 BlackShader.finish();
                 GradientShader.setup();
-                GrassWare.textManager.renderStringNoShadow("<OyVey>", x, y, ClickGui.Instance.getColor());
+                GrassWare.textManager.renderStringNoShadow("<grassware>", x, y, ClickGui.Instance.getColor());
                 GradientShader.finish();
             } else {
                 GrassWare.textManager.renderString(text, x, y, new Color(color));
             }
         }
-        return mc.fontRenderer.drawStringWithShadow(text.replace("<OyVey>", ""), x + (text.contains("<OyVey>") ? GrassWare.textManager.stringWidth("<OyVey>") : 0), y, color);
+        return mc.fontRenderer.drawStringWithShadow(text.replace("<grassware>", ""), x + (text.contains("<grassware>") ? GrassWare.textManager.stringWidth("<grassware>") : 0), y, color);
     }
 }

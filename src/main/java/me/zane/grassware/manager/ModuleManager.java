@@ -5,12 +5,11 @@ import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.util.ClassFinder;
 import org.lwjgl.input.Keyboard;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class ModuleManager extends Feature {
     public ArrayList<Module> modules = new ArrayList<>();
+    private static final LinkedHashMap<String, Module> modulesNameMap = new LinkedHashMap<>();
 
     public void init() {
         try {
@@ -47,6 +46,10 @@ public class ModuleManager extends Feature {
 
     public List<Module.Category> getCategories() {
         return Arrays.asList(Module.Category.values());
+    }
+    public static Module getModule(String name) {
+        if (name == null) return null;
+        return modulesNameMap.get(name.toLowerCase(Locale.ROOT));
     }
 
     public void onKeyPressed(int eventKey) {

@@ -19,13 +19,13 @@ public class ConfigCommand extends Command {
     @Override
     public void execute(final String[] commands) {
         if (commands.length == 1) {
-            sendMessage("You`ll find the config files in your gameProfile directory under oyvey/config");
+            sendMessage("You`ll find the config files in your gameProfile directory under grassware/config");
             return;
         }
         if (commands.length == 2)
             if ("list".equals(commands[0])) {
                 String configs = "Configs: ";
-                File file = new File("oyvey/");
+                File file = new File("grassware/");
                 List<File> directories = Arrays.stream(Objects.requireNonNull(file.listFiles())).filter(File::isDirectory).filter(f -> !f.getName().equals("util")).collect(Collectors.toList());
                 StringBuilder builder = new StringBuilder(configs);
                 for (File file1 : directories)

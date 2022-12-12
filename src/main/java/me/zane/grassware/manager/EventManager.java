@@ -32,7 +32,7 @@ public class EventManager extends Feature {
     @SubscribeEvent
     public void onWorldRender(final RenderWorldLastEvent event) {
         if (!nullCheck()) {
-            mc.profiler.startSection("oyvey");
+            mc.profiler.startSection("grassware");
 
             final Render3DPreEvent render3dPreEvent = new Render3DPreEvent(event.getPartialTicks());
             GrassWare.eventBus.invoke(render3dPreEvent);

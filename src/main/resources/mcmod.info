@@ -1,7 +1,7 @@
 [
   {
-    "modid": "oyvey",
-    "name": "OyVey",
+    "modid": "grassware",
+    "name": "grassware",
     "description": "1.12.2 Anarchy PvP Client",
     "version": "0.0.3",
     "mcversion": "1.12.2",

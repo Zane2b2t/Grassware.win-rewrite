@@ -2,7 +2,7 @@
   "required": true,
   "compatibilityLevel": "JAVA_8",
   "package": "me.zane.grassware.mixin.mixins",
-  "refmap": "mixins.oyvey.refmap.json",
+  "refmap": "mixins.grassware.refmap.json",
   "mixins": [
     "IMinecraft",
     "MixinChunkRenderDispatcher",

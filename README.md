@@ -16,7 +16,7 @@ This project was made for the popular group, Grassers. Hence the name Grassware.
 * alpha432 (client base)
 * zpisstige (client basev2)
 * Zane2b2t (head developer, pro paster, maintainer)
-* Hockeyl8[https://github.com/hockeyl8] (Stuff)
+* [Hockeyl8](https://github.com/hockeyl8) (Stuff)
 * Rat2b2t (that one guy that always starts off with the readme)
 
 ## Features
