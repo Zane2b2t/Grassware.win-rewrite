@@ -21,8 +21,8 @@ This project was made for the popular group, Grassers. Hence the name Grassware.
 
 ## Features
 * Combat <br>Aura (KillAura), AutoCrystal, Offhand
-* Movement <br>NoSlow, ReverseStep, Speed, Sprint, Step, Velocity, HoleSnap
-* Player <br>WallPhase (OP)
+* Movement <br>NoSlow, ReverseStep, Speed, Sprint, Step, Velocity,
+* Player <br>WallPhase (OP), AutoFrameDupe
 * Render <br>HoleESP, NameTags, PopESP (PopChams), ShaderESP, World (Environment),
 * Client <br>ClickGUI, Hud
 
