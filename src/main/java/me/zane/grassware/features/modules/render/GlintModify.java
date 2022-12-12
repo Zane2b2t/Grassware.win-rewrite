@@ -4,6 +4,7 @@ package me.zane.grassware.features.modules.render;
 import java.awt.Color;
 import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.features.setting.Setting;
+import me.zane.grassware.event.bus.EventListener;
 
 public class GlintModify extends Module {
 
@@ -23,7 +24,7 @@ public class GlintModify extends Module {
         return new Color((float)c.getRed() / 255.0f * fade, (float)c.getGreen() / 255.0f * fade, (float)c.getBlue() / 255.0f * fade, (float)c.getAlpha() / 255.0f);
     }
 
-    @Override
+    @EventListener
     public void onUpdate() {
         if (this.rainbow.getValue().booleanValue()) {
             this.cycleRainbow();
