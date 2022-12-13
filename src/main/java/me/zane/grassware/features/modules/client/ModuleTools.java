@@ -7,8 +7,7 @@ public class ModuleTools extends Module {
 
     private static ModuleTools INSTANCE;
 
-    public Setting<Notifier> notifier = register(new Setting("ModuleNotifier", Notifier.FUTURE));
-    public Setting<PopNotifier> popNotifier = register(new Setting("PopNotifier", PopNotifier.FUTURE));
+    public Setting<Notifier> notifier = register(new Setting("ModuleNotifier", Notifier.SYNCCLIENT));
 
 
 
