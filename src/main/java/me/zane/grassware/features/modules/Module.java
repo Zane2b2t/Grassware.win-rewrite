@@ -7,6 +7,10 @@ import me.zane.grassware.features.command.Command;
 import me.zane.grassware.features.setting.impl.BindSetting;
 import me.zane.grassware.features.setting.impl.BooleanSetting;
 import me.zane.grassware.features.modules.client.ModuleTools;
+import me.zane.grassware.event.events.ClientEvent;
+import me.zane.grassware.event.events.Render3DEvent;
+import me.zane.grassware.event.events.Render2DEvent;
+
 
 public class Module extends Feature {
     public float anim = 0.0f;
