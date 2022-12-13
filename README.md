@@ -14,10 +14,10 @@ This project was made for the popular group, Grassers. Hence the name Grassware.
 
 #### Grassware.win Contributors
 * alpha432 (client base)
-* zpisstige (client basev2)
-* Zane2b2t (head developer, pro paster, maintainer)
+* [zpisstige](https://github.com/RealzPrestige) (client basev2)
+* [Zane2b2t](https://github.com/Zane2b2t) (head developer, pro paster, maintainer)
 * [Hockeyl8](https://github.com/hockeyl8) (Stuff)
-* Rat2b2t (that one guy that always starts off with the readme)
+* [Rat2b2t](https://github.com/Rat2b2t) (that one guy that always starts off with the readme)
 
 ## Features
 * Combat <br>Aura (KillAura), AutoCrystal, Offhand
