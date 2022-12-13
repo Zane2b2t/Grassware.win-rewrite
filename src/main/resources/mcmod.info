@@ -2,14 +2,14 @@
   {
     "modid": "grassware",
     "name": "grassware",
-    "description": "1.12.2 Anarchy PvP Client",
-    "version": "0.0.3",
+    "description": "Prefix is !",
+    "version": "0.0.4",
     "mcversion": "1.12.2",
-    "logoFile": "niggahack.png",
-    "url": "https://discordapp.com/invite/WcAx3ps",
+    "logoFile": "grassware.png",
+    "url": "https://discord.gg/JdYGZntM48",
     "updateUrl": "",
     "authorList": [
-      "Alpha432"
+      "Zprestige, ZANE, Hockeyl8, Alpha432"
     ],
     "screenshots": [],
     "dependencies": []
