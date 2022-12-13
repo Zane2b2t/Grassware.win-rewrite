@@ -16,7 +16,7 @@ import java.util.Arrays;
 
 public class ClickGui extends Module {
     public static ClickGui Instance;
-    public final ModeSetting mode = register("Mode", "Static", Arrays.asList("Static", "Gradient"));
+    public final ModeSetting mode = register("Mode", "Gradient", Arrays.asList("Static", "Gradient"));
     public final IntSetting red = register("Red", 68, 0, 255).invokeVisibility(z -> mode.getValue().equals("Static"));
     public final IntSetting green = register("Green", 0, 0, 255).invokeVisibility(z -> mode.getValue().equals("Static"));
     public final IntSetting blue = register("Blue", 152, 0, 255).invokeVisibility(z -> mode.getValue().equals("Static"));
@@ -24,15 +24,15 @@ public class ClickGui extends Module {
     public final FloatSetting step = register("Step", 1.0f, 0.1f, 2.0f).invokeVisibility(z -> !mode.getValue().equals("Static"));
     public final FloatSetting speed = register("Speed", 1.0f, 0.1f, 5.0f).invokeVisibility(z -> !mode.getValue().equals("Static"));
 
-    public final IntSetting gradientRed1 = register("Red1", 68, 0, 255).invokeVisibility(z -> mode.getValue().equals("Gradient"));
-    public final IntSetting gradientGreen1 = register("Green1", 0, 0, 255).invokeVisibility(z -> mode.getValue().equals("Gradient"));
-    public final IntSetting gradientBlue1 = register("Blue1", 152, 0, 255).invokeVisibility(z -> mode.getValue().equals("Gradient"));
+    public final IntSetting gradientRed1 = register("Red1", 5, 0, 255).invokeVisibility(z -> mode.getValue().equals("Gradient"));
+    public final IntSetting gradientGreen1 = register("Green1", 155, 0, 255).invokeVisibility(z -> mode.getValue().equals("Gradient"));
+    public final IntSetting gradientBlue1 = register("Blue1", 5, 0, 255).invokeVisibility(z -> mode.getValue().equals("Gradient"));
 
-    public final IntSetting gradientRed2 = register("Red2", 68, 0, 255).invokeVisibility(z -> mode.getValue().equals("Gradient"));
+    public final IntSetting gradientRed2 = register("Red2", 5, 0, 255).invokeVisibility(z -> mode.getValue().equals("Gradient"));
     public final IntSetting gradientGreen2 = register("Green2", 255, 0, 255).invokeVisibility(z -> mode.getValue().equals("Gradient"));
-    public final IntSetting gradientBlue2 = register("Blue2", 152, 0, 255).invokeVisibility(z -> mode.getValue().equals("Gradient"));
+    public final IntSetting gradientBlue2 = register("Blue2", 5, 0, 255).invokeVisibility(z -> mode.getValue().equals("Gradient"));
 
-    private final BooleanSetting snowing = register("Snowing", false);
+    private final BooleanSetting snowing = register("Snowing", true);
 
     public ClickGui() {
         bind.invokeValue(Keyboard.KEY_O);
