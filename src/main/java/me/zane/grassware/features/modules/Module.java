@@ -6,11 +6,14 @@ import me.zane.grassware.features.Feature;
 import me.zane.grassware.features.command.Command;
 import me.zane.grassware.features.setting.impl.BindSetting;
 import me.zane.grassware.features.setting.impl.BooleanSetting;
+<<<<<<< HEAD
 import me.zane.grassware.features.modules.client.ModuleTools;
 import me.zane.grassware.event.events.ClientEvent;
 import me.zane.grassware.event.events.Render3DEvent;
 import me.zane.grassware.event.events.Render2DEvent;
 
+=======
+>>>>>>> parent of 8556129 (Update Module.java)
 
 public class Module extends Feature {
     public float anim = 0.0f;
@@ -37,6 +40,7 @@ public class Module extends Feature {
         }
     }
 
+<<<<<<< HEAD
     public void enable() {
         if (enabled.getValue()) {
             GrassWare.eventBus.registerListener(this);
@@ -93,6 +97,8 @@ public class Module extends Feature {
         return new TextComponentString(HUD.getInstance().getCommandMessage() + ChatFormatting.RED + this.getDisplayName() + " toggled off.");
     }
     
+=======
+>>>>>>> parent of 8556129 (Update Module.java)
     public void enable() {
         if (!enabled.getValue()) {
             GrassWare.eventBus.registerListener(this);
