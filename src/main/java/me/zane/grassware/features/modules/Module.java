@@ -6,6 +6,7 @@ import me.zane.grassware.features.Feature;
 import me.zane.grassware.features.command.Command;
 import me.zane.grassware.features.setting.impl.BindSetting;
 import me.zane.grassware.features.setting.impl.BooleanSetting;
+import me.zane.grassware.features.modules.client.ModuleTools;
 
 public class Module extends Feature {
     public float anim = 0.0f;
@@ -32,6 +33,58 @@ public class Module extends Feature {
         }
     }
 
+        public TextComponentString getNotifierOn() {
+        if (ModuleTools.getInstance().isEnabled()) {
+            switch (ModuleTools.getInstance().notifier.getValue()) {
+                case FUTURE: {
+                    return new TextComponentString(ChatFormatting.RED + "[Future] " + ChatFormatting.GRAY + this.getDisplayName() + " toggled " + ChatFormatting.GREEN + "on" + ChatFormatting.GRAY + ".");
+                }
+                case DOTGOD: {
+                    return new TextComponentString(ChatFormatting.DARK_PURPLE + "[" + ChatFormatting.LIGHT_PURPLE + "DotGod.CC" + ChatFormatting.DARK_PURPLE + "] " + ChatFormatting.DARK_AQUA + this.getDisplayName() + ChatFormatting.LIGHT_PURPLE + " was " + ChatFormatting.GREEN + "enabled.");
+
+                }
+                case PHOBOS: {
+                    return new TextComponentString((HUD.getInstance().getCommandMessage()) + ChatFormatting.BOLD + this.getDisplayName() + ChatFormatting.RESET + ChatFormatting.GREEN + " enabled.");
+
+                }
+                            
+                case SYNCCLIENT: {
+                     return new TextComponentString(ChatFormatting.DARK_PURPLE + "[" + ChatFormatting.LIGHT_PURPLE + "SyncClient" + ChatFormatting.DARK_PURPLE + "] " + ChatFormatting.DARK_AQUA + this.getDisplayName() + ChatFormatting.LIGHT_PURPLE + " turned " + ChatFormatting.GREEN + "ON.");
+
+                }       
+                case TROLLGOD: {
+                    return new TextComponentString((HUD.getInstance().getCommandMessage()) + ChatFormatting.DARK_PURPLE + this.getDisplayName() + ChatFormatting.LIGHT_PURPLE + " was " + ChatFormatting.GREEN + "enabled.");
+                }
+            }
+        }
+        return new TextComponentString(HUD.getInstance().getCommandMessage() + ChatFormatting.GREEN + this.getDisplayName() + " toggled on.");
+    }
+
+    public TextComponentString getNotifierOff() {
+        if (ModuleTools.getInstance().isEnabled()) {
+            switch (ModuleTools.getInstance().notifier.getValue()) {
+                case FUTURE: {
+                    return new TextComponentString(ChatFormatting.RED + "[Future] " + ChatFormatting.GRAY + this.getDisplayName() + " toggled " + ChatFormatting.RED + "off" + ChatFormatting.GRAY + ".");
+                }
+                case DOTGOD: {
+                    return new TextComponentString(ChatFormatting.DARK_PURPLE + "[" + ChatFormatting.LIGHT_PURPLE + "DotGod.CC" + ChatFormatting.DARK_PURPLE + "] " + ChatFormatting.DARK_AQUA + this.getDisplayName() + ChatFormatting.LIGHT_PURPLE + " was " + ChatFormatting.RED + "disabled.");
+
+                }
+                case PHOBOS: {
+                    return new TextComponentString((HUD.getInstance().getCommandMessage()) + ChatFormatting.BOLD + this.getDisplayName() + ChatFormatting.RESET + ChatFormatting.RED + " disabled.");
+
+                }
+                case SYNCCLIENT: {
+                     return new TextComponentString(ChatFormatting.DARK_PURPLE + "[" + ChatFormatting.LIGHT_PURPLE + "SyncClient" + ChatFormatting.DARK_PURPLE + "] " + ChatFormatting.DARK_AQUA + this.getDisplayName() + ChatFormatting.LIGHT_PURPLE + " turned " + ChatFormatting.RED + "OFF.");       
+                }
+                case TROLLGOD: {
+                    return new TextComponentString((HUD.getInstance().getCommandMessage()) + ChatFormatting.DARK_PURPLE + this.getDisplayName() + ChatFormatting.LIGHT_PURPLE + " was " + ChatFormatting.RED + "disabled.");
+                }
+            }
+        }
+        return new TextComponentString(HUD.getInstance().getCommandMessage() + ChatFormatting.RED + this.getDisplayName() + " toggled off.");
+    }
+    
     public void enable() {
         if (!enabled.getValue()) {
             GrassWare.eventBus.registerListener(this);
