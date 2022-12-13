@@ -27,7 +27,7 @@ public class AutoCrystal extends Module {
     private final FloatSetting targetRange = register("Target Range", 5.0f, 0.1f, 15.0f);
     private final FloatSetting minimumDamage = register("Minimum Damage", 6.0f, 0.1f, 12.0f);
     private final FloatSetting maximumDamage = register("Maximum Damage", 8.0f, 0.1f, 12.0f);
-    private final FloatSetting delay = register("Delay", 50.0f, 0.1f, 500.0f);
+    private final FloatSetting delay = register("Delay", 50.0f, 0f, 500.0f);
     private final FloatSetting opacity = register("Opacity", 0.5f, 0.1f, 1.0f);
     private BlockPos placedPos;
     private long sys;
