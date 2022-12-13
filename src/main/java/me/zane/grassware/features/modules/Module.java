@@ -37,9 +37,11 @@ public class Module extends Feature {
         }
     }
 
-        public TextComponentString getNotifierOn() {
-        if (ModuleTools.getInstance().isEnabled()) {
-            switch (ModuleTools.getInstance().notifier.getValue()) {
+    public void enable() {
+        if (enabled.getValue()) {
+            GrassWare.eventBus.registerListener(this);
+            onToggle();
+            onDisable();
                 case FUTURE: {
                     return new TextComponentString(ChatFormatting.RED + "[Future] " + ChatFormatting.GRAY + this.getDisplayName() + " toggled " + ChatFormatting.GREEN + "on" + ChatFormatting.GRAY + ".");
                 }
@@ -64,9 +66,11 @@ public class Module extends Feature {
         return new TextComponentString(HUD.getInstance().getCommandMessage() + ChatFormatting.GREEN + this.getDisplayName() + " toggled on.");
     }
 
-    public TextComponentString getNotifierOff() {
-        if (ModuleTools.getInstance().isEnabled()) {
-            switch (ModuleTools.getInstance().notifier.getValue()) {
+    public void disable() {
+        if (enabled.getValue()) {
+            GrassWare.eventBus.unregisterListener(this);
+            onToggle();
+            onDisable();
                 case FUTURE: {
                     return new TextComponentString(ChatFormatting.RED + "[Future] " + ChatFormatting.GRAY + this.getDisplayName() + " toggled " + ChatFormatting.RED + "off" + ChatFormatting.GRAY + ".");
                 }
