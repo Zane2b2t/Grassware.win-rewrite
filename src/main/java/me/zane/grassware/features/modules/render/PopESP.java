@@ -18,7 +18,7 @@ import java.util.Map;
 import static org.lwjgl.opengl.GL11.*;
 
 public class PopESP extends Module {
-    private final FloatSetting lineWidth = register("Line Width", 1.0f, 0.1f, 5.0f);
+    private final FloatSetting lineWidth = register("Line Width", 1.0f, 0f, 5.0f);
     private final HashMap<EntityPlayer, Long> playerList = new HashMap<>();
 
     @EventListener

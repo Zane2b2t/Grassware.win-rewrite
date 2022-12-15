@@ -43,7 +43,7 @@ public class Module extends Feature {
             GrassWare.eventBus.registerListener(this);
             onToggle();
             onEnable();
-            Command.sendRemovableMessage(GrassWare.commandManager.getClientMessage() + " " + ChatFormatting.WHITE + name + " Turned " + ChatFormatting.GREEN + "ON", 1);
+            Command.sendRemovableMessage(GrassWare.commandManager.getClientMessage() + " " + ChatFormatting.WHITE + name + " Toggled " + ChatFormatting.GREEN + "ON", 1);
             enabled.invokeValue(true);
         }
     }
@@ -53,7 +53,7 @@ public class Module extends Feature {
             GrassWare.eventBus.unregisterListener(this);
             onToggle();
             onDisable();
-            Command.sendRemovableMessage(GrassWare.commandManager.getClientMessage() + " " + ChatFormatting.WHITE + name + " Turned " + ChatFormatting.RED + "OFF", 1);
+            Command.sendRemovableMessage(GrassWare.commandManager.getClientMessage() + " " + ChatFormatting.WHITE + name + " Toggled " + ChatFormatting.RED + "OFF", 1);
             enabled.invokeValue(false);
         }
     }

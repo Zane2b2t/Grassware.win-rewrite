@@ -18,7 +18,7 @@ import static org.lwjgl.opengl.GL11.glPopMatrix;
 
 public class ShaderESP extends Module {
     private final FloatSetting opacity = register("Opacity", 0.5f, 0.1f, 1.0f);
-    private final FloatSetting lineWidth = register("Line Width", 1.0f, 0.1f, 5.0f);
+    private final FloatSetting lineWidth = register("Line Width", 1.0f, 0f, 5.0f);
 
     @EventListener
     public void onRender3D(final Render3DEvent event) {

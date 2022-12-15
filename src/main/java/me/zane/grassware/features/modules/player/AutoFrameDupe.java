@@ -1,9 +1,10 @@
 package me.zane.grassware.features.modules.player;
 
-import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.event.bus.EventListener;
+import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.features.setting.impl.IntSetting;
 import me.zane.grassware.features.setting.impl.BooleanSetting;
+import me.zane.grassware.features.setting.impl.FloatSetting;
 import me.zane.grassware.util.Util;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItemFrame;
@@ -14,13 +15,13 @@ import net.minecraft.util.EnumHand;
 
 public class AutoFrameDupe extends Module {
     private final BooleanSetting shulkersonly = register("ShulkerOnly", false);
-    private final IntSetting range = register("Range", 5, 0, 6);
-    private final IntSetting turns = register("Turns", 1, 0, 5);
-    private final IntSetting ticks = register("Ticks", 10, 1, 20);
+    private final FloatSetting range = register("Range", 5, 1, 10);
+    private final FloatSetting turns = register("Turns", 5, 1, 10);
+    private final FloatSetting ticks = register("Ticks", 10, 1, 20);
     private int timeoutTicks = 0;
 
 
-     @EventListener
+    @EventListener
     public void onUpdate() {
         if (Util.mc.player != null && Util.mc.world != null) {
             if (shulkersonly.getValue()) {
