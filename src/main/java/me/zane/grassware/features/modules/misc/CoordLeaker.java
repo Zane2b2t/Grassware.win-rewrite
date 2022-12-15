@@ -5,7 +5,7 @@ import me.zane.grassware.util.Util;
 import net.minecraft.network.play.client.CPacketChatMessage;
 
 
-public class Coordleaker extends Module {
+public class CoordLeaker extends Module {
 
 
     @Override
