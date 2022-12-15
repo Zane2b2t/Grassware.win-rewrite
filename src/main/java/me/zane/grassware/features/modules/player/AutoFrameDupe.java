@@ -14,8 +14,8 @@ import net.minecraft.util.EnumHand;
 
 public class AutoFrameDupe extends Module {
     private final BooleanSetting shulkersonly = register("ShulkerOnly", false);
-    private final IntSetting range = register("Range", 5, 1, 10);
-    private final IntSetting turns = register("Turns", 5, 1, 10);
+    private final IntSetting range = register("Range", 5, 0, 6);
+    private final IntSetting turns = register("Turns", 1, 0, 5);
     private final IntSetting ticks = register("Ticks", 10, 1, 20);
     private int timeoutTicks = 0;
 
