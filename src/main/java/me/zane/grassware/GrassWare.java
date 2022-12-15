@@ -11,7 +11,7 @@ import org.lwjgl.opengl.Display;
 @Mod(modid = "grassware", name = "GrassWare", version = GrassWare.MODVER)
 public class GrassWare {
     public static final String MODNAME = "GrassWare";
-    public static final String MODVER = "1.0";
+    public static final String MODVER = "0.0.4";
     public static EventBus eventBus;
     public static ThreadManager threadManager;
     public static HoleManager holeManager;
