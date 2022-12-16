@@ -26,6 +26,6 @@ public class MixinRenderItem {
 
     @ModifyArg(method={"renderEffect"}, at=@At(value="INVOKE", target="net/minecraft/client/renderer/RenderItem.renderModel(Lnet/minecraft/client/renderer/block/model/IBakedModel;I)V"), index=1)
     private int renderEffect(int oldValue) {
+    return;
     }
-
 }
