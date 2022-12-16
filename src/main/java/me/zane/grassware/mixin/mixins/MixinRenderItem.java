@@ -2,7 +2,7 @@
 package me.zane.grassware.mixin.mixins;
 
 import me.zane.grassware.GrassWare;
-import me.zane.grassware.event.events.RenderItemEvent;
+// import me.zane.grassware.event.events.RenderItemEvent;
 // import me.zane.grassware.features.modules.render.GlintModify;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderItem;
