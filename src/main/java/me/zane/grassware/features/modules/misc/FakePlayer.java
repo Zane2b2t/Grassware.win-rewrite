@@ -1,9 +1,9 @@
-package dev.zprestige.ruby.module.misc;
+package me.zane.grassware.featurws.modules.misc;
 
 import com.google.gson.JsonParser;
 import com.mojang.authlib.GameProfile;
 import me.zane.grassware.modules.Module;
-import me.zane.grassware.settings.impl.Switch;
+import me.zane.grassware.features.setting.impl.Switch;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 
 import java.io.InputStream;
