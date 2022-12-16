@@ -42,9 +42,12 @@ public class AutoCrystal extends Module {
 
     @EventListener
     public void TickEvent(final TickEvent event) {
-        placedPos = null;
         final EntityPlayer entityPlayer = EntityUtil.entityPlayer(targetRange.getValue());
-        if (entityPlayer == null || System.currentTimeMillis() - sys <= delay.getValue()) {
+        if(entityPlayer == null){
+            placedPos = null;
+            return;
+        }
+        if (System.currentTimeMillis() - sys <= delay.getValue()) {
             return;
         }
         final EnumHand enumHand = MC.mc.player.getHeldItem(EnumHand.MAIN_HAND).getItem().equals(Items.END_CRYSTAL) ? EnumHand.MAIN_HAND : MC.mc.player.getHeldItem(EnumHand.OFF_HAND).getItem().equals(Items.END_CRYSTAL) ? EnumHand.OFF_HAND : null;
@@ -58,6 +61,8 @@ public class AutoCrystal extends Module {
                 placedPos = pos;
                 sys = System.currentTimeMillis();
             }
+            if(pos == null)
+                placedPos = null;
         }
         final EntityEnderCrystal entityEnderCrystal = crystal(entityPlayer);
         if (entityEnderCrystal != null) {
