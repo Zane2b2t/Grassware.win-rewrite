@@ -13,7 +13,7 @@ private final FloatSetting fallSpeed = register("FallSpeed", 2.0f, 1.0f, 20.0f);
     public void onTick(final TickEvent event) {
         if (mc.player.onGround) {
             mc.player.motionY = -fallSpeed.getValue();
-        }
+
         if (mc.player.isElytraFlying() || mc.player.isOnLadder() || mc.player.capabilities.isFlying || mc.player.motionY > 0.0 || mc.gameSettings.keyBindJump.isKeyDown()) {
             return;
         }
