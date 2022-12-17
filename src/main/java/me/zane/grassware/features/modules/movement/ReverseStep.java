@@ -1,5 +1,6 @@
 package me.zane.grassware.features.modules.movement;
 
+import me.zane.grassware.features.setting.impl.FloatSetting;
 import me.zane.grassware.event.bus.EventListener;
 import me.zane.grassware.event.events.TickEvent;
 import me.zane.grassware.features.modules.Module;
