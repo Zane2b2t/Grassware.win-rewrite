@@ -8,6 +8,7 @@ import me.zane.grassware.features.setting.impl.BooleanSetting;
 import net.minecraft.network.play.client.CPacketPlayer;
 import net.minecraft.network.play.client.CPacketHeldItemChange;
 import net.minecraft.util.MovementInput;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class NoSlow extends Module {
        private final BooleanSetting strict = register("Strict", false);
