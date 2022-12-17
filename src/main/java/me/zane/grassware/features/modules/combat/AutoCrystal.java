@@ -2,7 +2,6 @@ package me.zane.grassware.features.modules.combat;
 
 import me.zane.grassware.event.bus.EventListener;
 import me.zane.grassware.event.events.Render3DEvent;
-import me.zane.grassware.event.events.TickEvent;
 import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.features.setting.impl.FloatSetting;
 import me.zane.grassware.features.setting.impl.ModeSetting;
@@ -22,6 +21,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.util.Arrays;
 import java.util.TreeMap;
@@ -41,7 +41,7 @@ public class AutoCrystal extends Module {
     private long sys;
 
     @EventListener
-    public void TickEvent(final TickEvent event) {
+    public void onTickEvent(final TickEvent.ClientTickEvent event) {
         final EntityPlayer entityPlayer = EntityUtil.entityPlayer(targetRange.getValue());
         if(entityPlayer == null){
             placedPos = null;
