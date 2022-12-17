@@ -38,9 +38,6 @@ public class FakePlayer extends Module {
 
     @Override
     public void onEnable() {
-        if (FakePlayer.fullNullCheck()) {
-            return;
-        }
         this.falesnejhrac = new EntityOtherPlayerMP(FakePlayer.mc.world, new GameProfile(UUID.fromString("69722c53-cdba-4a82-89d7-06df2214082f"), this.plrName.getValue()));
         this.falesnejhrac.copyLocationAndAnglesFrom(FakePlayer.mc.player);
         this.falesnejhrac.rotationYawHead = FakePlayer.mc.player.rotationYawHead;
@@ -60,9 +57,6 @@ public class FakePlayer extends Module {
 
     @Override
     public void onDisable() {
-        if (FakePlayer.fullNullCheck()) {
-            return;
-        }
         try {
             FakePlayer.mc.world.removeEntity(this.falesnejhrac);
         }
@@ -73,7 +67,7 @@ public class FakePlayer extends Module {
 
     @SubscribeEvent
     public void onPacketReceive(PacketEvent.Receive event) {
-        if (this.pop.getValue() && this.isEnabled() && !FakePlayer.fullNullCheck() && event.getPacket() instanceof SPacketDestroyEntities) {
+        if (this.pop.getValue() && this.isEnabled() && event.getPacket() instanceof SPacketDestroyEntities) {
             SPacketDestroyEntities packet = (SPacketDestroyEntities)event.getPacket();
             for (int id : packet.getEntityIDs()) {
                 Entity entity = FakePlayer.mc.world.getEntityByID(id);
