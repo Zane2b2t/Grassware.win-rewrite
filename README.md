@@ -18,6 +18,7 @@ This project was made for the popular group, Grassers. Hence the name Grassware.
 * [Zane2b2t](https://github.com/Zane2b2t) (head developer, pro paster, maintainer)
 * [Hockeyl8](https://github.com/hockeyl8) (Stuff)
 * [Cuubicc](https://github.com/Cuubicc) (Crazy Fixes)
+* [MrBubblecum](https://github.com/MrBubblegum) (mistor bobbor gom)
 * [Rat2b2t](https://github.com/Rat2b2t) (that one guy that always starts off with the readme)
 
 ## Features
