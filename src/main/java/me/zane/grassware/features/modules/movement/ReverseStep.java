@@ -10,7 +10,7 @@ private final FloatSetting fallSpeed = register("FallSpeed", 2.0f, 1.0f, 20.0f);
 
     @EventListener
     public void onTick(final TickEvent event) {
-        if (mc.player.onGround && !mc.player.isInWater && !mc.player.isInLava && !mc.player.isOnLadder && !mc.gameSettings.keyBindJump.isKeyDown) {
+        if (!mc.player.isElytraFlying() || !mc.player.isInWater || !mc.player.isInLava || !mc.player.isOnLadder() || !mc.player.capabilities.isFlying || !mc.player.motionY > 0.0 || !mc.gameSettings.keyBindJump.isKeyDown()) {
             mc.player.motionY = -fallSpeed.getValue();
         }
     }
