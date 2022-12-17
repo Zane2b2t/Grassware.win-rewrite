@@ -4,6 +4,7 @@ import me.zane.grassware.event.bus.EventListener;
 import me.zane.grassware.event.events.PacketEvent;
 import me.zane.grassware.event.events.ItemInputUpdateEvent;
 import me.zane.grassware.features.modules.Module;
+import me.zane.grassware.features.setting.impl.BooleanSetting;
 import net.minecraft.network.play.client.CPacketPlayer;
 import net.minecraft.network.play.client.CPacketHeldItemChange;
 import net.minecraft.util.MovementInput;
