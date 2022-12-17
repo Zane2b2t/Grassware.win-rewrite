@@ -7,7 +7,7 @@ import me.zane.grassware.features.modules.Module;
 import net.minecraft.client.settings.KeyBinding;
 
 public class ReverseStep extends Module {
-private final FloatSetting fallSpeed = register("FallSpeed", 2.0f, 1.0f, 20.0f);
+private final FloatSetting fallSpeed = register("FallSpeed", 2.0f, 1.0f, 50.0f);
 
     @EventListener
     public void onTick(final TickEvent event) {
