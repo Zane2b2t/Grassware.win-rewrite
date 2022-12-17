@@ -1,9 +1,10 @@
-package me.alpha432.oyvey.features.modules.player;
+package me.zane.grassware.features.modules.player;
 
 import com.mojang.authlib.GameProfile;
-import me.alpha432.oyvey.event.events.PacketEvent;
-import me.alpha432.oyvey.features.modules.Module;
-import me.alpha432.oyvey.features.setting.Setting;
+import me.zane.grassware.event.events.PacketEvent;
+import me.zane.grassware.features.modules.Module;
+import me.zane.grassware.features.setting.impl.BooleanSetting;
+import me.zane.grassware.features.setting.impl.StringSetting;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -24,11 +25,11 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.util.UUID;
 
-public class FakePlayer
-        extends Module {
-    public Setting<Boolean> inv = this.register(new Setting<Boolean>("Inventory", true));
-    public Setting<Boolean> pop = this.register(new Setting<Boolean>("TotemPop", true));
-    public Setting<String> plrName = this.register(new Setting<String>("Name", "is Pig"));
+public class FakePlayer extends Module {
+
+    private final BooleanSetting inv = register("Inventory", true);
+    private final BooleanSetting pop = register("TotemPop", true);
+    private final StringSetting plrName = register("Name", "Fit");
     private EntityOtherPlayerMP falesnejhrac;
 
     public FakePlayer() {
@@ -43,7 +44,7 @@ public class FakePlayer
         this.falesnejhrac = new EntityOtherPlayerMP(FakePlayer.mc.world, new GameProfile(UUID.fromString("69722c53-cdba-4a82-89d7-06df2214082f"), this.plrName.getValue()));
         this.falesnejhrac.copyLocationAndAnglesFrom(FakePlayer.mc.player);
         this.falesnejhrac.rotationYawHead = FakePlayer.mc.player.rotationYawHead;
-        if (this.inv.getValue().booleanValue()) {
+        if (this.inv.getValue()) {
             this.falesnejhrac.inventory = FakePlayer.mc.player.inventory;
         }
         this.falesnejhrac.setHealth(36.0f);
@@ -72,7 +73,7 @@ public class FakePlayer
 
     @SubscribeEvent
     public void onPacketReceive(PacketEvent.Receive event) {
-        if (this.pop.getValue().booleanValue() && this.isEnabled() && !FakePlayer.fullNullCheck() && event.getPacket() instanceof SPacketDestroyEntities) {
+        if (this.pop.getValue() && this.isEnabled() && !FakePlayer.fullNullCheck() && event.getPacket() instanceof SPacketDestroyEntities) {
             SPacketDestroyEntities packet = (SPacketDestroyEntities)event.getPacket();
             for (int id : packet.getEntityIDs()) {
                 Entity entity = FakePlayer.mc.world.getEntityByID(id);
