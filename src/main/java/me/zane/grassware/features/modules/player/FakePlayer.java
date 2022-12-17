@@ -33,10 +33,9 @@ public class FakePlayer extends Module {
     private EntityOtherPlayerMP falesnejhrac;
 
     public FakePlayer() {
-        super("FakePlayer", "Spawns a FakePlayer for testing", Module.Category.PLAYER, false, false, false);
+        super("FakePlayer", "Spawns a FakePlayer for testing", Module.Category.PLAYER, false, false, true);
     }
 
-    @Override
     public void onEnable() {
         this.falesnejhrac = new EntityOtherPlayerMP(FakePlayer.mc.world, new GameProfile(UUID.fromString("69722c53-cdba-4a82-89d7-06df2214082f"), this.plrName.getValue()));
         this.falesnejhrac.copyLocationAndAnglesFrom(FakePlayer.mc.player);
