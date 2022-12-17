@@ -7,7 +7,10 @@ import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.features.setting.impl.BooleanSetting;
 import net.minecraft.network.play.client.CPacketPlayer;
 import net.minecraft.network.play.client.CPacketHeldItemChange;
+import net.minecraft.network.play.client.CPacketPlayerDigging;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MovementInput;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class NoSlow extends Module {
@@ -27,6 +30,9 @@ public class NoSlow extends Module {
     public void onPacketSend(PacketEvent.Send event) {
         if (event.getPacket() instanceof CPacketPlayer && toobee.getValue() && mc.player.isHandActive() && !mc.player.isRiding()) {
             mc.player.connection.sendPacket(new CPacketHeldItemChange(mc.player.inventory.currentItem));
+        }
+        if (event.getPacket() instanceof CPacketPlayer && strict.getValue() && mc.player.isHandActive() && !mc.player.isRiding()) {
+            mc.player.connection.sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.ABORT_DESTROY_BLOCK, new BlockPos(Math.floor(mc.player.posX), Math.floor(mc.player.posY), Math.floor(mc.player.posZ)), EnumFacing.DOWN));
         }
     }
 
