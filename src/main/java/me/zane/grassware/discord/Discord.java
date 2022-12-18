@@ -21,7 +21,7 @@ public class Discord {
         discordRichPresence.largeImageKey = "a17b5cecf9b6c86b89f6afbf26464156";
         discordRichPresence.largeImageText = "Grassware 0.0.4";
         discordRichPresence.smallImageKey = "a17b5cecf9b6c86b89f6afbf26464156";
-        discordRichPresence.smallImageText = "AtAt HQ";
+       // discordRichPresence.smallImageText = "AtAt HQ";
         discordRichPresence.state = null;
         discordRPC.Discord_UpdatePresence(discordRichPresence);
     }
