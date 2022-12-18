@@ -56,7 +56,7 @@ public class FakePlayer extends Module {
             FakePlayer.mc.world.removeEntity(this.falesnejhrac);
         }
         catch (Exception exception) {
-            // empty catch block
+            
         }
     }
 
@@ -122,7 +122,7 @@ public class FakePlayer extends Module {
                 k = EnchantmentHelper.getEnchantmentModifierDamage((Iterable)ep.getArmorInventoryList(), (DamageSource)ds);
             }
             catch (Exception exception) {
-                // empty catch block
+                
             }
             float f = MathHelper.clamp((float)k, (float)0.0f, (float)20.0f);
             damage *= 1.0f - f / 25.0f;
