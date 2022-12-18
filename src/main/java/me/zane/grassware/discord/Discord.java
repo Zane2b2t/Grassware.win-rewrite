@@ -18,9 +18,9 @@ public class Discord {
 
         discordRichPresence.startTimestamp = System.currentTimeMillis() / 1000L;
         discordRichPresence.details ="0.0.4";
-        discordRichPresence.largeImageKey = "a17b5cecf9b6c86b89f6afbf26464156";
+        discordRichPresence.largeImageKey = "large";
         discordRichPresence.largeImageText = "Grassware 0.0.4";
-        discordRichPresence.smallImageKey = "a17b5cecf9b6c86b89f6afbf26464156";
+        discordRichPresence.smallImageKey = "small";
        // discordRichPresence.smallImageText = "AtAt HQ";
         discordRichPresence.state = null;
         discordRPC.Discord_UpdatePresence(discordRichPresence);
