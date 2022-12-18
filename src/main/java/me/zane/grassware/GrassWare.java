@@ -1,5 +1,6 @@
 package me.zane.grassware;
 
+import me.zane.grassware.discord.Discord;
 import me.zane.grassware.event.bus.EventBus;
 import me.zane.grassware.features.gui.alt.AltGui;
 import me.zane.grassware.manager.*;
@@ -52,6 +53,9 @@ public class GrassWare {
     public void init(FMLInitializationEvent event) {
         Display.setTitle("GrassWare " + GrassWare.MODVER);
         GrassWare.load();
+        Discord.startRPC();
+
     }
+
 }
 

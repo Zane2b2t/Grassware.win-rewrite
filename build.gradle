@@ -44,8 +44,11 @@ repositories {
         name = 'spongepowered-repo'
         url = 'https://repo.spongepowered.org/maven/'
     }
-    jcenter()
-    maven { url 'https://jitpack.io' }
+    maven {
+        url 'https://jitpack.io'
+        name 'Jitpack'
+    }
+
 }
 
 dependencies {
@@ -57,7 +60,7 @@ dependencies {
         exclude module: 'commons-io'
     }
 
-    compile 'club.minnced:java-discord-rpc:2.0.2'
+    compile 'club.minnced:java-discord-rpc:2.0.1'
     compile 'com.github.litarvan:OpenAuth:1.1.2'
 }
 

@@ -20,13 +20,14 @@ This project was made for the popular group, Grassers. Hence the name Grassware.
 * [Cuubicc](https://github.com/Cuubicc) (Crazy Fixes)
 * [MrBubblegum](https://github.com/MrBubblegum) (Random Stuff)
 * [Rat2b2t](https://github.com/Rat2b2t) (that one guy that always starts off with the readme)
+* [SirHilarious](https://github.com/SirHilarious) (literally just the Discord RPC)
 
 ## Features
 * Combat <br>Aura (KillAura), AutoCrystal, Offhand
 * Movement <br>NoSlow, ReverseStep, Speed, Sprint, Step, Velocity,
 * Player <br>WallPhase, AutoFrameDupe (Crashes)
 * Render <br>HoleESP, NameTags, PopESP (PopChams), ShaderESP, World (Environment),
-* Client <br>ClickGUI, Hud
+* Client <br>ClickGUI, Hud, DiscordRPC
 
 ## Installing
 
