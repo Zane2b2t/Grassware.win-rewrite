@@ -13,14 +13,15 @@ public class Discord {
         DiscordEventHandlers eventHandlers = new DiscordEventHandlers();
         eventHandlers.disconnected = ((var1, var2) -> System.out.println("Discord RPC disconnected, var1: " + var1 + ", var2: " + var2));
 
-        String discordID = ""; // Just put the ID of the Discord Dev Thingy into "
+        String discordID = "1054052534442012773";
         discordRPC.Discord_Initialize(discordID, eventHandlers, true, null);
 
         discordRichPresence.startTimestamp = System.currentTimeMillis() / 1000L;
         discordRichPresence.details ="0.0.4";
-        //discordRichPresence.largeImageKey = "";  // i really need the Imagekeys to make that work.
-        //discordRichPresence.largeImageText = "";
-        //discordRichPresence.smallImageKey = "";
+        discordRichPresence.largeImageKey = "a17b5cecf9b6c86b89f6afbf26464156";
+        discordRichPresence.largeImageText = "Grassware 0.0.4";
+        discordRichPresence.smallImageKey = "a17b5cecf9b6c86b89f6afbf26464156";
+        discordRichPresence.smallImageText = "AtAt HQ";
         discordRichPresence.state = null;
         discordRPC.Discord_UpdatePresence(discordRichPresence);
     }
