@@ -30,7 +30,7 @@ public class NoSlow extends Module {
     public void onPacketSend(PacketEvent.Send event) {
         if (slowed() && toobee.getValue()) {
             mc.player.connection.sendPacket(new CPacketHeldItemChange(mc.player.inventory.currentItem));
-        } else {
+        }
         if (slowed() && strict.getValue()) {
             mc.player.connection.sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.ABORT_DESTROY_BLOCK, new BlockPos(Math.floor(mc.player.posX), Math.floor(mc.player.posY), Math.floor(mc.player.posZ)), EnumFacing.DOWN));
         }
