@@ -23,6 +23,7 @@ public class NoSlow extends Module {
             final MovementInput movementInput = event.movementInput;
             movementInput.moveForward /= 0.2f;
             movementInput.moveStrafe /= 0.2f;
+            }
         }
     }
 
