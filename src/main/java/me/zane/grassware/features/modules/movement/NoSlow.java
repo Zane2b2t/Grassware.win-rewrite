@@ -37,6 +37,6 @@ public class NoSlow extends Module {
     }
 
     private boolean slowed() {
-        return event.getPacket() instanceof CPacketPlayer && mc.player.isHandActive() && !mc.player.isRiding() && !mc.player.isElytraFlying();
+        return mc.player.isHandActive() && !mc.player.isRiding() && !mc.player.isElytraFlying();
     }
 }
