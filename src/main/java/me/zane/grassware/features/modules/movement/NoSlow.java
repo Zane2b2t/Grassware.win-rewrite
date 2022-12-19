@@ -23,7 +23,6 @@ public class NoSlow extends Module {
             final MovementInput movementInput = event.movementInput;
             movementInput.moveForward /= 0.2f;
             movementInput.moveStrafe /= 0.2f;
-            }
         }
     }
 
@@ -32,7 +31,7 @@ public class NoSlow extends Module {
         if (slowed()) {
         if (event.getPacket() instanceof CPacketPlayer && toobee.getValue()) {
             mc.player.connection.sendPacket(new CPacketHeldItemChange(mc.player.inventory.currentItem));
-        } else {
+        }
         if (slowed()) {
         if (event.getPacket() instanceof CPacketPlayer && strict.getValue()) {
             mc.player.connection.sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.ABORT_DESTROY_BLOCK, new BlockPos(Math.floor(mc.player.posX), Math.floor(mc.player.posY), Math.floor(mc.player.posZ)), EnumFacing.DOWN));
