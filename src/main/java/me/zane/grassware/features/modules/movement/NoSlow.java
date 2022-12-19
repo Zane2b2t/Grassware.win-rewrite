@@ -28,14 +28,11 @@ public class NoSlow extends Module {
 
     @SubscribeEvent
     public void onPacketSend(PacketEvent.Send event) {
-        if (slowed()) {
-        if (event.getPacket() instanceof CPacketPlayer && toobee.getValue()) {
+        if (event.getPacket() instanceof CPacketPlayer && slowed() && toobee.getValue()) {
             mc.player.connection.sendPacket(new CPacketHeldItemChange(mc.player.inventory.currentItem));
         } else {
-        if (slowed()) {
-        if (event.getPacket() instanceof CPacketPlayer && strict.getValue()) {
+        if (event.getPacket() instanceof CPacketPlayer && slowed() && strict.getValue()) {
             mc.player.connection.sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.ABORT_DESTROY_BLOCK, new BlockPos(Math.floor(mc.player.posX), Math.floor(mc.player.posY), Math.floor(mc.player.posZ)), EnumFacing.DOWN));
-            }
         }
     }
 
