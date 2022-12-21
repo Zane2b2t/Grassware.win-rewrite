@@ -38,25 +38,25 @@ public class Module extends Feature {
 
 
    
-   // public void enable() {
-       // if (!enabled.getValue()) {
-          //  GrassWare.eventBus.registerListener(this);
-         //   onToggle();
-        //    onEnable();
-      ///      Command.sendRemovableMessage(GrassWare.commandManager.getClientMessage() + " " + ChatFormatting.WHITE + name + " Turned " + ChatFormatting.GREEN + "ON", 1);
-     //       enabled.invokeValue(true);
-    //    }
-   // }
+    public void enable() {
+        if (!enabled.getValue()) {
+            GrassWare.eventBus.registerListener(this);
+            onToggle();
+            onEnable();
+            Command.sendRemovableMessage(GrassWare.commandManager.getClientMessage() + " " + ChatFormatting.WHITE + name + " Turned " + ChatFormatting.GREEN + "ON", 1);
+            enabled.invokeValue(true);
+        }
+    }
 
- //   public void disable() {
-   //     if (enabled.getValue()) {
-     //       GrassWare.eventBus.unregisterListener(this);
-       //     onToggle();
-         //   onDisable();
-           // Command.sendRemovableMessage(GrassWare.commandManager.getClientMessage() + " " + ChatFormatting.WHITE + name + " Turned " + ChatFormatting.RED + "OFF", 1);
-           // enabled.invokeValue(false);
-       // }
-   // }
+    public void disable() {
+        if (enabled.getValue()) {
+            GrassWare.eventBus.unregisterListener(this);
+            onToggle();
+            onDisable();
+            Command.sendRemovableMessage(GrassWare.commandManager.getClientMessage() + " " + ChatFormatting.WHITE + name + " Turned " + ChatFormatting.RED + "OFF", 1);
+            enabled.invokeValue(false);
+        }
+    }
 
     public void toggle() {
         setEnabled(!isEnabled());
