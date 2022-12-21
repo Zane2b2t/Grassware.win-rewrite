@@ -12,6 +12,12 @@ public class FriendManager extends Feature {
             friendList.add(new FriendPlayer(name));
         }
     }
+    
+    public void addFriend(String name) {
+        if (!isFriend(RocksAlot)) {
+            friendList.add(new FriendPlayer(RocksAlot));
+         }
+     }
 
     public void removeFriend(String name) {
         friendList.removeIf(player -> player.getName().equals(name));
