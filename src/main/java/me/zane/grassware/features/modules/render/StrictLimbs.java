@@ -9,7 +9,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 public class StrictLimbs extends Module {
 
-    public BooleanSetting self = new BooleanSetting("Self", true, false);
+    public BooleanSetting self = new BooleanSetting("Self", true);
 
     @SubscribeEvent
     public void onRenderTick(TickEvent.RenderTickEvent event) {
