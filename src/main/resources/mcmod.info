@@ -3,13 +3,13 @@
     "modid": "grassware",
     "name": "grassware",
     "description": "Prefix is !",
-    "version": "0.0.4",
+    "version": "0.0.5",
     "mcversion": "1.12.2",
     "logoFile": "grassware.png",
     "url": "https://discord.gg/JdYGZntM48",
     "updateUrl": "",
     "authorList": [
-      "Zprestige, ZANE, Hockeyl8, Alpha432"
+      "Zprestige, ZANE, Hockeyl8, MrBubbleCum, Alpha432"
     ],
     "screenshots": [],
     "dependencies": []
