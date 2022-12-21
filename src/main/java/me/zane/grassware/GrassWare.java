@@ -9,10 +9,10 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import org.lwjgl.opengl.Display;
 
-@Mod(modid = "grassware", name = "GrassWare", version = GrassWare.MODVER)
+@Mod(modid = "grassware.win", name = "GrassWare.win", version = GrassWare.MODVER)
 public class GrassWare {
-    public static final String MODNAME = "GrassWare";
-    public static final String MODVER = "0.0.4";
+    public static final String MODNAME = "GrassWare.win";
+    public static final String MODVER = "0.0.5";
     public static EventBus eventBus;
     public static ThreadManager threadManager;
     public static HoleManager holeManager;
