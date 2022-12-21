@@ -1,7 +1,7 @@
 package me.zane.grassware.features.modules.render;
 
 import me.zane.grassware.features.modules.Module;
-import me.zane.grassware.features.setting.impl.BoolSetting;
+import me.zane.grassware.features.setting.impl.BooleanSetting;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -9,7 +9,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 public class StrictLimbs extends Module {
 
-    public BoolSetting self = new BoolSetting("Self", true, false);
+    public BooleanSetting self = new BooleanSetting("Self", true, false);
 
     @SubscribeEvent
     public void onRenderTick(TickEvent.RenderTickEvent event) {
