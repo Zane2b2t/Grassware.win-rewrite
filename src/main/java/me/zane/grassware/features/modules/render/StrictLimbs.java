@@ -1,7 +1,7 @@
 package me.zane.grassware.features.modules.render;
 
 import me.zane.grassware.features.modules.Module;
-import me.zane.grassware.setting.impl.BoolSetting;
+import me.zane.grassware.features.setting.impl.BoolSetting;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
