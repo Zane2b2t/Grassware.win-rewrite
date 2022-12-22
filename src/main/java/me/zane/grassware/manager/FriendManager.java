@@ -25,13 +25,13 @@ public class FriendManager extends Feature {
         return friendList.stream().anyMatch(player -> player.getName().equals(name));
     }
 
-    public void saveFriends() {
+    public void saveFriends(){
         for (FriendPlayer friend : friendList) {
             register(friend.getName(), "");
         }
     }
 
-    public void onLoad() {
+    public void onLoad(){
         friendList.clear();
     }
 
