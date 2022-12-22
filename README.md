@@ -3,7 +3,7 @@
 <!-- TABLE OF CONTENTS -->
 ## Table of Contents
 * [Information](#Information)
-    * [About](#About)
+* [About](#About)
 * [Grassware.win Contributors](#Grassware.winContributors)
 * [Features](#Features)
 * [Installation](#Installing)
