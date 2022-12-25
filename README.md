@@ -21,6 +21,7 @@ This project was made for the popular group, Grassers. Hence the name Grassware.
 * [MrBubblegum](https://github.com/MrBubblegum) (Random Stuff)
 * [Rat2b2t](https://github.com/Rat2b2t) (that one guy that always starts off with the readme)
 * [SirHilarious](https://github.com/SirHilarious) (literally just the Discord RPC)
+* WMS (Insane 5b5t corner clip)
 
 ## Features
 * Combat <br>Aura (KillAura), AutoCrystal, Offhand
