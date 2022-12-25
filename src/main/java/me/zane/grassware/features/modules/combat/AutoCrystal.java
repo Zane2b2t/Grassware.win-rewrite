@@ -3,6 +3,7 @@ package me.zane.grassware.features.modules.combat;
 import me.zane.grassware.event.bus.EventListener;
 import me.zane.grassware.event.events.Render3DEvent;
 import me.zane.grassware.event.events.TickEvent;
+import me.zane.grassware.event.events.UpdatePlayerWalkingEvent;
 import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.features.setting.impl.FloatSetting;
 import me.zane.grassware.features.setting.impl.ModeSetting;
@@ -47,6 +48,15 @@ public class AutoCrystal extends Module {
             placedPos = null;
             return;
         }
+        
+    @EventListener
+    public void OnUpdatePlayerWalkingEvent(final UpdatePlayerWalkingEvent event) {
+        final EntityPlayer entityPlayer = EntityUtil.entityPlayer(targetRange.getValue());
+        if(entityPlayer == null){
+            placedPos = null;
+            return;
+        }
+        
         if (System.currentTimeMillis() - sys <= delay.getValue()) {
             return;
         }
