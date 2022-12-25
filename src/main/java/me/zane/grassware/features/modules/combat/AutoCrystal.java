@@ -49,13 +49,6 @@ public class AutoCrystal extends Module {
             return;
         }
         
-    @EventListener
-    public void OnUpdatePlayerWalkingEvent(final UpdatePlayerWalkingEvent event) {
-        final EntityPlayer entityPlayer = EntityUtil.entityPlayer(targetRange.getValue());
-        if(entityPlayer == null){
-            placedPos = null;
-            return;
-        }
         
         if (System.currentTimeMillis() - sys <= delay.getValue()) {
             return;
