@@ -11,7 +11,7 @@ public class CornerClip extends Module {
     public CornerClip() {
 // made by WMS gaming -ZANE
         }
-    @Override
+    @EventListener
     public void onTick(final TickEvent event) {
         mc.player.connection.sendPacket(new CPacketPlayer.Position(mc.player.posX,mc.player.posY - 0.0042123,mc.player.posZ,mc.player.onGround));
         mc.player.connection.sendPacket(new CPacketPlayer.Position(mc.player.posX,mc.player.posY - 0.02141,mc.player.posZ,mc.player.onGround));
