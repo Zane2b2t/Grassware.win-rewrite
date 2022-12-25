@@ -7,6 +7,7 @@ import org.lwjgl.input.Keyboard;
 public class CornerClip extends Module {
     public CornerClip() {
 // made by WMS gaming -ZANE
+        {
     @Override
     public void onTick;() {
         mc.player.connection.sendPacket(new CPacketPlayer.Position(mc.player.posX,mc.player.posY - 0.0042123,mc.player.posZ,mc.player.onGround));
