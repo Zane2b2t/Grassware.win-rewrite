@@ -59,7 +59,7 @@ public class CommandManager extends Feature {
     }
 
     public String getClientMessage() {
-        return ChatFormatting.GREEN + "[Grassware.win]";
+        return ChatFormatting.LIGHT_GREEN + "[" + ChatFormatting.GREEN "Grassware.win" + ChatFormatting.LIGHT_GREEN "]"
     }
 
     public String getPrefix() {
