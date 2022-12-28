@@ -17,11 +17,11 @@ import java.util.Arrays;
 public class ClickGui extends Module {
     public static ClickGui Instance;
     public final ModeSetting mode = register("Mode", "Gradient", Arrays.asList("Static", "Gradient"));
-    public final IntSetting red = register("Red", 68, 0, 255).invokeVisibility(z -> mode.getValue().equals("Static"));
-    public final IntSetting green = register("Green", 0, 0, 255).invokeVisibility(z -> mode.getValue().equals("Static"));
-    public final IntSetting blue = register("Blue", 152, 0, 255).invokeVisibility(z -> mode.getValue().equals("Static"));
+    public final IntSetting red = register("Red", 20, 0, 255).invokeVisibility(z -> mode.getValue().equals("Static"));
+    public final IntSetting green = register("Green", 250, 0, 255).invokeVisibility(z -> mode.getValue().equals("Static"));
+    public final IntSetting blue = register("Blue", 20, 0, 255).invokeVisibility(z -> mode.getValue().equals("Static"));
 
-    public final FloatSetting step = register("Step", 1.0f, 0.1f, 2.0f).invokeVisibility(z -> !mode.getValue().equals("Static"));
+    public final FloatSetting step = register("Step", 0.3f, 0f, 2.0f).invokeVisibility(z -> !mode.getValue().equals("Static"));
     public final FloatSetting speed = register("Speed", 1.0f, 0.1f, 5.0f).invokeVisibility(z -> !mode.getValue().equals("Static"));
 
     public final IntSetting gradientRed1 = register("Red1", 5, 0, 255).invokeVisibility(z -> mode.getValue().equals("Gradient"));
