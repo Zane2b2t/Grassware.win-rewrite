@@ -22,7 +22,8 @@ This project was made for the popular group, Grassers. Hence the name Grassware.
 * [Rat2b2t](https://github.com/Rat2b2t) (that one guy that always starts off with the readme)
 * [SirHilarious](https://github.com/SirHilarious) (literally just the Discord RPC)
 * WMS (Insane 5b5t corner clip)
-ghostlead (removed the backdoors tos the clients)
+* ghostlead (removed the backdoors tos the clients)
+* [Paoo2](https://github.com/Paoo2) (Tester)
 ## Features
 * Combat <br>Aura (KillAura), AutoCrystal, Offhand
 * Movement <br>NoSlow, ReverseStep, Speed, Sprint, Step, Velocity,
