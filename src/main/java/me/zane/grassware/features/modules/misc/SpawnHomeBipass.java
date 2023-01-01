@@ -1,5 +1,10 @@
 package me.zane.grassware.features.modules.misc;
 
+import com.mojang.realmsclient.gui.ChatFormatting;
+import me.zane.grassware.features.command.Command;
+import me.zane.grassware.features.command.commands.*;
+
+import me.zane.grassware.features.command.Command;
 import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.features.setting.impl.StringSetting;
 import net.minecraft.network.play.client.CPacketChatMessage;
