@@ -7,6 +7,7 @@ import me.zane.grassware.features.command.Command;
 import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.features.setting.Setting;
 import me.zane.grassware.features.setting.impl.BooleanSetting;
+import me.zane.grassware.event.bus.EventListener;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityGhast;
@@ -19,7 +20,6 @@ public class GhastNotifier extends Module {
     public BooleanSetting sound = register("Sound", true);
 
 
-    @Override
     public void onEnable() {
         this.ghasts.clear();
     }
@@ -28,11 +28,11 @@ public class GhastNotifier extends Module {
     public void onUpdate() {
         for (Entity entity : GhastNotifier.mc.world.getLoadedEntityList()) {
             if (!(entity instanceof EntityGhast) || this.ghasts.contains(entity)) continue;
-            if (this.Chat.getValue().booleanValue()) {
+            if (this.Chat.getValue().BooleanValue()) {
                 Command.sendMessage("Ghast Detected at: " + entity.getPosition().getX() + "x, " + entity.getPosition().getY() + "y, " + entity.getPosition().getZ() + "z.");
             }
             this.ghasts.add(entity);
-            if (!this.Sound.getValue().booleanValue()) continue;
+            if (this.Sound.getValue().BooleanValue()) continue; 
             GhastNotifier.mc.player.playSound(SoundEvents.BLOCK_ANVIL_DESTROY, 1.0f, 1.0f);
         }
     }
