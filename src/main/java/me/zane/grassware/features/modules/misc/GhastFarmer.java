@@ -35,11 +35,8 @@ public class GhastFarmer extends Module {
     double ghastY;
     double ghastZ;
 
-    public GhastFarmer( ) {
-        super ( "GhastFarmer" , "Helps you find ghasts" , Module.Category.MISC , true , false , false );
-    }
 
-    @Override
+    @SubscribeEvent
     public void onEnable() {
         if (!GhastFarmer.fullNullCheck()) {
             this.startPos = GhastFarmer.mc.player.getPosition();
@@ -47,12 +44,12 @@ public class GhastFarmer extends Module {
         this.entities.clear();
     }
 
-    @Override
+    @SubscribeEvent
     public void onDisable() {
         GhastFarmer.mc.player.sendChatMessage(this.baritonePrefix.getValue() + "cancel");
     }
 // this is an optimized version of the BigBullet'z outdated ghast farmer -ZANE
-    @Override
+    @SubscribeEvent
     public void onUpdate() {
         if (GhastFarmer.mc.player == null || GhastFarmer.mc.world == null) {
             return;
