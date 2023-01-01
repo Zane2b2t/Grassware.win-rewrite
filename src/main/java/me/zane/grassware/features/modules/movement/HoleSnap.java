@@ -4,7 +4,7 @@ import java.util.Comparator;
 
 import me.zane.grassware.GrassWare;
 import me.zane.grassware.event.events.PacketEvent;
-import me.zane.grassware.event.bus.EventListener
+import me.zane.grassware.event.bus.EventListener;
 import me.zane.grassware.util.*;
 import me.zane.grassware.util.Timer;
 import me.zane.grassware.features.command.Command;
