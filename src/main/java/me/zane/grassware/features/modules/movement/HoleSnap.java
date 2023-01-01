@@ -33,11 +33,11 @@ extends Module {
     private /* synthetic */ IntSetting ticks = register("Ticks", 5.0f, 1.0f, 20.0f);
   //  public /* synthetic */ Setting<Mode> mode; "wtf is mode in holesnap??"
 
-    @EventListener
+    @Override
     public void onTick() {
         BlockPos blockPos2;
         if (this.mode.getValue() == Mode.Instant) {
-            blockPos2 = Quantum.holeManager.calcHoles().stream().min(Comparator.comparing(blockPos -> HoleSnap.mc.player.getDistance((double)blockPos.getX(), (double)blockPos.getY(), (double)blockPos.getZ()))).orElse(null);
+            blockPos2 = GrassWare.holeManager.calcHoles().stream().min(Comparator.comparing(blockPos -> HoleSnap.mc.player.getDistance((double)blockPos.getX(), (double)blockPos.getY(), (double)blockPos.getZ()))).orElse(null);
             if (blockPos2 != null) {
                 if (HoleSnap.mc.player.getDistance((double)blockPos2.getX(), (double)blockPos2.getY(), (double)blockPos2.getZ()) < (double)this.range.getValue().floatValue() + 1.5) {
                     HoleSnap.mc.player.setPosition((double)blockPos2.getX() + 0.5, (double)blockPos2.getY(), (double)blockPos2.getZ() + 0.5);
@@ -89,14 +89,14 @@ extends Module {
         }
     }
 
-    @EventListener
+    @Override
     public void onDisable() {
         this.timer.reset();
         this.holes = null;
         HoleSnap.mc.timer.tickLength = 50.0f;
     }
 
-    @EventListener
+    @Override
     public void onEnable() {
         if (this.mode.getValue() == Mode.Motion && this.motionstop.getValue().booleanValue()) {
             HoleSnap.mc.player.motionX = 0.0;
