@@ -24,11 +24,11 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 public class HoleSnap
 extends Module {
     /* synthetic */ HoleUtilSafety.Hole holes;
-    private final /* synthetic */ BoleanSetting motionstop = register("MotionStop", false);
+    private /* synthetic */ Setting<Boolean> motionstop;
     private final /* synthetic */ FloatSetting range = register("Range", 2.0f, 1.0f, 6.0f);
     private final /* synthetic */ FloatSetting range2 = register("Range2", 2.0f, 1.0f, 6.0f);
     /* synthetic */ Timer timer;
-    private final /* synthetic */ BoleanSetting speedcheck = register("SpeedCheck", true);
+    private final /* synthetic */ Setting<Boolean> SpeedCheck;
     public /* synthetic */ FloatSetting timerfactor = register("TimeFactor", 2.0f, 1.0f, 10.0f);
     private /* synthetic */ IntSetting ticks = register("Ticks", 5.0f, 1.0f, 20.0f);
   //  public /* synthetic */ Setting<Mode> mode; "wtf is mode in holesnap??"
