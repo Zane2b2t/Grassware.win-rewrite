@@ -13,9 +13,9 @@ import me.zane.grassware.util.Util;
 
 
 
-public class SpawnHomeBipass extends Module{
+public class SpawnHomeBipass extends Module {
 
-    private final StringSetting HomeName = register("Home Name", "Home1")
+    private final StringSetting HomeName = register("Home Name", "Home1");
 
     @SubscribeEvent
     public void onEnable() {
