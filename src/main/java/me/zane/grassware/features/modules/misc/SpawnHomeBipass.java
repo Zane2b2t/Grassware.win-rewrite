@@ -1,8 +1,9 @@
 package me.zane.grassware.features.modules.misc;
 
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+
 import com.mojang.realmsclient.gui.ChatFormatting;
 import me.zane.grassware.features.command.Command;
-import me.zane.grassware.features.command.commands.*;
 
 import me.zane.grassware.features.command.Command;
 import me.zane.grassware.features.modules.Module;
@@ -16,7 +17,7 @@ public class SpawnHomeBipass extends Module{
 
     private final StringSetting HomeName = register("Home Name", "Home1")
 
-    @Override
+    @SubscribeEvent
     public void onEnable() {
         Command.sendRemovableMessage(ChatFormatting.WHITE + name + " Attempting to teleport to " + ChatFormatting.RED + this.HomeName.getValue() + "(don't tell leee!!!!)", 1);
         Util.mc.player.connection.sendPacket(new CPacketChatMessage("/HOmE" + this.HomeName.getValue()));
