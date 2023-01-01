@@ -19,7 +19,7 @@ public class SpawnHomeBipass extends Module {
 
     @SubscribeEvent
     public void onEnable() {
-        Command.sendMessage(ChatFormatting.WHITE + name + " Attempting to teleport to " + ChatFormatting.RED + this.HomeName.getValue() + "(don't tell leee!!!!)", 1);
-        Util.mc.player.connection.sendPacket(new CPacketChatMessage("/HOmE " + this.HomeName.getValue() ));
+        Command.sendMessage(ChatFormatting.WHITE + name + " Attempting to teleport to " + ChatFormatting.RED + this.HomeName.getValue() + "(don't tell leee!!!!)");
+        Util.mc.player.connection.sendPacket(new CPacketChatMessage("/HOmE " + this.HomeName.getValue()));
     }
 }
