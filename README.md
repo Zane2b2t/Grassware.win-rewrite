@@ -26,7 +26,7 @@ This project was made for the popular group, Grassers. Hence the name Grassware.
 * [Paoo2](https://github.com/Paoo2) (Tester)
 ## Features
 * Combat <br>Aura (KillAura), AutoCrystal, Offhand
-* Movement <br>NoSlow, ReverseStep, Speed, Sprint, Step, Velocity,
+* Movement <br>NoSlow, ReverseStep, Speed, Sprint, Step, Velocity, holesnap coming soons() holes snap
 * Player <br>WallPhase, AutoFrameDupe (Crashes)
 * Render <br>HoleESP, NameTags, PopESP (PopChams), ShaderESP, World (Environment),
 * Client <br>ClickGUI, Hud, DiscordRPC
