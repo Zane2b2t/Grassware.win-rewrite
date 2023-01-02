@@ -36,6 +36,7 @@ public class EntityNotifier extends Module {
         llamas.clear();
     }
 
+    @SubscribeEvent
     public void onUpdate() {
         if (this.Ghasts.getValue()) {
             for (Entity entity : EntityNotifier.mc.world.getLoadedEntityList()) {
