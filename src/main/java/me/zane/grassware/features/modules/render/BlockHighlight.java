@@ -1,22 +1,33 @@
-package us.velocity.client.impl.modules.render;
 
-import org.jetbrains.annotations.Nullable;
-import org.lwjgl.input.Keyboard;
-import us.velocity.client.api.module.Module;
+package me.zane.grassware.features.modules.render;
+
+import java.awt.Color;
+
+import me.zane.grassware.event.events.Render3DEvent;
+import me.zane.grassware.features.modules.Module;
+import me.zane.grassware.util.RenderUtil;
 import me.zane.grassware.features.setting.impl.IntSetting;
 import me.zane.grassware.features.setting.impl.BooleanSetting;
+import me.zane.grassware.features.setting.impl.FloatSetting;
 
-public class BlockHighlight extends Module
-{
-    public static BlockHighlight blockHighlight = new BlockHighlight();
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 
-    public static final IntSetting alpha = register("Alpha", 90, 0, 255);
-    public static final IntSetting linewidth = register("LineWidth", 1, 0, 5);
-    public static final BooleanSetting depth = register("Depth", true);
+public class BlockHighlight
+extends Module {
 
-    public BlockHighlight() {
-   //     super("BlockHighlight", Category.RENDER, "Allows you to change how the block highlight behaves.");
- //      this.key = Keyboard.KEY_NONE;
+    public final IntSetting alpha = register("Alpha", 90, 0, 255);
+    public final BooleanSetting box = register("Box", true);
+    public final IntSetting boxAlpha = register("BoxAlpha", 90, 0, 255);
+    public final BooleanSetting outline = register("Outline", true);
+    public final FloatSetting linewidth = register("LineWidth", 1, 0, 5);
+
+
+    @Override
+    public void onRender3D(Render3DEvent event) {
+        RayTraceResult ray = BlockHighlight.mc.objectMouseOver;
+        if (ray != null && ray.typeOfHit == RayTraceResult.Type.BLOCK) {
+            BlockPos blockpos = ray.getBlockPos();
+        }
     }
-
-}
+}   
