@@ -1,8 +1,6 @@
 
 package me.zane.grassware.features.modules.render;
 
-import java.awt.Color;
-
 import me.zane.grassware.event.events.Render3DEvent;
 import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.util.RenderUtil;
@@ -14,29 +12,30 @@ import me.zane.grassware.event.bus.EventListener;
 
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+import org.lwjgl.opengl.GL11;
 
 public class BlockHighlight
 extends Module {
 
-    public final IntSetting alpha = register("Alpha", 90, 0, 255);
     public final BooleanSetting box = register("Box", true);
     public final IntSetting boxAlpha = register("BoxAlpha", 90, 0, 255);
     public final BooleanSetting outline = register("Outline", true);
-    public final FloatSetting linewidth = register("LineWidth", 1, 0, 5);
+    public final FloatSetting lineWidth = register("LineWidth", 1f, 0f, 5f);
 
 
     @EventListener
     public void onRender3D(Render3DEvent event) {
         RayTraceResult ray = BlockHighlight.mc.objectMouseOver;
-        if (ray != null && ray.typeOfHit == RayTraceResult.Type.BLOCK) {
-            BlockPos blockpos = ray.getBlockPos();
-        if (ray != null) {
-            GradientShader.setup(alpha.getValue());
-            RenderUtil.boxShader(BLOCK);
-            RenderUtil.outlineShader(blockPos);
-            GradientShader.finish();
-          }
-      }
-   } 
-  
+        if(ray == null || ray.typeOfHit != RayTraceResult.Type.BLOCK)
+            return;
+        BlockPos pos = ray.getBlockPos();
+        GradientShader.setup(boxAlpha.getValue().floatValue() / 255f);
+        if(box.getValue())
+            RenderUtil.boxShader(pos);
+        if(outline.getValue()){
+            GL11.glLineWidth(lineWidth.getValue());
+            RenderUtil.outlineShader(pos);
+        }
+        GradientShader.finish();
+   }
 }
