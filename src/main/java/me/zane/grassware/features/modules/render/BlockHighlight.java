@@ -9,6 +9,8 @@ import me.zane.grassware.util.RenderUtil;
 import me.zane.grassware.features.setting.impl.IntSetting;
 import me.zane.grassware.features.setting.impl.BooleanSetting;
 import me.zane.grassware.features.setting.impl.FloatSetting;
+import me.zane.grassware.shader.impl.GradientShader;
+import me.zane.grassware.event.bus.EventListener;
 
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -22,22 +24,19 @@ extends Module {
     public final BooleanSetting outline = register("Outline", true);
     public final FloatSetting linewidth = register("LineWidth", 1, 0, 5);
 
-    
-        @EventListener
-    public void onRender3D(final Render3DEvent event) {
-        if (placedPos != null) {
-            GradientShader.setup(alpha.getValue());
-            RenderUtil.boxShader(blockPos);
-            RenderUtil.outlineShader(blockPos);
-            GradientShader.finish();
-        }
-    }
 
     @EventListener
     public void onRender3D(Render3DEvent event) {
         RayTraceResult ray = BlockHighlight.mc.objectMouseOver;
         if (ray != null && ray.typeOfHit == RayTraceResult.Type.BLOCK) {
             BlockPos blockpos = ray.getBlockPos();
-        }
-    }
-}   
+        if (ray != null) {
+            GradientShader.setup(alpha.getValue());
+            RenderUtil.boxShader(BLOCK);
+            RenderUtil.outlineShader(blockPos);
+            GradientShader.finish();
+          }
+      }
+   } 
+  
+}
