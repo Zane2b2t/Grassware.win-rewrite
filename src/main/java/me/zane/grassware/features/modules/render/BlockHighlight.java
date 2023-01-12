@@ -22,8 +22,18 @@ extends Module {
     public final BooleanSetting outline = register("Outline", true);
     public final FloatSetting linewidth = register("LineWidth", 1, 0, 5);
 
+    
+        @EventListener
+    public void onRender3D(final Render3DEvent event) {
+        if (placedPos != null) {
+            GradientShader.setup(alpha.getValue());
+            RenderUtil.boxShader(blockPos);
+            RenderUtil.outlineShader(blockPos);
+            GradientShader.finish();
+        }
+    }
 
-    @Override
+    @EventListener
     public void onRender3D(Render3DEvent event) {
         RayTraceResult ray = BlockHighlight.mc.objectMouseOver;
         if (ray != null && ray.typeOfHit == RayTraceResult.Type.BLOCK) {
