@@ -40,7 +40,7 @@ public class AutoCrystal extends Module {
     private final FloatSetting delay = register("Delay", 50.0f, 0f, 500.0f);
     private final ModeSetting setDead = register("Set Dead", "Set Dead", Arrays.asList("None", "Set Dead", "Remove", "Both"));
     private final BooleanSetting rotate = register("Rotate", true);
-    private final BooleanSetting offset = register("Offset"), false;
+    private final BooleanSetting offset = register("Offset", false);
     private final FloatSetting opacity = register("Opacity", 0.5f, 0.1f, 1.0f);
     private BlockPos placedPos;
     private long sys;
@@ -63,7 +63,7 @@ public class AutoCrystal extends Module {
         }
         
         
-            @SubscribeEvent(priority = EventPriority.HIGHEST)
+            @SubscribeEvent(priority = EventPriority.HIGHEST);
     public void onUpdate(UpdatePlayerWalkingEvent event) {
         if (rotate.getValue() && event.getStage() == Stage.PRE) {
             doAutoCrystal();
