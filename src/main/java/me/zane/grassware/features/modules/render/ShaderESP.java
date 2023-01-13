@@ -71,7 +71,7 @@ public class ShaderESP extends Module {
 
     @EventListener
     public void onHeldItem(final HeldItemEvent event) {
-        event.setCancelled(false);
+        event.setCancelled(true);
     }
 
     @EventListener
