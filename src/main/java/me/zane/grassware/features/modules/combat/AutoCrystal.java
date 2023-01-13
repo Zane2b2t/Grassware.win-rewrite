@@ -12,6 +12,8 @@ import me.zane.grassware.util.BlockUtil;
 import me.zane.grassware.util.EntityUtil;
 import me.zane.grassware.util.RenderUtil;
 import me.zane.grassware.util.MC;
+import me.zane.grassware.manager.RotationManager;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.player.EntityPlayer;
@@ -37,6 +39,8 @@ public class AutoCrystal extends Module {
     private final FloatSetting maximumDamage = register("Maximum Damage", 8.0f, 0.1f, 12.0f);
     private final FloatSetting delay = register("Delay", 50.0f, 0f, 500.0f);
     private final ModeSetting setDead = register("Set Dead", "Set Dead", Arrays.asList("None", "Set Dead", "Remove", "Both"));
+    private final BooleanSetting rotate = register("Rotate", true);
+    private final BooleanSetting offset = register("Offset"), false;
     private final FloatSetting opacity = register("Opacity", 0.5f, 0.1f, 1.0f);
     private BlockPos placedPos;
     private long sys;
@@ -47,8 +51,24 @@ public class AutoCrystal extends Module {
         if(entityPlayer == null){
             placedPos = null;
             return;
+                    if (!rotate.getValue()) {
+            doAutoCrystal();
+        }
+             if (rotate.getValue()) {
+                    float[] rotations = RotationUtil.getRotations(pos.getX() + 0.5F, pos.getY() + 1.0F, pos.getZ() + 0.5F);
+                    float offset = this.offset.getValue() ? (didOffset ? 0.004F : -0.004F) : 0.0F;
+                    RotationManager.getInstance().setPlayerRotations(rotations[0] + offset, rotations[1] + offset);
+                    didOffset = !didOffset;
+                }
         }
         
+        
+            @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public void onUpdate(UpdatePlayerWalkingEvent event) {
+        if (rotate.getValue() && event.getStage() == Stage.PRE) {
+            doAutoCrystal();
+        }
+    }
         
         if (System.currentTimeMillis() - sys <= delay.getValue()) {
             return;
