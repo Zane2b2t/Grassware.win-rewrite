@@ -25,6 +25,7 @@ public class GrassWare {
     public static ConfigManager configManager;
     public static EventManager eventManager;
     public static TextManager textManager;
+    public static RotationManager rotationManager;
 
     public static void load() {
         threadManager = new ThreadManager();
@@ -39,6 +40,7 @@ public class GrassWare {
         fileManager = new FileManager();
         colorManager = new ColorManager();
         configManager = new ConfigManager();
+        rotationManager = new RotationManager();
         moduleManager.init();
         configManager.init();
         AltGui.loadAlts();
