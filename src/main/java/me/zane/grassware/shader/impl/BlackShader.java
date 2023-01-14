@@ -10,7 +10,7 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 
 public class BlackShader implements MC {
-    private final static ShaderUtil shader = new ShaderUtil("textures/shaders/black.frag");
+    private final static ShaderUtil shader = new ShaderUtil("/assets/minecraft/textures/shaders/black.frag");
     private static Framebuffer framebuffer = new Framebuffer(1, 1, false);
 
     public static void setupUniforms() {
