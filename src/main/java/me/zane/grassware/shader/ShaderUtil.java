@@ -15,13 +15,13 @@ public class ShaderUtil implements MC {
     public ShaderUtil(final String fragmentShaderLoc) {
         int fragmentShaderID = 0;
         try {
-			InputStream vertexStream = this.getClass().getResourceAsStream("/assets/minecraft/textures/shaders/vertex.vsh");
-            vertexShaderID = createShader(IOUtils.toString(vertexStream), ARBVertexShader.GL_VERTEX_SHADER_ARB);
+		InputStream vertexStream = this.getClass().getResourceAsStream("/assets/minecraft/textures/shaders/vertex.vsh");
+		vertexShaderID = createShader(IOUtils.toString(vertexStream), ARBVertexShader.GL_VERTEX_SHADER_ARB);
 
-            InputStream fragmentStream = this.getClass().getResourceAsStream(fragmentShaderLoc);
-            fragmentShaderID = createShader(IOUtils.toString(fragmentStream), ARBFragmentShader.GL_FRAGMENT_SHADER_ARB);
-        } catch (Exception ignored) {
-			ignored.printStackTrace();
+            	InputStream fragmentStream = this.getClass().getResourceAsStream(fragmentShaderLoc);
+            	fragmentShaderID = createShader(IOUtils.toString(fragmentStream), ARBFragmentShader.GL_FRAGMENT_SHADER_ARB);
+        } catch (Exception e) {
+		e.printStackTrace();
         }
 
         if (vertexShaderID == 0 || fragmentShaderID == 0) throw new IllegalStateException("Shader failed to link!!");
