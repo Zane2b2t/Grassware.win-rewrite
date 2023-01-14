@@ -13,22 +13,26 @@ public class ShaderUtil implements MC {
     private final int programID;
 
     public ShaderUtil(final String fragmentShaderLoc) {
-        int program = glCreateProgram();
+        int fragmentShaderID = 0;
         try {
-            final int fragmentShaderID = createShader(mc.getResourceManager().getResource(new ResourceLocation(fragmentShaderLoc)).getInputStream(), GL_FRAGMENT_SHADER);
-            glAttachShader(program, fragmentShaderID);
+			InputStream vertexStream = this.getClass().getResourceAsStream("/assets/minecraft/textures/shaders/vertex.vsh");
+            vertexShaderID = createShader(IOUtils.toString(vertexStream), ARBVertexShader.GL_VERTEX_SHADER_ARB);
 
-            final int vertexShaderID = createShader(mc.getResourceManager().getResource(new ResourceLocation("assets/textures/shaders/vertex.vsh")).getInputStream(), GL_VERTEX_SHADER);
-            glAttachShader(program, vertexShaderID);
+            InputStream fragmentStream = this.getClass().getResourceAsStream(fragmentShaderLoc);
+            fragmentShaderID = createShader(IOUtils.toString(fragmentStream), ARBFragmentShader.GL_FRAGMENT_SHADER_ARB);
         } catch (Exception ignored) {
+			ignored.printStackTrace();
         }
 
-        glLinkProgram(program);
-        final int status = glGetProgrami(program, GL_LINK_STATUS);
+        if (vertexShaderID == 0 || fragmentShaderID == 0) throw new IllegalStateException("Shader failed to link!!");
 
-        if (status == 0) {
-            throw new IllegalStateException("Shader failed to link!");
-        }
+        int program = ARBShaderObjects.glCreateProgramObjectARB();
+        if (program == 0) throw new IllegalStateException("Shader failed to link!");
+
+        ARBShaderObjects.glAttachObjectARB(program, vertexShaderID);
+        ARBShaderObjects.glAttachObjectARB(program, fragmentShaderID);
+        ARBShaderObjects.glLinkProgramARB(program);
+        ARBShaderObjects.glValidateProgramARB(program);
         this.programID = program;
     }
 
@@ -67,16 +71,24 @@ public class ShaderUtil implements MC {
             glUniform1i(loc, args[0]);
         }
     }
-
-    private int createShader(final InputStream inputStream, final int shaderType) {
-        final int shader = glCreateShader(shaderType);
-        glShaderSource(shader, readInputStream(inputStream));
-        glCompileShader(shader);
-        if (glGetShaderi(shader, GL_COMPILE_STATUS) == 0) {
-            System.out.println(glGetShaderInfoLog(shader, 4096));
-            throw new IllegalStateException(String.format("Shader (%s) failed to compile!", shaderType));
+    
+    public String getLogInfo(int i) {
+        return ARBShaderObjects.glGetInfoLogARB(i, ARBShaderObjects.glGetObjectParameteriARB(i, ARBShaderObjects.GL_OBJECT_INFO_LOG_LENGTH_ARB));
+    }
+    
+    public int createShader(String shaderSource, int shaderType) {
+        int shader = 0;
+        try {
+            shader = ARBShaderObjects.glCreateShaderObjectARB(shaderType);
+            if (shader == 0) return 0;
+            ARBShaderObjects.glShaderSourceARB(shader, shaderSource);
+            ARBShaderObjects.glCompileShaderARB(shader);
+            if (ARBShaderObjects.glGetObjectParameteriARB(shader, ARBShaderObjects.GL_OBJECT_COMPILE_STATUS_ARB) == GL11.GL_FALSE) throw new RuntimeException("Error creating shader: " + this.getLogInfo(shader));
+            return shader;
+        } catch (Exception e) {
+            ARBShaderObjects.glDeleteObjectARB(shader);
+            throw e;
         }
-        return shader;
     }
 
 
