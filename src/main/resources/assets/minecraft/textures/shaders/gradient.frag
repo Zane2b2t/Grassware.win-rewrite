@@ -9,7 +9,7 @@ uniform float mix;
 
 void main() {
     float alpha =texture2D(texture, gl_TexCoord[0].xy).a;
-    if (alpha != 0f) {
+    if (alpha != 0.0) {
         float distance = sqrt(gl_FragCoord.x * gl_FragCoord.x + gl_FragCoord.y * gl_FragCoord.y) + offset;
 
         distance = distance / step;
