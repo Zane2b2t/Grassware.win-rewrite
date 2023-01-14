@@ -12,7 +12,7 @@ import java.awt.*;
 import static org.lwjgl.opengl.GL11.*;
 
 public class GradientShader implements MC {
-    private final static ShaderUtil shader = new ShaderUtil("textures/shaders/gradient.frag");
+    private final static ShaderUtil shader = new ShaderUtil("/assets/minecraft/textures/shaders/gradient.frag");
     private static Framebuffer framebuffer = new Framebuffer(1, 1, false);
 
     public static void setupUniforms(final float step, final float speed, final Color color, final Color color2, final float opacity) {
