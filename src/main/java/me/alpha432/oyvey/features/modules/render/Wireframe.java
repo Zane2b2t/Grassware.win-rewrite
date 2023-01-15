@@ -39,6 +39,7 @@ public class Wireframe
 
     private void setInstance() {
         INSTANCE = this;
+        }
     }
   
  @EventListener
