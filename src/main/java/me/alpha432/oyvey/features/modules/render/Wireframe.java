@@ -4,6 +4,7 @@ import me.alpha432.oyvey.features.modules.Module;
 import me.alpha432.oyvey.features.setting.impl.FloatSetting;
 import me.alpha432.oyvey.features.setting.impl.BooleanSetting;
 import me.alpha432.oyvey.features.setting.impl.ModeSetting;
+import me.zane.grassware.event.events.Render3DEvent;
 import me.alpha432.oyvey.shader.impl.GradientShader;
 import me.alpha432.oyvey.features.modules.client.ClickGui;
 
