@@ -11,6 +11,9 @@ import me.alpha432.oyvey.features.modules.client.ClickGui;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.glPopMatrix;
+
 public class Wireframe
         extends Module {
     private static Wireframe INSTANCE = new Wireframe();
