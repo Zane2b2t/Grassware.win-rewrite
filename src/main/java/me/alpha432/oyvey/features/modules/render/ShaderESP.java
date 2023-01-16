@@ -71,7 +71,7 @@ public class ShaderESP extends Module {
                 glPopMatrix();
             }
         }
-        ((IEntityRenderer) mc.entityRenderer).invokeRenderHand();
+        ((IEntityRenderer) mc.entityRenderer).invokeRenderHand(mc.getRenderPartialTicks(), 2);
 
         GradientShader.finish();
     }
