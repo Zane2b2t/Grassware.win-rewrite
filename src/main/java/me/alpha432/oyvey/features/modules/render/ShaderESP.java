@@ -9,6 +9,7 @@ import me.alpha432.oyvey.event.events.Render3DEvent;
 import me.alpha432.oyvey.features.modules.Module;
 import me.alpha432.oyvey.features.modules.client.ClickGui;
 import me.alpha432.oyvey.features.setting.impl.FloatSetting;
+import me.alpha432.oyvey.features.setting.impl.BooleanSetting;
 import me.alpha432.oyvey.shader.impl.GradientShader;
 
 import net.minecraft.entity.Entity;
@@ -24,6 +25,7 @@ import static org.lwjgl.opengl.GL11.glPopMatrix;
 public class ShaderESP extends Module {
     private final FloatSetting opacity = register("Opacity", 0.5f, 0.1f, 1.0f);
     private final FloatSetting lineWidth = register("Line Width", 1.0f, 0.1f, 5.0f);
+   // private final BooleanSetting items = register("Items", true);
 
     @EventListener
     public void onRender3D(final Render3DEvent event) {
@@ -31,12 +33,14 @@ public class ShaderESP extends Module {
             return;
         }
         GradientShader.setup(
+
                 ClickGui.Instance.step.getValue(),
                 ClickGui.Instance.speed.getValue(),
                 ClickGui.Instance.getGradient()[0],
                 ClickGui.Instance.getGradient()[1],
                 opacity.getValue()
         );
+
         for (final Entity entity : mc.world.loadedEntityList) {
             if (!entity.equals(mc.player) && entity instanceof EntityPlayer || entity instanceof EntityEnderCrystal) {
                 glPushMatrix();
@@ -66,15 +70,16 @@ public class ShaderESP extends Module {
                 glPopMatrix();
             }
         }
+        ((IEntityRenderer) mc.entityRenderer).invokeRenderHand();
+
         GradientShader.finish();
     }
 
     
-    @SubscribeEvent
-    public void renderItemInFirstPerson(final RenderItemInFirstPersonEvent event) {
-         event.setCancelled(false);
+    @EventListener
+    public void renderItemInFirstPerson(RenderItemInFirstPersonEvent event) {
 
-        
+        event.setCancelled(true);
     }
     
     
