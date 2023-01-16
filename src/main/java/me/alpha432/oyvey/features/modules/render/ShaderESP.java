@@ -11,11 +11,11 @@ import me.alpha432.oyvey.features.modules.client.ClickGui;
 import me.alpha432.oyvey.features.setting.impl.FloatSetting;
 import me.alpha432.oyvey.features.setting.impl.BooleanSetting;
 import me.alpha432.oyvey.shader.impl.GradientShader;
+import me.alpha432.oyvey.mixin.IEntityRenderer;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.client.renderer.entity.IEntityRenderer;
 
 import java.awt.*;
 
