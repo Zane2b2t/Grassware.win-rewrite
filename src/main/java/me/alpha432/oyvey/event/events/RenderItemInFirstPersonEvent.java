@@ -15,7 +15,7 @@ public class RenderItemInFirstPersonEvent extends Event {
     public boolean leftHanded;
 
     public RenderItemInFirstPersonEvent(EntityLivingBase entitylivingbaseIn, ItemStack heldStack, ItemCameraTransforms.TransformType transform, boolean leftHanded, int stage) {
-        super(stage);
+        //super(stage);
 
         entity = entitylivingbaseIn;
         stack = heldStack;
