@@ -10,6 +10,7 @@ import me.alpha432.oyvey.features.modules.Module;
 import me.alpha432.oyvey.features.modules.client.ClickGui;
 import me.alpha432.oyvey.features.setting.impl.FloatSetting;
 import me.alpha432.oyvey.shader.impl.GradientShader;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.player.EntityPlayer;
@@ -69,7 +70,7 @@ public class ShaderESP extends Module {
     }
 
     
-    @EventListener
+    @SubscribeEvent
     public void renderItemInFirstPerson(final RenderItemInFirstPersonEvent event) {
          event.setCancelled(false);
 
