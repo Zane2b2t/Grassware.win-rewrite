@@ -1,6 +1,6 @@
-package me.zane.grassware.event.events;
+package me.alpha432.oyvey.event.events;
 
-import me.zane.grassware.event.bus.Event;
+import me.alpha432.oyvey.event.bus.Event;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
