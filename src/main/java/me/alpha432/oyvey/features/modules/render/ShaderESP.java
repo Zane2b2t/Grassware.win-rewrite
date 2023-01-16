@@ -3,6 +3,7 @@ package me.alpha432.oyvey.features.modules.render;
 import me.alpha432.oyvey.event.bus.EventListener;
 import me.alpha432.oyvey.event.events.ArmorEvent;
 import me.alpha432.oyvey.event.events.FireEvent;
+import me.alpha432.oyvey.event.events.RenderItemInFirstPersonEvent;
 import me.alpha432.oyvey.event.events.HeldItemEvent;
 import me.alpha432.oyvey.event.events.Render3DEvent;
 import me.alpha432.oyvey.features.modules.Module;
@@ -67,6 +68,15 @@ public class ShaderESP extends Module {
         GradientShader.finish();
     }
 
+    
+    @EventListener
+    public void renderItemInFirstPerson(final RenderItemInFirstPersonEvent event) {
+         event.setCancelled(true);
+
+        
+    }
+    
+    
     @EventListener
     public void onArmor(final ArmorEvent event) {
         event.setCancelled(true);
