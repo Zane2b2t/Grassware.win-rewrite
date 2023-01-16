@@ -15,6 +15,7 @@ import me.alpha432.oyvey.shader.impl.GradientShader;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.client.renderer.entity.IEntityRenderer;
 
 import java.awt.*;
 
