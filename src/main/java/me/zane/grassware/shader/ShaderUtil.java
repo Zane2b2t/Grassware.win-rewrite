@@ -2,6 +2,7 @@ package me.zane.grassware.shader;
 
 import me.zane.grassware.util.MC;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.opengl.*;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
