@@ -72,6 +72,12 @@ public class ShaderESP extends Module {
             }
         }
         ((IEntityRenderer) mc.entityRenderer).invokeRenderHand(mc.getRenderPartialTicks(), 2);
+        
+        GlStateManager.disableBlend();
+            GlStateManager.disableAlpha();
+            GlStateManager.disableDepth();
+            GlStateManager.popAttrib();
+            GlStateManager.popMatrix();
 
         GradientShader.finish();
     }
