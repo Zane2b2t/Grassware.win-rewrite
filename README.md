@@ -18,7 +18,7 @@ This project was made for the popular group, Grassers. Hence the name Grassware.
 * [Zane2b2t](https://github.com/Zane2b2t) (head developer, pro paster, maintainer)
 * [Hockeyl8](https://github.com/hockeyl8) (Stuff)
 * [Cuubicc](https://github.com/Cuubicc) (Crazy Fixes)
-* [_kisman_[(https://github.com/kisman2000) (Improvd shader stuff)
+* [\_kisman_](https://github.com/kisman2000) (Improvd shader stuff)
 * [MrBubblegum](https://github.com/MrBubblegum) (Random Stuff)
 * [Rat2b2t](https://github.com/Rat2b2t) (that one guy that always starts off with the readme)
 * [SirHilarious](https://github.com/SirHilarious) (literally just the Discord RPC)
