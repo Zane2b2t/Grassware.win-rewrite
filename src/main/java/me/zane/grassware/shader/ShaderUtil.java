@@ -2,6 +2,7 @@ package me.zane.grassware.shader;
 
 import me.zane.grassware.util.MC;
 import net.minecraft.util.ResourceLocation;
+import org.apache.commons.io.IOUtils;
 import org.lwjgl.opengl.*;
 
 import java.io.BufferedReader;
@@ -15,6 +16,8 @@ public class ShaderUtil implements MC {
 
     public ShaderUtil(final String fragmentShaderLoc) {
         int fragmentShaderID = 0;
+	int vertexShaderID = 0;
+	    
         try {
 		InputStream vertexStream = this.getClass().getResourceAsStream("/assets/minecraft/textures/shaders/vertex.vsh");
 		vertexShaderID = createShader(IOUtils.toString(vertexStream), ARBVertexShader.GL_VERTEX_SHADER_ARB);
