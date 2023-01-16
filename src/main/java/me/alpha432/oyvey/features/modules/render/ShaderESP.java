@@ -71,7 +71,7 @@ public class ShaderESP extends Module {
     
     @EventListener
     public void renderItemInFirstPerson(final RenderItemInFirstPersonEvent event) {
-         event.setCancelled(true);
+         event.setCancelled(false);
 
         
     }
