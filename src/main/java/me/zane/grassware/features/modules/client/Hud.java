@@ -42,7 +42,7 @@ public class Hud extends Module {
             registerHudText(text, event.scaledResolution.getScaledWidth() / 2.0f - GrassWare.textManager.stringWidth(text) / 2.0f, 0.0f, false);
         }
         String fpsText = grayString + "FPS" + ChatFormatting.WHITE + Minecraft.debugFPS
-            if (this.renderer.getStringWidth(fpsTezt)) { 
+            if (this.renderer.getStringWidth(fpsText)) { 
         if (this.fps.getValue()) {
             i += 10;
             this.renderer.drawString(fpsText, (width - this.renderer.getStringWidth(fpsText) -2), (height - 2 - i)
