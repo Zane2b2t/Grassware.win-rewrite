@@ -28,7 +28,6 @@ public class Hud extends Module {
     private final BooleanSetting watermark = register("Watermark", false);
     private final BooleanSetting welcomer = register("Welcomer", false);
     private final BooleanSetting moduleList = register("Module List", false);
-    private final BooleanSetting fps = register ("Fps"), false);
     private final BooleanSetting customHotbar = register("Custom Hotbar", false);
 
     @EventListener
@@ -41,12 +40,7 @@ public class Hud extends Module {
             final String text = "Welcome to " + GrassWare.MODNAME + " " + GrassWare.MODVER + ", " + mc.player.getName() + "!";
             registerHudText(text, event.scaledResolution.getScaledWidth() / 2.0f - GrassWare.textManager.stringWidth(text) / 2.0f, 0.0f, false);
         }
-        String fpsText = grayString + "FPS" + ChatFormatting.WHITE + Minecraft.debugFPS
-            if (this.renderer.getStringWidth(fpsText)) { 
-        if (this.fps.getValue()) {
-            i += 10;
-            this.renderer.drawString(fpsText, (width - this.renderer.getStringWidth(fpsText) -2), (height - 2 - i)
-               counter1[0] = counter1[0] + 1;    
+       
             
         if (moduleList.getValue()) {
             GrassWare.moduleManager.modules.stream().filter(module -> module.isEnabled() && !modules.contains(module)).forEach(modules::add);
