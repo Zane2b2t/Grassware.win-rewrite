@@ -45,7 +45,7 @@ public class ItemChams extends Module{
     public void onHand(final RenderItemInFirstPersonEvent event);
     
     @EventListener
-     private void renderHandEvent(RenderHandEvent event):
+     private void renderHandEvent(RenderHandEvent event);
         
      
 
