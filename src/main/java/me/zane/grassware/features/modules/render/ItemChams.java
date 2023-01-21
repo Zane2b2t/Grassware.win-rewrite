@@ -7,11 +7,14 @@ import me.zane.grassware.features.setting.impl.FloatSetting;
 import me.zane.grassware.features.setting.impl.BooleanSetting;
 import me.zane.grassware.event.events.Render2DEvent;
 import me.zane.grassware.event.events.RenderItemInFirstPersonEvent;
-import me.zane.grassware.event.events.RenderHandEvent;
+// import me.zane.grassware.event.events.RenderHandEvent;
 import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.mixin.mixins.IEntityRenderer;
 
 import net.minecraft.client.shader.Framebuffer;
+import net.minecraftforge.client.event.RenderHandEvent;
+import net.minecraft.world.item.ItemStack;
+
 
 
 public class ItemChams extends Module{
@@ -40,6 +43,10 @@ public class ItemChams extends Module{
     }
     @EventListener
     public void onRenderHand(final RenderItemInFirstPersonEvent event);
+    
+    @EventListener
+     private void renderHandEvent(RenderHandEvent event) {
+        ItemStack stack = event.getItemStack();
 
 
 } 
