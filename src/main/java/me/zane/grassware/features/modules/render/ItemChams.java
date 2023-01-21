@@ -13,7 +13,7 @@ import me.zane.grassware.mixin.mixins.IEntityRenderer;
 
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraftforge.client.event.RenderHandEvent;
-import net.minecraft.world.item.ItemStack;
+// import net.minecraft.world.item.ItemStack;
 
 
 
@@ -46,7 +46,7 @@ public class ItemChams extends Module{
     
     @EventListener
      private void renderHandEvent(RenderHandEvent event) {
-        ItemStack stack = event.getItemStack();
+        
      }
 
 } 
