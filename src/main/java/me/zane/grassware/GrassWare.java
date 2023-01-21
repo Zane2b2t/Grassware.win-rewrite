@@ -51,5 +51,13 @@ public class GrassWare {
     }
 
 
+    @Mod.EventHandler
+    public void init(FMLInitializationEvent event) {
+        Display.setTitle("GrassWare " + GrassWare.MODVER);
+        GrassWare.load();
+        Discord.startRPC();
+
+    }
+
 }
 
