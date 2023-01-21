@@ -26,7 +26,7 @@ public class ItemChams extends Module{
     @EventListener
     public void onRender2D(final Render2DEvent event) {
        if (this.yes.getValue()) {
-           frameBufferShader.startDraw(event.getPartialTicks());
+           frameBufferShader.startDraw(mc.getPartialTicks());
 // my first module made from scratch :D -ZANE 1/19/2022 (intelij so ez wtf)
 
             ((IEntityRenderer) mc.entityRenderer).invokeRenderHand(mc.getRenderPartialTicks(), 2);
