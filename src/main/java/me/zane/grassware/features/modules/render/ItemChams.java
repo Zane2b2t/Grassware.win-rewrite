@@ -42,10 +42,14 @@ public class ItemChams extends Module{
         GradientShader.finish();
     }
     @EventListener
-    public void onHand(final RenderItemInFirstPersonEvent event);
+    public void renderItemInFirstPerson(final RenderItemInFirstPersonEvent event) {
+        // errors should be fixed now
+        }
     
     @EventListener
-     private void renderHandEvent(RenderHandEvent event);
+     private void renderHandEvent(RenderHandEvent event) {
+         // for some reason cant do ); must do {}
+         }
         
      
 
