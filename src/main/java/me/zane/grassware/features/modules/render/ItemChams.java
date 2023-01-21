@@ -39,7 +39,7 @@ public class ItemChams extends Module{
         GradientShader.finish();
     }
     @EventListener
-    public void onHand(final RenderItemInFirstPersonEvent event);
+    public void onRenderHand(final RenderItemInFirstPersonEvent event);
 
 
 } 
