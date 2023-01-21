@@ -29,7 +29,7 @@ public class ItemChams extends Module{
            frameBufferShader.startDraw(event.getPartialTicks());
 // my first module made from scratch :D -ZANE 1/19/2022 (intelij so ez wtf)
 
-           ((IEntityRenderer)this.mc.entityRenderer).invokeRenderHand(event.getPartialTicks(), 1);
+            ((IEntityRenderer) mc.entityRenderer).invokeRenderHand(mc.getRenderPartialTicks(), 2);
            frameBufferShader.stopDraw((float)this.linewidth.getValue(), (float)this.opacity.getValue());
        }
         GradientShader.setup(
