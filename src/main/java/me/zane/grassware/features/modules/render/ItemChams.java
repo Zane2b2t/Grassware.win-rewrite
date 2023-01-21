@@ -47,6 +47,6 @@ public class ItemChams extends Module{
     @EventListener
      private void renderHandEvent(RenderHandEvent event) {
         ItemStack stack = event.getItemStack();
-
+     }
 
 } 
