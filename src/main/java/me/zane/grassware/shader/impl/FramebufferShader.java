@@ -1,131 +1,71 @@
 package me.zane.grassware.shader.impl;
 
-import me.zane.grassware.GrassWare;
-import me.zane.grassware.mixin.mixins.IEntityRenderer;
-import me.zane.grassware.features.modules.client.ClickGui;
-import me.zane.grassware.shader.impl.GradientShader;
-import me.zane.grassware.util.MC;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.shader.Framebuffer;
 
-import org.lwjgl.opengl.Display;
+import me.zane.grassware.util.MC;
 
-import java.awt.*;
-
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL20.glUseProgram;
+import org.lwjgl.opengl.*;
 
 public abstract class FramebufferShader implements MC {
+    public Minecraft mc;
+    public static Framebuffer framebuffer;
+    public boolean entityShadows;
+    public int animationSpeed;
 
-    protected static int lastScale;
-    protected static int lastScaleWidth;
-    protected static int lastScaleHeight;
-    private static Framebuffer framebuffer;
-  //  protected float red, green, blue, alpha = 1F;
-    protected float radius = 2F;
-  //  protected float quality = 1F;
-
-    private boolean entityShadows;
-
-    public FramebufferShader(String fragmentShader) {
+    public FramebufferShader(final String fragmentShader) {
         super(fragmentShader);
+        this.mc = Minecraft.getMinecraft();
     }
 
-    public void startDraw(float partialTicks) {
+    public void startDraw(final float partialTicks) {
         GlStateManager.enableAlpha();
         GlStateManager.pushMatrix();
         GlStateManager.pushAttrib();
-        framebuffer = setupFrameBuffer(framebuffer);
-        framebuffer.bindFramebuffer(true);
-        entityShadows = GrassWare.mc.gameSettings.entityShadows;
-        GrassWare.mc.gameSettings.entityShadows = false;
-        ((IEntityRenderer) GrassWare.mc.entityRenderer).invokeSetupCameraTransform(partialTicks, 0);
-              GradientShader.setup(
-                ClickGui.Instance.step.getValue(),
-                ClickGui.Instance.speed.getValue(),
-                ClickGui.Instance.getGradient()[0],
-                ClickGui.Instance.getGradient()[1],
-                opacity.getValue()
-        );
-        GradientShader.finish();
+        (FramebufferShader.framebuffer = setupFrameBuffer(FramebufferShader.framebuffer)).framebufferClear();
+        FramebufferShader.framebuffer.bindFramebuffer(true);
+        entityShadows = mc.gameSettings.entityShadows;
+        mc.gameSettings.entityShadows = false;
+        mc.entityRenderer.setupCameraTransform(partialTicks, 0);
     }
 
-    public void stopDraw(Color color, float radius, float quality) {
-        GrassWare.mc.gameSettings.entityShadows = entityShadows;
-        GlStateManager.enableBlend();
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        GrassWare.mc.getFramebuffer().bindFramebuffer(true);
-
-         speed = ClickGui.Instance.spped.getValue();
-         step = ClickGui.Instance.step.getValue();
-         gradient1 = ClickGui.Instance.getGradient()[0];
-         gradient2 = ClickGui.Instance.getGradient()[1];
-        alpha = opacity.getValue();
-         this.radius = radius;                                                                         // blue = color.getBlue() / 255F;
-                                                                                   // alpha = color.getAlpha() / 255F;
-        
-                                                                                   // this.quality = quality;
-
-        GrassWare.mc.entityRenderer.disableLightmap();
+    public void stopDraw() {
+        mc.gameSettings.entityShadows = this.entityShadows;
+        GL11.glEnable(3042);
+        GL11.glBlendFunc(770, 771);
+        mc.getFramebuffer().bindFramebuffer(true);
+        mc.entityRenderer.disableLightmap();
         RenderHelper.disableStandardItemLighting();
-
         startShader();
-        GrassWare.mc.entityRenderer.setupOverlayRendering();
-        drawFramebuffer(framebuffer);
+        mc.entityRenderer.setupOverlayRendering();
+        drawFramebuffer(FramebufferShader.framebuffer);
         stopShader();
-
-        GrassWare.mc.entityRenderer.disableLightmap();
-
+        mc.entityRenderer.disableLightmap();
         GlStateManager.popMatrix();
         GlStateManager.popAttrib();
     }
 
     public Framebuffer setupFrameBuffer(Framebuffer frameBuffer) {
-        if (Display.isActive() || Display.isVisible()) {
-            if (frameBuffer != null) {
-                frameBuffer.framebufferClear();
-                ScaledResolution scale = new ScaledResolution(Minecraft.getMinecraft());
-                int factor = scale.getScaleFactor();
-                int factor2 = scale.getScaledWidth();
-                int factor3 = scale.getScaledHeight();
-                if (lastScale != factor || lastScaleWidth != factor2 || lastScaleHeight != factor3) {
-                    frameBuffer.deleteFramebuffer();
-                    frameBuffer = new Framebuffer(Ruby.mc.displayWidth, Ruby.mc.displayHeight, true);
-                    frameBuffer.framebufferClear();
-                }
-                lastScale = factor;
-                lastScaleWidth = factor2;
-                lastScaleHeight = factor3;
-            } else {
-                frameBuffer = new Framebuffer(GrassWare.mc.displayWidth, GrassWare.mc.displayHeight, true);
-            }
-        } else {
-            if (frameBuffer == null) {
-                frameBuffer = new Framebuffer(GrassWare.mc.displayWidth, GrassWare.mc.displayHeight, true);
-            }
-        }
-
+        if (frameBuffer != null) frameBuffer.deleteFramebuffer();
+        frameBuffer = new Framebuffer(this.mc.displayWidth, this.mc.displayHeight, true);
         return frameBuffer;
     }
 
-    public void drawFramebuffer(Framebuffer framebuffer) {
-        ScaledResolution scaledResolution = new ScaledResolution(Ruby.mc);
-        glBindTexture(GL_TEXTURE_2D, framebuffer.framebufferTexture);
-        glBegin(GL_QUADS);
-        glTexCoord2d(0, 1);
-        glVertex2d(0, 0);
-        glTexCoord2d(0, 0);
-        glVertex2d(0, scaledResolution.getScaledHeight());
-        glTexCoord2d(1, 0);
-        glVertex2d(scaledResolution.getScaledWidth(), scaledResolution.getScaledHeight());
-        glTexCoord2d(1, 1);
-        glVertex2d(scaledResolution.getScaledWidth(), 0);
-        glEnd();
-        glUseProgram(0);
+    public void drawFramebuffer(final Framebuffer framebuffer) {
+        final ScaledResolution scaledResolution = new ScaledResolution(this.mc);
+        GL11.glBindTexture(3553, framebuffer.framebufferTexture);
+        GL11.glBegin(7);
+        GL11.glTexCoord2d(Double.longBitsToDouble(Double.doubleToLongBits(1.7921236082576344E308) ^ 0x7FEFE69EB44D9FE1L), Double.longBitsToDouble(Double.doubleToLongBits(4.899133169559449) ^ 0x7FE398B65D9806D1L));
+        GL11.glVertex2d(Double.longBitsToDouble(Double.doubleToLongBits(3.7307361562967813E307) ^ 0x7FCA9050299687CBL), Double.longBitsToDouble(Double.doubleToLongBits(7.56781900945177E307) ^ 0x7FDAF13C89C9BE29L));
+        GL11.glTexCoord2d(Double.longBitsToDouble(Double.doubleToLongBits(1.0409447193540338E308) ^ 0x7FE28788CB57BFECL), Double.longBitsToDouble(Double.doubleToLongBits(4.140164300258766E307) ^ 0x7FCD7A9C5BA7C45BL));
+        GL11.glVertex2d(Double.longBitsToDouble(Double.doubleToLongBits(1.3989301333159067E308) ^ 0x7FE8E6DB3F70C542L), scaledResolution.getScaledHeight());
+        GL11.glTexCoord2d(Double.longBitsToDouble(Double.doubleToLongBits(52.314008345000495) ^ 0x7FBA28316CEA395FL), Double.longBitsToDouble(Double.doubleToLongBits(1.3534831910786353E308) ^ 0x7FE817C1C68E7C69L));
+        GL11.glVertex2d(scaledResolution.getScaledWidth(), scaledResolution.getScaledHeight());
+        GL11.glTexCoord2d(Double.longBitsToDouble(Double.doubleToLongBits(4.557588341026122) ^ 0x7FE23AF870255A34L), Double.longBitsToDouble(Double.doubleToLongBits(23.337335758793085) ^ 0x7FC7565BA2E3C9A3L));
+        GL11.glVertex2d(scaledResolution.getScaledWidth(), Double.longBitsToDouble(Double.doubleToLongBits(1.5123382114342209E308) ^ 0x7FEAEBA6CA1CFB74L));
+        GL11.glEnd();
+        GL20.glUseProgram(0);
     }
-
 }
