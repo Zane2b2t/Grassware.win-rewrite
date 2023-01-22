@@ -10,7 +10,7 @@ import me.zane.grassware.shader.Shader;
 
 import org.lwjgl.opengl.*;
 
-public abstract class FramebufferShader implements MC {
+public abstract class FramebufferShader extends Shader {
     public Minecraft mc;
     public static Framebuffer framebuffer;
     public boolean entityShadows;
