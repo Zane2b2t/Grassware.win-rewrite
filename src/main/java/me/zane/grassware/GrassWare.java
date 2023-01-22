@@ -5,8 +5,11 @@ import me.zane.grassware.event.bus.EventBus;
 import me.zane.grassware.features.gui.alt.AltGui;
 import me.zane.grassware.manager.*;
 import me.zane.grassware.manager.*;
+
 import net.minecraftforge.fml.common.Mod;
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+
 import org.lwjgl.opengl.Display;
 
 @Mod(modid = "grassware.win", name = "GrassWare.win", version = GrassWare.MODVER)
