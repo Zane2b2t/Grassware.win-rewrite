@@ -1,7 +1,7 @@
 package me.zane.grassware.shader.impl;
 
 import me.zane.grassware.GrassWare;
-import zane.grassware.mixin.mixins.IEntityRenderer;
+import me.zane.grassware.mixin.mixins.IEntityRenderer;
 import me.zane.grassware.features.modules.client.ClickGui;
 import me.zane.grassware.shader.impl.GradientShader;
 
@@ -18,7 +18,7 @@ import java.awt.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.glUseProgram;
 
-public abstract class FramebufferShader extends Shader {
+public abstract class FramebufferShader implements MC {
 
     protected static int lastScale;
     protected static int lastScaleWidth;
