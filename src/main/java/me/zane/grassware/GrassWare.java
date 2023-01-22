@@ -13,6 +13,7 @@ import org.lwjgl.opengl.Display;
 public class GrassWare {
     public static final String MODNAME = "GrassWare.win";
     public static final String MODVER = "0.0.5";
+    public static Minecraft mc;
     public static EventBus eventBus;
     public static ThreadManager threadManager;
     public static HoleManager holeManager;
@@ -28,6 +29,7 @@ public class GrassWare {
     public static RotationManager rotationManager;
 
     public static void load() {
+        mc = Minecraft.getMinecraft();
         threadManager = new ThreadManager();
         holeManager = new HoleManager();
         eventBus = new EventBus();
