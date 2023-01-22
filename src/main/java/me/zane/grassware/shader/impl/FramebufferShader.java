@@ -4,6 +4,7 @@ import me.zane.grassware.GrassWare;
 import me.zane.grassware.mixin.mixins.IEntityRenderer;
 import me.zane.grassware.features.modules.client.ClickGui;
 import me.zane.grassware.shader.impl.GradientShader;
+import me.zane.grassware.util.MC;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
