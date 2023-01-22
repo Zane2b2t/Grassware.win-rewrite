@@ -3,17 +3,18 @@ package me.zane.grassware.features.modules.render;
 import me.zane.grassware.features.modules.client.ClickGui;
 import me.zane.grassware.event.bus.EventListener;
 import me.zane.grassware.shader.impl.GradientShader;
+import me.zane.grassware.shader.impl.FramebufferShader;
 import me.zane.grassware.features.setting.impl.FloatSetting;
 import me.zane.grassware.features.setting.impl.BooleanSetting;
 import me.zane.grassware.event.events.Render2DEvent;
 import me.zane.grassware.event.events.RenderItemInFirstPersonEvent;
-// import me.zane.grassware.event.events.RenderHandEvent;
+// import me.zane.grassware.event.events.RenderHandEvent; (we be using the minecraft one)
 import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.mixin.mixins.IEntityRenderer;
 
 import net.minecraft.client.shader.Framebuffer;
-import net.minecraftforge.client.event.RenderHandEvent;
-// import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.client.event.RenderHandEvent; //this one
+// import net.minecraft.world.item.ItemStack; 
 
 
 
