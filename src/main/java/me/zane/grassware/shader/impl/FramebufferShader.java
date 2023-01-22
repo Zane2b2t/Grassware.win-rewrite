@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.*;
 import net.minecraft.client.shader.Framebuffer;
 
 import me.zane.grassware.util.MC;
+import me.zane.grassware.shader.Shader;
 
 import org.lwjgl.opengl.*;
 
