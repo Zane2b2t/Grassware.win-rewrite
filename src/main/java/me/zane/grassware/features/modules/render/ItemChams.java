@@ -15,7 +15,6 @@ public class ItemChams extends Module{
     
     private boolean criticalSection = true;
 
-
     @EventListener
     public void onRender2D(final Render2DEvent event) {
         GradientShader.setup(opacity.getValue());
@@ -30,7 +29,7 @@ public class ItemChams extends Module{
     @EventListener
     private void renderHandEvent(RenderHandEvent event) {
         if(criticalSection) {
-            event.cancel();
+            event.setCancelled(true);
         }
     }
 } 
