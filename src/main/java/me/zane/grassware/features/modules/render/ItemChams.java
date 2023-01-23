@@ -27,7 +27,7 @@ public class ItemChams extends Module{
     }
     
     @EventListener
-    private void renderHandEvent(RenderHandEvent event) {
+    public void onRenderHandEvent(final RenderHandEvent event) {
         if(criticalSection) {
             event.setCancelled(true);
         }
