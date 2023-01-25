@@ -1,8 +1,12 @@
 package me.zane.grassware.event.events;
 
+import me.zane.grassware.event.bus.Event;
+
+
 import net.minecraft.util.EnumHandSide;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
+@Cancelable
 public class RenderHeldItemEvent extends Event {
     private final EnumHandSide side;
 
