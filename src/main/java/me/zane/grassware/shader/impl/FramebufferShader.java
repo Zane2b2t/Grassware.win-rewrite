@@ -8,7 +8,7 @@ import net.minecraft.client.shader.Framebuffer;
 import me.zane.grassware.util.MC;
 import me.zane.grassware.shader.Shader;
 import me.zane.grassware.shader.ShaderUtil;
-import me.zane.grassware.shader.ShaderUtilKT;
+import me.zane.grassware.features.ShaderUtil;
 
 import org.lwjgl.opengl.*;
 
