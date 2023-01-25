@@ -5,6 +5,7 @@ import me.zane.grassware.shader.impl.GradientShader;
 import me.zane.grassware.features.setting.impl.FloatSetting;
 import me.zane.grassware.features.setting.impl.BooleanSetting;
 import me.zane.grassware.event.events.Render2DEvent;
+import me.zane.grassware.event.events.RenderItemInFirstPersonEvent;
 import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.mixin.mixins.IEntityRenderer;
 
@@ -13,7 +14,7 @@ import net.minecraftforge.client.event.RenderHandEvent;
 public class ItemChams extends Module{
     private final FloatSetting opacity = register("Opacity", 0.5f, 0.1f, 1.0f);
     
-    private boolean criticalSection = true;
+    private final BooleanSetting criticalSection = register("CriticalSelection", true);
 
     @EventListener
     public void onRender2D(final Render2DEvent event) {
@@ -27,7 +28,7 @@ public class ItemChams extends Module{
     }
     
     @EventListener
-    public void onRenderHandEvent(final RenderHandEvent event) {
+    public void onRenderItemInFirstPerson(final RenderItemInFirstPerson event) {
         if(criticalSection) {
             event.setCancelled(true);
         }
