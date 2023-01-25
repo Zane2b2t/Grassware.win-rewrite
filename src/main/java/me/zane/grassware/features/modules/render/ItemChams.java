@@ -14,7 +14,8 @@ import net.minecraftforge.client.event.RenderHandEvent;
 public class ItemChams extends Module{
     private final FloatSetting opacity = register("Opacity", 0.5f, 0.1f, 1.0f);
     
-    private final BooleanSetting criticalSection = register("CriticalSelection", true);
+    private boolean criticalSection = true;
+   
 
     @EventListener
     public void onRender2D(final Render2DEvent event) {
