@@ -4,7 +4,7 @@ import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.shader.Framebuffer
 import org.lwjgl.opengl.GL20
 
-class ShaderUtil {
+class ShaderUtilKT {
     companion object {
         fun setupUniforms(shader: Shader, uniforms: Array<Uniform>) {
             for(uniform in uniforms) {
