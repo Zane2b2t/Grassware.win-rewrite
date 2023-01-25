@@ -29,7 +29,7 @@ public class ItemChams extends Module{
     }
     
     @EventListener
-    public void onRenderItemInFirstPerson(final RenderItemInFirstPerson event) {
+    public void onRenderItemInFirstPerson(final RenderItemInFirstPersonEvent event) {
         if(criticalSection) {
             event.setCancelled(true);
         }
