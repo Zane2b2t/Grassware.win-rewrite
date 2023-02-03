@@ -10,6 +10,7 @@ import me.zane.grassware.util.MC;
 import me.zane.grassware.shader.Shader;
 import me.zane.grassware.shader.ShaderUtil;
 import me.zane.grassware.mixin.mixins.IEntityRenderer;
+import me.zane.grassware.mixin.mixins.MixinEntityRenderer;
 
 import org.lwjgl.opengl.*;
 
@@ -32,7 +33,7 @@ public abstract class FramebufferShader extends Shader {
         FramebufferShader.framebuffer.bindFramebuffer(true);
         entityShadows = mc.gameSettings.entityShadows;
         mc.gameSettings.entityShadows = false;
-        mc.entityRenderer.setupCameraTransform(mc.getRenderPartialTicks 1);
+        mc.entityRenderer.setupCameraTransform(mc.getRenderPartialTicks(), 2);
     }
 
     public void stopDraw() {
