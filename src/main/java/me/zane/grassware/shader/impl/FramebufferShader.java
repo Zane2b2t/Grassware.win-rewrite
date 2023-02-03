@@ -4,6 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.shader.Framebuffer;
+import net.minecraft.client.renderer.EntityRenderer;
 
 import me.zane.grassware.util.MC;
 import me.zane.grassware.shader.Shader;
@@ -31,7 +32,7 @@ public abstract class FramebufferShader extends Shader {
         FramebufferShader.framebuffer.bindFramebuffer(true);
         entityShadows = mc.gameSettings.entityShadows;
         mc.gameSettings.entityShadows = false;
-        mc.entityRenderer.setupCameraTransform(mc.getRenderPartialTicks(), 1);
+        mc.entityRenderer.setupCameraTransform(mc.getRenderPartialTicks 1);
     }
 
     public void stopDraw() {
