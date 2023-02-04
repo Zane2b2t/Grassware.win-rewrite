@@ -1,6 +1,6 @@
 package me.zane.grassware.event.events;
 
-import me.zane.grassware.event.bus.EventStage;
+import me.zane.grassware.event.EventStage;
 
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.entity.EntityLivingBase;
