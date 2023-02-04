@@ -9,8 +9,12 @@ import net.minecraft.client.renderer.EntityRenderer;
 import me.zane.grassware.util.MC;
 import me.zane.grassware.shader.Shader;
 import me.zane.grassware.shader.ShaderUtil;
+// <<<<<<< no-more-branches-pls
 import me.zane.grassware.mixin.mixins.IEntityRenderer;
 import me.zane.grassware.mixin.mixins.MixinEntityRenderer;
+// =======
+import me.zane.grassware.features.ShaderUtil;
+//>>>>>>> worky
 
 import org.lwjgl.opengl.*;
 
