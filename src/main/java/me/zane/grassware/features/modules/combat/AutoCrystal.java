@@ -12,6 +12,7 @@ import me.zane.grassware.util.BlockUtil;
 import me.zane.grassware.util.EntityUtil;
 import me.zane.grassware.util.RenderUtil;
 import me.zane.grassware.util.MC;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.player.EntityPlayer;
@@ -42,7 +43,7 @@ public class AutoCrystal extends Module {
     private long sys;
 
     @EventListener
-    public void onTick(final TickEvent event) {
+    public void onUpdate(final UpdatePlayerWalkingEvent event) {
         final EntityPlayer entityPlayer = EntityUtil.entityPlayer(targetRange.getValue());
         if(entityPlayer == null){
             placedPos = null;
