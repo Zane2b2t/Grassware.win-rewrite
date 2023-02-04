@@ -6,13 +6,14 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import me.zane.grassware.event.bus.EventListener;
 
 public class StrictLimbs extends Module {
 
-    public BooleanSetting self = new BooleanSetting("Self", true);
+    private final BooleanSetting self = new BooleanSetting("Self", true);
 
-    @SubscribeEvent
-    public void onRenderTick(TickEvent.RenderTickEvent event) {
+    @EventListener
+    public void onUpdate(final UpdatePlayerWalkingEvent event) {
         if(nullCheck()) return;
         for(Entity entity : mc.world.loadedEntityList) {
             if(!(entity instanceof EntityPlayer)) return;
