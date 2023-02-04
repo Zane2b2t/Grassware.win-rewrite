@@ -25,16 +25,16 @@ public abstract class FramebufferShader extends Shader {
         this.mc = Minecraft.getMinecraft();
     }
 
-    public void startDraw(final float partialTicks) {
-        GlStateManager.enableAlpha();
-        GlStateManager.pushMatrix();
-        GlStateManager.pushAttrib();
-        (FramebufferShader.framebuffer = setupFrameBuffer(FramebufferShader.framebuffer)).framebufferClear();
-        FramebufferShader.framebuffer.bindFramebuffer(true);
-        entityShadows = mc.gameSettings.entityShadows;
-        mc.gameSettings.entityShadows = false;
-        mc.entityRenderer.setupCameraTransform(mc.getRenderPartialTicks(), 2);
-    }
+//    public void startDraw(final float partialTicks) {
+//        GlStateManager.enableAlpha();
+//        GlStateManager.pushMatrix();
+//        GlStateManager.pushAttrib();
+//        (FramebufferShader.framebuffer = setupFrameBuffer(FramebufferShader.framebuffer)).framebufferClear();
+//        FramebufferShader.framebuffer.bindFramebuffer(true);
+//        entityShadows = mc.gameSettings.entityShadows;
+//        mc.gameSettings.entityShadows = false;
+//        mc.entityRenderer.setupCameraTransform(mc.getRenderPartialTicks(), 2);
+//    }
 
     public void stopDraw() {
         mc.gameSettings.entityShadows = this.entityShadows;
