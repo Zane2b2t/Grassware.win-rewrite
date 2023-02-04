@@ -3,7 +3,7 @@ package me.zane.grassware.features.modules.misc;
 import me.zane.grassware.features.setting.impl.IntSetting;
 import me.zane.grassware.features.setting.impl.BooleanSetting;
 import me.zane.grassware.util.Timer;
-import me.zane.grassware.event.UpdateEvent;
+import me.zane.grassware.event.events.UpdateEvent;
 import me.zane.grassware.features.modules.Module;
 
 import net.minecraft.client.audio.PositionedSoundRecord;
