@@ -8,7 +8,7 @@ public class Timer2 {
 
     public Timer2() {
         current = -1;
-      return Timer;
+      
     }
 
     public final boolean hasReached(final long delay) {
