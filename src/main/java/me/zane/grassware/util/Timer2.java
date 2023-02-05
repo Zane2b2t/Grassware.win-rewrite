@@ -6,8 +6,9 @@ public class Timer2 {
 
     private long current;
 
-    public Timer(); {
+    public Timer() {
         current = -1;
+      return Timer;
     }
 
     public final boolean hasReached(final long delay) {
