@@ -29,8 +29,9 @@ public class NoRender extends Module {
             event.getEntityLivingBase().limbSwingAmount = 0;
             event.getEntityLivingBase().prevLimbSwingAmount = 0;
             event.getEntityLivingBase().swingProgress = 0;
+            
         }
-    });
+    }
 
     @EventListener
     public void onOverlay(final OverlayEvent event) {
