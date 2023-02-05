@@ -22,7 +22,7 @@ public class QuranFacts extends Module {
     private final BooleanSetting sound = register("Sound", true);
     private final BooleanSetting randomize = register("Randomize", false);
 
-    private final Timer delayTimer = new Timer();
+    private final Timer2 delayTimer = new Timer2();
     private final List<String> facts = new LinkedList<>();
 
     public QuranFacts() {
