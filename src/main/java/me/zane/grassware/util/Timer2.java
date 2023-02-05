@@ -6,7 +6,7 @@ public class Timer2 {
 
     private long current;
 
-    public Timer() {
+    public Timer2() {
         current = -1;
       return Timer;
     }
