@@ -1,6 +1,6 @@
 package me.zane.grassware.util;
 
-public class Timer {
+public class Timer2 {
 
     private long current;
 
