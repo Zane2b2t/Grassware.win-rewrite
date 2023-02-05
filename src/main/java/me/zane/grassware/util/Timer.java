@@ -14,6 +14,21 @@ public class Timer implements MC {
     public long getMs(long time) {
         return time / 1000000L;
     }
+    
+    public boolean hasReached(long delay) {
+        return System.currentTimeMillis() - this.current >= delay;
+    }
+    
+        public boolean hasReached(long delay, boolean reset) {
+        if (reset)
+            reset();
+        return System.currentTimeMillis() - this.current >= delay;
+    }
+    
+     public final void reset() {
+        this.current = System.currentTimeMillis();
+    }
+    
 
     public long getTime() {
         return getMs(this.time);
