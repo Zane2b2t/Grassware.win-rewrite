@@ -16,21 +16,20 @@ This project was made for the popular group, Grassers. Hence the name Grassware.
 * alpha432 (client base)
 * [zpisstige](https://github.com/RealzPrestige) (client basev2 + all of the good visuals as now he knows how to use OpenGL and shaders and is an absolute coding god)
 * [Zane2b2t](https://github.com/Zane2b2t) (head developer, pro paster, maintainer)
-* [Hockeyl8](https://github.com/hockeyl8) (Stuff)
+* [Hockeyl8](https://github.com/hockeyl8) (Stuff and error fixes)
 * [Cuubicc](https://github.com/Cuubicc) (Crazy Fixes)
 * [\_kisman_](https://github.com/kisman2000) (Improvd shader stuff)
 * [MrBubblegum](https://github.com/MrBubblegum) (Random Stuff)
 * [Rat2b2t](https://github.com/Rat2b2t) (that one guy that always starts off with the readme)
 * [SirHilarious](https://github.com/SirHilarious) (literally just the Discord RPC)
-* WMS (Insane 5b5t corner clip)
 * ghostlead (removed the backdoors tos the clients)
 * [Paoo2](https://github.com/Paoo2) (Tester)
 ## Features
 * Combat <br>Aura (KillAura), AutoCrystal, Offhand
-* Misc <br>CoordLeaker, SpawnHomeBipass (8b8t)
+* Misc <br>CoordLeaker, SpawnHomeBipass (8b8t), QuranFacts
 * Movement <br>NoSlow, ReverseStep, Speed, Sprint, Step, Velocity, (Soon) HoleSnap
-* Player <br>WallPhase, CornerClip, FakePlayer, AutoFrameDupe (Crash/Broken)
-* Render <br>HoleESP, NameTags, NoRender, PopESP, PortalChams, ShaderESP, StrictLimbs, World
+* Player <br>WallPhase, FakePlayer 
+* Render <br>HoleESP, NameTags, NoRender, PopESP, ShaderESP, World
 * Client <br>ClickGUI, Hud, DiscordRPC
 
 ## Installing
