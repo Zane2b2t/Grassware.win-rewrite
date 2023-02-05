@@ -1,10 +1,12 @@
 package me.zane.grassware.util;
 
+import me.zane.grassware.util.Timer;
+
 public class Timer2 {
 
     private long current;
 
-    public Timer() {
+    public Timer(); {
         current = -1;
     }
 
