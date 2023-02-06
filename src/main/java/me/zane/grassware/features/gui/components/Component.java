@@ -6,8 +6,8 @@ import me.zane.grassware.features.gui.GrassWareGui;
 import me.zane.grassware.features.gui.components.items.Item;
 import me.zane.grassware.features.gui.components.items.buttons.Button;
 import me.zane.grassware.features.modules.client.ClickGui;
-import me.zane.grassware.util.RenderUtil;
 import me.zane.grassware.util.MC;
+import me.zane.grassware.util.RenderUtil;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.init.SoundEvents;
 
@@ -17,12 +17,12 @@ import java.util.ArrayList;
 public class Component extends Feature {
     public static int[] counter1 = new int[]{1};
     private final ArrayList<Item> items = new ArrayList<>();
+    private final int width;
     public boolean drag;
     private int x;
     private int y;
     private int x2;
     private int y2;
-    private final int width;
     private int height;
     private boolean open;
 

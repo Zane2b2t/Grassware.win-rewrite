@@ -2,7 +2,6 @@ package me.zane.grassware.features.modules.render;
 
 import me.zane.grassware.event.bus.EventListener;
 import me.zane.grassware.event.events.*;
-import me.zane.grassware.event.events.*;
 import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.features.modules.client.ClickGui;
 import me.zane.grassware.features.setting.impl.FloatSetting;

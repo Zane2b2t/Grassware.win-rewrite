@@ -16,6 +16,7 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 
 public class AltGui implements MC {
+    private static final Timer typingIconTimer = new Timer();
     public static ArrayList<AltButton> altButtons = new ArrayList<>();
     private static String email = "", password = "";
     private static boolean e = false, p = false, microsoft = false;
@@ -120,9 +121,6 @@ public class AltGui implements MC {
         }
         altButtons = altButtons1;
     }
-
-
-    private static final Timer typingIconTimer = new Timer();
 
     private static String typingIcon() {
         if (typingIconTimer.passedMs(1000)) {

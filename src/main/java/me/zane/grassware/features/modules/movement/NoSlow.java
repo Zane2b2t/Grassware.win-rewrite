@@ -1,11 +1,10 @@
 package me.zane.grassware.features.modules.movement;
 
 import me.zane.grassware.event.bus.EventListener;
-import me.zane.grassware.event.events.PacketEvent;
 import me.zane.grassware.event.events.ItemInputUpdateEvent;
+import me.zane.grassware.event.events.PacketEvent;
 import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.features.setting.impl.BooleanSetting;
-import net.minecraft.network.play.client.CPacketPlayer;
 import net.minecraft.network.play.client.CPacketHeldItemChange;
 import net.minecraft.network.play.client.CPacketPlayerDigging;
 import net.minecraft.util.EnumFacing;
@@ -14,8 +13,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class NoSlow extends Module {
-       private final BooleanSetting strict = register("Strict", false);
-       private final BooleanSetting toobee = register("2b2t", false);
+    private final BooleanSetting strict = register("Strict", false);
+    private final BooleanSetting toobee = register("2b2t", false);
 
     @EventListener
     public void onItemInputUpdate(final ItemInputUpdateEvent event) {

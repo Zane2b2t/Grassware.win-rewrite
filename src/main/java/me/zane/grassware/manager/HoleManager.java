@@ -11,8 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HoleManager implements MC {
-    private ArrayList<HolePos> holes = new ArrayList<>();
-    public String time;
     private final Vec3i[] Hole = {
             new Vec3i(1, 0, 0),
             new Vec3i(-1, 0, 0),
@@ -20,7 +18,6 @@ public class HoleManager implements MC {
             new Vec3i(0, 0, 1),
             new Vec3i(0, 0, -1)
     };
-
     private final Vec3i[] DoubleHoleNorth = {
             new Vec3i(0, 0, -2),
             new Vec3i(-1, 0, -1),
@@ -31,7 +28,6 @@ public class HoleManager implements MC {
             new Vec3i(1, 0, 0),
             new Vec3i(0, 0, 1)
     };
-
     private final Vec3i[] DoubleHoleWest = {
             new Vec3i(-2, 0, 0),
             new Vec3i(-1, 0, 1),
@@ -42,6 +38,8 @@ public class HoleManager implements MC {
             new Vec3i(0, 0, -1),
             new Vec3i(1, 0, 0)
     };
+    public String time;
+    private ArrayList<HolePos> holes = new ArrayList<>();
 
     public void loadHoles(final int range) {
         if (mc.world == null || mc.player == null) {
@@ -156,6 +154,15 @@ public class HoleManager implements MC {
         return holes;
     }
 
+    public enum Type {
+        Bedrock,
+        Obsidian,
+        DoubleBedrockNorth,
+        DoubleBedrockWest,
+        DoubleObsidianNorth,
+        DoubleObsidianWest
+    }
+
     public static class HolePos {
         private final BlockPos pos;
         private final Type holeType;
@@ -184,14 +191,5 @@ public class HoleManager implements MC {
         public boolean isDouble() {
             return holeType.equals(HoleManager.Type.DoubleBedrockNorth) || holeType.equals(Type.DoubleBedrockWest) || holeType.equals(Type.DoubleObsidianNorth) || holeType.equals(Type.DoubleObsidianWest);
         }
-    }
-
-    public enum Type {
-        Bedrock,
-        Obsidian,
-        DoubleBedrockNorth,
-        DoubleBedrockWest,
-        DoubleObsidianNorth,
-        DoubleObsidianWest
     }
 }

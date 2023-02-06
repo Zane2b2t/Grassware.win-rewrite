@@ -4,6 +4,7 @@ import me.zane.grassware.event.bus.Event;
 
 public final class UpdateEvent extends Event {
 
-    public UpdateEvent() {}
+    public UpdateEvent() {
+    }
 
 }

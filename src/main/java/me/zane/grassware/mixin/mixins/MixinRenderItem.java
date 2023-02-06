@@ -1,4 +1,3 @@
-
 package me.zane.grassware.mixin.mixins;
 
 //import me.zane.grassware.GrassWare;
@@ -20,12 +19,12 @@ package me.zane.grassware.mixin.mixins;
 
 //@Mixin(value={RenderItem.class})
 //public class MixinRenderItem {
-    //@Shadow
-    //private void renderModel(IBakedModel model, int color, ItemStack stack) {
-    //}
+//@Shadow
+//private void renderModel(IBakedModel model, int color, ItemStack stack) {
+//}
 
-    //@ModifyArg(method={"renderEffect"}, at=@At(value="INVOKE", target="net/minecraft/client/renderer/RenderItem.renderModel(Lnet/minecraft/client/renderer/block/model/IBakedModel;I)V"), index=1)
-    //private int renderEffect(int oldValue) {
-    //return;
-  //  }
+//@ModifyArg(method={"renderEffect"}, at=@At(value="INVOKE", target="net/minecraft/client/renderer/RenderItem.renderModel(Lnet/minecraft/client/renderer/block/model/IBakedModel;I)V"), index=1)
+//private int renderEffect(int oldValue) {
+//return;
+//  }
 //}

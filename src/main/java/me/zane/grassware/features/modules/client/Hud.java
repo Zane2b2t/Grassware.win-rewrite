@@ -2,7 +2,9 @@ package me.zane.grassware.features.modules.client;
 
 import me.zane.grassware.GrassWare;
 import me.zane.grassware.event.bus.EventListener;
-import me.zane.grassware.event.events.*;
+import me.zane.grassware.event.events.Render2DEvent;
+import me.zane.grassware.event.events.RenderHotbarEvent;
+import me.zane.grassware.event.events.RenderPotionEffectsEvent;
 import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.features.setting.impl.BooleanSetting;
 import me.zane.grassware.manager.EventManager;
@@ -10,9 +12,6 @@ import me.zane.grassware.shader.impl.BlackShader;
 import me.zane.grassware.shader.impl.GradientShader;
 import me.zane.grassware.util.MathUtil;
 import me.zane.grassware.util.RenderUtil;
-import me.zane.grassware.event.events.Render2DEvent;
-import me.zane.grassware.event.events.RenderHotbarEvent;
-import me.zane.grassware.event.events.RenderPotionEffectsEvent;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.item.ItemStack;
@@ -40,8 +39,8 @@ public class Hud extends Module {
             final String text = "Welcome to " + GrassWare.MODNAME + " " + GrassWare.MODVER + ", " + mc.player.getName() + "!";
             registerHudText(text, event.scaledResolution.getScaledWidth() / 2.0f - GrassWare.textManager.stringWidth(text) / 2.0f, 0.0f, false);
         }
-       
-            
+
+
         if (moduleList.getValue()) {
             GrassWare.moduleManager.modules.stream().filter(module -> module.isEnabled() && !modules.contains(module)).forEach(modules::add);
             modules.sort(Comparator.comparing(Module::totalStringWidth));

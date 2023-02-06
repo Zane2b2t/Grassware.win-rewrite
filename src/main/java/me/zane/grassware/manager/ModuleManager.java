@@ -8,8 +8,13 @@ import org.lwjgl.input.Keyboard;
 import java.util.*;
 
 public class ModuleManager extends Feature {
-    public ArrayList<Module> modules = new ArrayList<>();
     private static final LinkedHashMap<String, Module> modulesNameMap = new LinkedHashMap<>();
+    public ArrayList<Module> modules = new ArrayList<>();
+
+    public static Module getModule(String name) {
+        if (name == null) return null;
+        return modulesNameMap.get(name.toLowerCase(Locale.ROOT));
+    }
 
     public void init() {
         try {
@@ -46,10 +51,6 @@ public class ModuleManager extends Feature {
 
     public List<Module.Category> getCategories() {
         return Arrays.asList(Module.Category.values());
-    }
-    public static Module getModule(String name) {
-        if (name == null) return null;
-        return modulesNameMap.get(name.toLowerCase(Locale.ROOT));
     }
 
     public void onKeyPressed(int eventKey) {

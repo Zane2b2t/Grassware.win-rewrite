@@ -14,7 +14,6 @@ import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.player.EntityPlayer;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL11.glPopMatrix;
 
 public class ShaderESP extends Module {
     private final FloatSetting opacity = register("Opacity", 0.5f, 0.1f, 1.0f);

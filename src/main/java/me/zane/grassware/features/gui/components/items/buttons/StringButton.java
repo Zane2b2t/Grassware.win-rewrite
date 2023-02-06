@@ -14,8 +14,10 @@ import java.awt.*;
 
 public class StringButton extends Button {
     private final StringSetting setting;
+    private final Timer idleTimer = new Timer();
     public boolean isListening;
     private CurrentString currentString = new CurrentString("");
+    private boolean idling;
 
     public StringButton(StringSetting setting) {
         super(setting.getName());
@@ -102,9 +104,6 @@ public class StringButton extends Button {
     public void setString(String newString) {
         currentString = new CurrentString(newString);
     }
-
-    private final Timer idleTimer = new Timer();
-    private boolean idling;
 
     public String typingIcon() {
         if (idleTimer.passedMs(500L)) {

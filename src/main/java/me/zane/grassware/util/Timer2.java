@@ -1,14 +1,12 @@
 package me.zane.grassware.util;
 
-import me.zane.grassware.util.Timer;
-
 public class Timer2 {
 
     private long current;
 
     public Timer2() {
         current = -1;
-      
+
     }
 
     public final boolean hasReached(final long delay) {

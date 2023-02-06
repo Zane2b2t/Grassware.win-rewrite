@@ -4,7 +4,6 @@ import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.features.setting.Setting;
 import me.zane.grassware.features.setting.impl.*;
 import me.zane.grassware.util.MC;
-import me.zane.grassware.features.setting.impl.*;
 
 import java.util.ArrayList;
 import java.util.List;

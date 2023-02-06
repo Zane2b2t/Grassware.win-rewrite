@@ -4,7 +4,6 @@ import me.zane.grassware.GrassWare;
 import me.zane.grassware.event.bus.EventListener;
 import me.zane.grassware.event.events.PacketEvent;
 import me.zane.grassware.event.events.Render3DEvent;
-import me.zane.grassware.event.events.TickEvent;
 import me.zane.grassware.event.events.UpdatePlayerWalkingEvent;
 import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.features.setting.impl.BooleanSetting;
@@ -12,9 +11,8 @@ import me.zane.grassware.features.setting.impl.FloatSetting;
 import me.zane.grassware.features.setting.impl.ModeSetting;
 import me.zane.grassware.shader.impl.GradientShader;
 import me.zane.grassware.util.BlockUtil;
-import me.zane.grassware.util.RenderUtil;
 import me.zane.grassware.util.MC;
-
+import me.zane.grassware.util.RenderUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.player.EntityPlayer;
@@ -48,21 +46,21 @@ public class AutoCrystal extends Module {
     private final ModeSetting setDead = register("Set Dead", "Set Dead", Arrays.asList("None", "Set Dead", "Remove", "Both"));
     private final BooleanSetting fastRemove = register("Fast Remove", false);
     private final FloatSetting opacity = register("Opacity", 0.5f, 0.1f, 1.0f);
+    private final Map<Integer, Long> breakMap = new ConcurrentHashMap<>();
     private BlockPos placedPos;
     private long placeTime;
     private long breakTime;
-    private final Map<Integer, Long> breakMap = new ConcurrentHashMap<>();
 
     @EventListener
 
     public void onUpdate(final UpdatePlayerWalkingEvent event) {
         final EntityPlayer entityPlayer = target(targetRange.getValue());
-        if(entityPlayer == null){
+        if (entityPlayer == null) {
             placedPos = null;
             return;
         }
 
-        if(System.currentTimeMillis() - placeTime > placeDelay.getValue()){
+        if (System.currentTimeMillis() - placeTime > placeDelay.getValue()) {
             final EnumHand enumHand = MC.mc.player.getHeldItem(EnumHand.MAIN_HAND).getItem().equals(Items.END_CRYSTAL) ? EnumHand.MAIN_HAND : MC.mc.player.getHeldItem(EnumHand.OFF_HAND).getItem().equals(Items.END_CRYSTAL) ? EnumHand.OFF_HAND : null;
             if (enumHand != null) {
                 final BlockPos pos = pos(entityPlayer);
@@ -74,12 +72,12 @@ public class AutoCrystal extends Module {
                     placedPos = pos;
                     placeTime = System.currentTimeMillis();
                 }
-                if(pos == null)
+                if (pos == null)
                     placedPos = null;
             }
         }
 
-        if(System.currentTimeMillis() - breakTime > breakDelay.getValue()){
+        if (System.currentTimeMillis() - breakTime > breakDelay.getValue()) {
             final EntityEnderCrystal entityEnderCrystal = crystal(entityPlayer);
             if (entityEnderCrystal != null) {
                 if (MC.mc.getConnection() != null) {
@@ -90,7 +88,7 @@ public class AutoCrystal extends Module {
                 breakTime = System.currentTimeMillis();
                 try {
                     breakMap.put(entityEnderCrystal.getEntityId(), System.currentTimeMillis());
-                } catch (Exception ignored){
+                } catch (Exception ignored) {
                 }
             }
         }
@@ -101,16 +99,16 @@ public class AutoCrystal extends Module {
     }
 
     @EventListener
-    public void onPacketReceive(PacketEvent.Receive event){
-        if(event.getPacket() instanceof SPacketSpawnObject && breakMode.getValue().equals("Adaptive")){
+    public void onPacketReceive(PacketEvent.Receive event) {
+        if (event.getPacket() instanceof SPacketSpawnObject && breakMode.getValue().equals("Adaptive")) {
             SPacketSpawnObject packet = event.getPacket();
-            if(packet.getType() != 51 || !(mc.world.getEntityByID(packet.getEntityID()) instanceof EntityEnderCrystal))
+            if (packet.getType() != 51 || !(mc.world.getEntityByID(packet.getEntityID()) instanceof EntityEnderCrystal))
                 return;
             EntityEnderCrystal crystal = (EntityEnderCrystal) mc.world.getEntityByID(packet.getEntityID());
-            if(crystal == null)
+            if (crystal == null)
                 return;
             final EntityPlayer entityPlayer = target(targetRange.getValue());
-            if(entityPlayer == null)
+            if (entityPlayer == null)
                 return;
             final float selfDamage = BlockUtil.calculateEntityDamage(crystal, MC.mc.player);
             if (selfDamage > maximumDamage.getValue()) {
@@ -131,32 +129,32 @@ public class AutoCrystal extends Module {
             breakTime = System.currentTimeMillis();
             try {
                 breakMap.put(crystal.getEntityId(), System.currentTimeMillis());
-            } catch (Exception ignored){
+            } catch (Exception ignored) {
             }
         }
-        if(event.getPacket() instanceof SPacketDestroyEntities){
+        if (event.getPacket() instanceof SPacketDestroyEntities) {
             SPacketDestroyEntities packet = event.getPacket();
-            for(int id : packet.getEntityIDs()){
+            for (int id : packet.getEntityIDs()) {
                 try {
-                    if(breakMap.containsKey(id) && breakMap.get(id) > 1500){
+                    if (breakMap.containsKey(id) && breakMap.get(id) > 1500) {
                         breakMap.remove(id);
                         continue;
                     }
-                    if(!fastRemove.getValue()) continue;
-                    if(!breakMap.containsKey(id)) continue;
+                    if (!fastRemove.getValue()) continue;
+                    if (!breakMap.containsKey(id)) continue;
                     mc.world.removeEntityFromWorld(id);
-                } catch (Exception ignored){
+                } catch (Exception ignored) {
                 }
             }
         }
     }
 
-    private void handleSetDead(EntityEnderCrystal crystal){
-        if(setDead.getValue().equals("None"))
+    private void handleSetDead(EntityEnderCrystal crystal) {
+        if (setDead.getValue().equals("None"))
             return;
-        if(setDead.getValue().equals("Set Dead") || setDead.getValue().equals("Both"))
+        if (setDead.getValue().equals("Set Dead") || setDead.getValue().equals("Both"))
             crystal.setDead();
-        if(setDead.getValue().equals("Remove") || setDead.getValue().equals("Both"))
+        if (setDead.getValue().equals("Remove") || setDead.getValue().equals("Both"))
             mc.world.removeEntity(crystal);
     }
 
@@ -196,8 +194,8 @@ public class AutoCrystal extends Module {
         return null;
     }
 
-    private float breakRange(Entity entity){
-        if(mc.player.canEntityBeSeen(entity))
+    private float breakRange(Entity entity) {
+        if (mc.player.canEntityBeSeen(entity))
             return breakRange.getValue();
         return breakWallRange.getValue();
     }
@@ -206,8 +204,8 @@ public class AutoCrystal extends Module {
         final TreeMap<Float, BlockPos> map = new TreeMap<>();
 
         BlockUtil.getBlocksInRadius(targetRange.getValue()).stream().filter(BlockUtil::valid).forEach(pos -> {
-            if(mc.world.rayTraceBlocks(mc.player.getPositionVector().add(0, mc.player.eyeHeight, 0), new Vec3d(pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5), false, true, false) != null){
-                if(mc.player.getDistance(pos.getX() + 0.5, pos.getY()+ 0.5, pos.getZ() + 0.5) > placeWallRange.getValue())
+            if (mc.world.rayTraceBlocks(mc.player.getPositionVector().add(0, mc.player.eyeHeight, 0), new Vec3d(pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5), false, true, false) != null) {
+                if (mc.player.getDistance(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5) > placeWallRange.getValue())
                     return;
             }
             if (Math.sqrt(MC.mc.player.getDistanceSq(pos)) > placeRange.getValue()) {
@@ -241,7 +239,7 @@ public class AutoCrystal extends Module {
     private EntityPlayer target(final float range) {
         final TreeMap<Float, EntityPlayer> map = new TreeMap<>();
         mc.world.playerEntities.stream().filter(e -> !e.equals(mc.player) && !e.isDead).forEach(entityPlayer -> {
-            if(entityPlayer.getHealth() <= 0)
+            if (entityPlayer.getHealth() <= 0)
                 return;
             final float distance = entityPlayer.getDistance(mc.player);
             if (distance < range && !GrassWare.friendManager.isFriend(entityPlayer.getName())) {

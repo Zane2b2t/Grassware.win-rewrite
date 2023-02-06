@@ -1,16 +1,12 @@
 package me.zane.grassware.features.modules.misc;
 
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-
 import com.mojang.realmsclient.gui.ChatFormatting;
-import me.zane.grassware.features.command.Command;
-
 import me.zane.grassware.features.command.Command;
 import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.features.setting.impl.StringSetting;
-import net.minecraft.network.play.client.CPacketChatMessage;
 import me.zane.grassware.util.Util;
-
+import net.minecraft.network.play.client.CPacketChatMessage;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 
 public class SpawnHomeBipass extends Module {

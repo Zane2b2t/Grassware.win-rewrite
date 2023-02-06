@@ -1,15 +1,14 @@
 package me.zane.grassware.features.modules.render;
 
 import me.zane.grassware.event.bus.EventListener;
-import me.zane.grassware.event.events.*;
-import me.zane.grassware.features.modules.Module;
-import me.zane.grassware.features.setting.impl.BooleanSetting;
-import me.zane.grassware.features.setting.impl.FloatSetting;
-import me.zane.grassware.features.setting.impl.IntSetting;
 import me.zane.grassware.event.events.ChunkLoadEvent;
 import me.zane.grassware.event.events.PacketEvent;
 import me.zane.grassware.event.events.ParticleEvent;
 import me.zane.grassware.event.events.Render3DEvent;
+import me.zane.grassware.features.modules.Module;
+import me.zane.grassware.features.setting.impl.BooleanSetting;
+import me.zane.grassware.features.setting.impl.FloatSetting;
+import me.zane.grassware.features.setting.impl.IntSetting;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.network.play.server.SPacketEffect;
 

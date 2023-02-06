@@ -7,8 +7,6 @@ import me.zane.grassware.event.events.RenderLivingEntityEvent;
 import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.features.setting.impl.BooleanSetting;
 
-import net.minecraftforge.fml.common.eventhandler.Event;
-
 
 public class NoRender extends Module {
     private final BooleanSetting hurtCam = register("HurtCam", false);
@@ -21,7 +19,7 @@ public class NoRender extends Module {
             event.setCancelled(true);
         }
     }
-    
+
     @EventListener
     private void onRenderLivingEntity(final RenderLivingEntityEvent event) {
         if (strictLimbs.getValue()) {
@@ -29,7 +27,7 @@ public class NoRender extends Module {
             event.getEntityLivingBase().limbSwingAmount = 0;
             event.getEntityLivingBase().prevLimbSwingAmount = 0;
             event.getEntityLivingBase().swingProgress = 0;
-            
+
         }
     }
 

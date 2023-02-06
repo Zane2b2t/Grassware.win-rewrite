@@ -1,9 +1,11 @@
 package me.zane.grassware.shader;
 
 import me.zane.grassware.util.MC;
-import net.minecraft.util.ResourceLocation;
 import org.apache.commons.io.IOUtils;
-import org.lwjgl.opengl.*;
+import org.lwjgl.opengl.ARBFragmentShader;
+import org.lwjgl.opengl.ARBShaderObjects;
+import org.lwjgl.opengl.ARBVertexShader;
+import org.lwjgl.opengl.GL11;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -16,16 +18,16 @@ public class ShaderUtil implements MC {
 
     public ShaderUtil(final String fragmentShaderLoc) {
         int fragmentShaderID = 0;
-	int vertexShaderID = 0;
-	    
-        try {
-		InputStream vertexStream = this.getClass().getResourceAsStream("/assets/minecraft/textures/shaders/vertex.vsh");
-		vertexShaderID = createShader(IOUtils.toString(vertexStream), ARBVertexShader.GL_VERTEX_SHADER_ARB);
+        int vertexShaderID = 0;
 
-            	InputStream fragmentStream = this.getClass().getResourceAsStream(fragmentShaderLoc);
-            	fragmentShaderID = createShader(IOUtils.toString(fragmentStream), ARBFragmentShader.GL_FRAGMENT_SHADER_ARB);
+        try {
+            InputStream vertexStream = this.getClass().getResourceAsStream("/assets/minecraft/textures/shaders/vertex.vsh");
+            vertexShaderID = createShader(IOUtils.toString(vertexStream), ARBVertexShader.GL_VERTEX_SHADER_ARB);
+
+            InputStream fragmentStream = this.getClass().getResourceAsStream(fragmentShaderLoc);
+            fragmentShaderID = createShader(IOUtils.toString(fragmentStream), ARBFragmentShader.GL_FRAGMENT_SHADER_ARB);
         } catch (Exception e) {
-		e.printStackTrace();
+            e.printStackTrace();
         }
 
         if (vertexShaderID == 0 || fragmentShaderID == 0) throw new IllegalStateException("Shader failed to link!!");
@@ -40,6 +42,20 @@ public class ShaderUtil implements MC {
         this.programID = program;
     }
 
+    public static String readInputStream(final InputStream inputStream) {
+        final StringBuilder stringBuilder = new StringBuilder();
+        try {
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+            String line;
+            while ((line = bufferedReader.readLine()) != null)
+                stringBuilder.append(line).append('\n');
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return stringBuilder.toString();
+    }
+
     public void init() {
         glUseProgram(programID);
     }
@@ -47,7 +63,6 @@ public class ShaderUtil implements MC {
     public void unload() {
         glUseProgram(0);
     }
-
 
     public void setUniformf(final String name, final float... args) {
         final int loc = glGetUniformLocation(programID, name);
@@ -75,11 +90,11 @@ public class ShaderUtil implements MC {
             glUniform1i(loc, args[0]);
         }
     }
-    
+
     public String getLogInfo(int i) {
         return ARBShaderObjects.glGetInfoLogARB(i, ARBShaderObjects.glGetObjectParameteriARB(i, ARBShaderObjects.GL_OBJECT_INFO_LOG_LENGTH_ARB));
     }
-    
+
     public int createShader(String shaderSource, int shaderType) {
         int shader = 0;
         try {
@@ -87,26 +102,12 @@ public class ShaderUtil implements MC {
             if (shader == 0) return 0;
             ARBShaderObjects.glShaderSourceARB(shader, shaderSource);
             ARBShaderObjects.glCompileShaderARB(shader);
-            if (ARBShaderObjects.glGetObjectParameteriARB(shader, ARBShaderObjects.GL_OBJECT_COMPILE_STATUS_ARB) == GL11.GL_FALSE) throw new RuntimeException("Error creating shader: " + this.getLogInfo(shader));
+            if (ARBShaderObjects.glGetObjectParameteriARB(shader, ARBShaderObjects.GL_OBJECT_COMPILE_STATUS_ARB) == GL11.GL_FALSE)
+                throw new RuntimeException("Error creating shader: " + this.getLogInfo(shader));
             return shader;
         } catch (Exception e) {
             ARBShaderObjects.glDeleteObjectARB(shader);
             throw e;
         }
-    }
-
-
-    public static String readInputStream(final InputStream inputStream) {
-        final StringBuilder stringBuilder = new StringBuilder();
-        try {
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-            String line;
-            while ((line = bufferedReader.readLine()) != null)
-                stringBuilder.append(line).append('\n');
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return stringBuilder.toString();
     }
 }

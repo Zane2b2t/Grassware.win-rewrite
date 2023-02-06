@@ -9,9 +9,8 @@ public class CoordLeaker extends Module {
 
 
     @Override
-    public
-    void onEnable() {
-        
+    public void onEnable() {
+
         Util.mc.player.connection.sendPacket(new CPacketChatMessage("lol my coords are: " + Math.floor(Util.mc.player.posX) + ", " + Math.floor(Util.mc.player.posY) + ", " + Math.floor(Util.mc.player.posZ) + "! come and kill me."));
     }
 }

@@ -6,9 +6,6 @@ import me.zane.grassware.features.Feature;
 import me.zane.grassware.features.command.Command;
 import me.zane.grassware.features.setting.impl.BindSetting;
 import me.zane.grassware.features.setting.impl.BooleanSetting;
-import me.zane.grassware.event.events.ClientEvent;
-import me.zane.grassware.event.events.Render3DEvent;
-import me.zane.grassware.event.events.Render2DEvent;
 
 
 public class Module extends Feature {
@@ -37,7 +34,6 @@ public class Module extends Feature {
     }
 
 
-   
     public void enable() {
         if (!enabled.getValue()) {
             GrassWare.eventBus.registerListener(this);
@@ -53,7 +49,7 @@ public class Module extends Feature {
             GrassWare.eventBus.unregisterListener(this);
             onToggle();
             onDisable();
-           Command.sendRemovableMessage(ChatFormatting.WHITE + name + " Turned " + ChatFormatting.RED + "OFF", 1);
+            Command.sendRemovableMessage(ChatFormatting.WHITE + name + " Turned " + ChatFormatting.RED + "OFF", 1);
             enabled.invokeValue(false);
         }
     }
@@ -73,11 +69,6 @@ public class Module extends Feature {
         return this;
     }
 
-    public Module setCategory(final Category category) {
-        this.category = category;
-        return this;
-    }
-
     public float totalStringWidth() {
         return stringWidth() + infoWidth();
     }
@@ -88,6 +79,11 @@ public class Module extends Feature {
 
     public Category getCategory() {
         return category;
+    }
+
+    public Module setCategory(final Category category) {
+        this.category = category;
+        return this;
     }
 
     public int getBind() {

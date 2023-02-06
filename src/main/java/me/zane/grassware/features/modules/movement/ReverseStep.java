@@ -1,13 +1,12 @@
 package me.zane.grassware.features.modules.movement;
 
-import me.zane.grassware.features.setting.impl.FloatSetting;
 import me.zane.grassware.event.bus.EventListener;
 import me.zane.grassware.event.events.TickEvent;
 import me.zane.grassware.features.modules.Module;
-import net.minecraft.client.settings.KeyBinding;
+import me.zane.grassware.features.setting.impl.FloatSetting;
 
 public class ReverseStep extends Module {
-private final FloatSetting fallSpeed = register("FallSpeed", 2.0f, 1.0f, 50.0f);
+    private final FloatSetting fallSpeed = register("FallSpeed", 2.0f, 1.0f, 50.0f);
 
     @EventListener
     public void onTick(final TickEvent event) {

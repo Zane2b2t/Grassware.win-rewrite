@@ -1,5 +1,7 @@
 package me.zane.grassware.util;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -8,14 +10,21 @@ import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.MobEffects;
+import net.minecraft.network.play.client.CPacketEntityAction;
+import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock;
 import net.minecraft.util.CombatRules;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Explosion;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 public class BlockUtil implements MC {
 
@@ -45,6 +54,19 @@ public class BlockUtil implements MC {
         return calculatePosDamage(position.getX() + 0.5, position.getY() + 1.0, position.getZ() + 0.5, entityPlayer);
     }
 
+    public static void rightClickBlock(BlockPos pos, Vec3d vec, EnumHand hand, EnumFacing direction, boolean packet) {
+        if (packet) {
+            float f = (float) (vec.x - (double) pos.getX());
+            float f1 = (float) (vec.y - (double) pos.getY());
+            float f2 = (float) (vec.z - (double) pos.getZ());
+            mc.player.connection.sendPacket(new CPacketPlayerTryUseItemOnBlock(pos, direction, hand, f, f1, f2));
+        } else {
+            mc.playerController.processRightClickBlock(mc.player, mc.world, pos, direction, vec, hand);
+        }
+        mc.player.swingArm(EnumHand.MAIN_HAND);
+        mc.rightClickDelayTimer = 4;
+    }
+
     @SuppressWarnings("ConstantConditions")
     public static float calculatePosDamage(final double posX, final double posY, final double posZ, final Entity entity) {
         final float doubleSize = 12.0F;
@@ -60,6 +82,52 @@ public class BlockUtil implements MC {
         }
 
         return (float) finalDamage;
+    }
+
+    public static boolean placeBlock(BlockPos pos, EnumHand hand, boolean packet, boolean isSneaking) {
+        boolean sneaking = false;
+        EnumFacing side = BlockUtil.getFirstFacing(pos);
+        if (side == null) {
+            return isSneaking;
+        }
+        List<Block> blackList = Arrays.asList(Blocks.ENDER_CHEST, Blocks.CHEST, Blocks.TRAPPED_CHEST, Blocks.CRAFTING_TABLE, Blocks.ANVIL, Blocks.BREWING_STAND, Blocks.HOPPER, Blocks.DROPPER, Blocks.DISPENSER, Blocks.TRAPDOOR, Blocks.ENCHANTING_TABLE);
+        List<Block> shulkerList = Arrays.asList(Blocks.WHITE_SHULKER_BOX, Blocks.ORANGE_SHULKER_BOX, Blocks.MAGENTA_SHULKER_BOX, Blocks.LIGHT_BLUE_SHULKER_BOX, Blocks.YELLOW_SHULKER_BOX, Blocks.LIME_SHULKER_BOX, Blocks.PINK_SHULKER_BOX, Blocks.GRAY_SHULKER_BOX, Blocks.SILVER_SHULKER_BOX, Blocks.CYAN_SHULKER_BOX, Blocks.PURPLE_SHULKER_BOX, Blocks.BLUE_SHULKER_BOX, Blocks.BROWN_SHULKER_BOX, Blocks.GREEN_SHULKER_BOX, Blocks.RED_SHULKER_BOX, Blocks.BLACK_SHULKER_BOX);
+        BlockPos neighbour = pos.offset(side);
+        EnumFacing opposite = side.getOpposite();
+        Vec3d hitVec = new Vec3d(neighbour).add(0.5, 0.5, 0.5).add(new Vec3d(opposite.getDirectionVec()).scale(0.5));
+        Block neighbourBlock = BlockUtil.mc.world.getBlockState(neighbour).getBlock();
+        if (!BlockUtil.mc.player.isSneaking() && (blackList.contains(neighbourBlock) || shulkerList.contains(neighbourBlock))) {
+            BlockUtil.mc.player.connection.sendPacket(new CPacketEntityAction(BlockUtil.mc.player, CPacketEntityAction.Action.START_SNEAKING));
+            BlockUtil.mc.player.setSneaking(true);
+            sneaking = true;
+        }
+        BlockUtil.rightClickBlock(neighbour, hitVec, hand, opposite, packet);
+        BlockUtil.mc.player.swingArm(EnumHand.MAIN_HAND);
+        BlockUtil.mc.rightClickDelayTimer = 4;
+        return sneaking || isSneaking;
+    }
+
+    public static List<EnumFacing> getPossibleSides(BlockPos pos) {
+        ArrayList<EnumFacing> facings = new ArrayList<>();
+        if (mc.world == null || pos == null) {
+            return facings;
+        }
+        for (EnumFacing side : EnumFacing.values()) {
+            BlockPos neighbour = pos.offset(side);
+            IBlockState blockState = mc.world.getBlockState(neighbour);
+            if (!blockState.getBlock().canCollideCheck(blockState, false) || blockState.getMaterial().isReplaceable())
+                continue;
+            facings.add(side);
+        }
+        return facings;
+    }
+
+    public static EnumFacing getFirstFacing(BlockPos pos) {
+        Iterator<EnumFacing> iterator = BlockUtil.getPossibleSides(pos).iterator();
+        if (iterator.hasNext()) {
+            return iterator.next();
+        }
+        return null;
     }
 
     private static float getMultipliedDamage(final float damage) {

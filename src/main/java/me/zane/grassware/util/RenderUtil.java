@@ -2,8 +2,7 @@ package me.zane.grassware.util;
 
 import me.zane.grassware.features.modules.client.ClickGui;
 import me.zane.grassware.shader.impl.GradientShader;
-import net.minecraft.client.renderer.*;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
@@ -39,7 +38,7 @@ public class RenderUtil implements MC {
         final AxisAlignedBB bb = new AxisAlignedBB(pos);
         outlineShader(bb.minX, bb.minY, bb.minZ, bb.maxX, bb.maxY, bb.maxZ);
     }
-    
+
 
     public static void outlineShader(final double minX, final double minY, final double minZ, final double maxX, final double maxY, final double maxZ) {
         final AxisAlignedBB bb = new AxisAlignedBB(minX, minY, minZ, maxX, maxY, maxZ).offset(RenderUtil.renderOffset());

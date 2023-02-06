@@ -4,7 +4,6 @@ import com.mojang.realmsclient.gui.ChatFormatting;
 import me.zane.grassware.features.Feature;
 import me.zane.grassware.features.command.Command;
 import me.zane.grassware.features.command.commands.*;
-import me.zane.grassware.features.command.commands.*;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

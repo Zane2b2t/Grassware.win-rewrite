@@ -8,7 +8,6 @@ import me.zane.grassware.features.modules.client.ClickGui;
 import me.zane.grassware.features.setting.Setting;
 import me.zane.grassware.features.setting.impl.*;
 import me.zane.grassware.util.MC;
-import me.zane.grassware.features.setting.impl.*;
 
 import java.io.*;
 import java.nio.file.Files;

@@ -5,7 +5,6 @@ import me.zane.grassware.features.gui.components.items.Item;
 import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.features.setting.Setting;
 import me.zane.grassware.features.setting.impl.*;
-import me.zane.grassware.features.setting.impl.*;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.init.SoundEvents;
 

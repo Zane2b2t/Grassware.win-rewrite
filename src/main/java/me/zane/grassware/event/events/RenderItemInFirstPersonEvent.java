@@ -1,7 +1,6 @@
 package me.zane.grassware.event.events;
 
 import me.zane.grassware.event.bus.Event;
-
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;

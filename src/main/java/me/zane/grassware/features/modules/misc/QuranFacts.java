@@ -4,13 +4,12 @@ import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.features.setting.impl.BooleanSetting;
 import me.zane.grassware.features.setting.impl.IntSetting;
 import me.zane.grassware.util.Timer;
-
 import net.minecraft.network.play.client.CPacketChatMessage;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 
 public class QuranFacts
-extends Module {
+        extends Module {
     private final IntSetting delay = register("Seconds Delay", 7, 1, 20);
     private final BooleanSetting packetMessage = register("Packet Message", false);
     public Timer timer = new Timer();
@@ -189,7 +188,6 @@ extends Module {
             }
             ++this.messageCount;
             this.timer.reset();
-            return;
         }
     }
 }

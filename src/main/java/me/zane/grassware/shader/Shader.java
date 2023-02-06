@@ -1,11 +1,14 @@
 package me.zane.grassware.shader;
 
 import org.apache.commons.io.IOUtils;
-import org.lwjgl.opengl.*;
+import org.lwjgl.opengl.ARBShaderObjects;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL20;
 
 import java.io.InputStream;
 import java.nio.charset.Charset;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public abstract class Shader {
     public int program;
@@ -21,8 +24,7 @@ public abstract class Shader {
             final InputStream fragmentStream = this.getClass().getResourceAsStream("/assets/hockeyware/shaders/shaderChams/fragment/" + fragmentShader);
             fragmentShaderID = this.createShader(IOUtils.toString(fragmentStream, Charset.defaultCharset()), 35632);
             IOUtils.closeQuietly(fragmentStream);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return;
         }
@@ -54,8 +56,11 @@ public abstract class Shader {
         GL11.glPopMatrix();
     }
 
-    public void setupUniforms() {}
-    public void updateUniforms() {}
+    public void setupUniforms() {
+    }
+
+    public void updateUniforms() {
+    }
 
     public int createShader(final String shaderSource, final int shaderType) {
         int shader = 0;
@@ -64,7 +69,8 @@ public abstract class Shader {
             if (shader == 0) return 0;
             ARBShaderObjects.glShaderSourceARB(shader, shaderSource);
             ARBShaderObjects.glCompileShaderARB(shader);
-            if (ARBShaderObjects.glGetObjectParameteriARB(shader, 35713) == 0) throw new RuntimeException("Error creating shader: " + this.getLogInfo(shader));
+            if (ARBShaderObjects.glGetObjectParameteriARB(shader, 35713) == 0)
+                throw new RuntimeException("Error creating shader: " + this.getLogInfo(shader));
             return shader;
         } catch (Exception e) {
             ARBShaderObjects.glDeleteObjectARB(shader);

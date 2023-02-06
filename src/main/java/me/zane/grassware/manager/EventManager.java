@@ -5,7 +5,6 @@ import me.zane.grassware.GrassWare;
 import me.zane.grassware.event.events.*;
 import me.zane.grassware.features.Feature;
 import me.zane.grassware.features.command.Command;
-import me.zane.grassware.event.events.*;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;

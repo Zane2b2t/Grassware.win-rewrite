@@ -35,14 +35,29 @@ typedef struct DiscordUser {
 /**
  * Struct binding for a discord join request.
  */
-public class DiscordUser extends Structure
-{
+public class DiscordUser extends Structure {
     private static final List<String> FIELD_ORDER = Collections.unmodifiableList(Arrays.asList(
             "userId",
             "username",
             "discriminator",
             "avatar"
     ));
+    /**
+     * The userId for the user that requests to join
+     */
+    public String userId;
+    /**
+     * The username of the user that requests to join
+     */
+    public String username;
+    /**
+     * The discriminator of the user that requests to join
+     */
+    public String discriminator;
+    /**
+     * The avatar of the user that requests to join
+     */
+    public String avatar;
 
     public DiscordUser(String encoding) {
         super();
@@ -53,29 +68,8 @@ public class DiscordUser extends Structure
         this("UTF-8");
     }
 
-    /**
-     * The userId for the user that requests to join
-     */
-    public String userId;
-
-    /**
-     * The username of the user that requests to join
-     */
-    public String username;
-
-    /**
-     * The discriminator of the user that requests to join
-     */
-    public String discriminator;
-
-    /**
-     * The avatar of the user that requests to join
-     */
-    public String avatar;
-
     @Override
-    public boolean equals(Object o)
-    {
+    public boolean equals(Object o) {
         if (this == o)
             return true;
         if (!(o instanceof DiscordUser))
@@ -88,14 +82,12 @@ public class DiscordUser extends Structure
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return Objects.hash(userId, username, discriminator, avatar);
     }
 
     @Override
-    protected List<String> getFieldOrder()
-    {
+    protected List<String> getFieldOrder() {
         return FIELD_ORDER;
     }
 }

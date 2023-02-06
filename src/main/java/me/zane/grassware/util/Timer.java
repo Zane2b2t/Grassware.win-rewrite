@@ -5,23 +5,23 @@ import net.minecraft.util.math.MathHelper;
 public class Timer implements MC {
     private long time = -1L;
     private long current;
-    private long lastMS = 0L;
-    
-    
+    private final long lastMS = 0L;
+
+
     public void sync() {
         this.time = System.nanoTime();
     }
 
     public boolean passedS(double s) {
-        return this.passedMs((long)s * 1000L);
+        return this.passedMs((long) s * 1000L);
     }
 
     public boolean passedDms(double dms) {
-        return this.passedMs((long)dms * 10L);
+        return this.passedMs((long) dms * 10L);
     }
 
     public boolean passedDs(double ds) {
-        return this.passedMs((long)ds * 100L);
+        return this.passedMs((long) ds * 100L);
     }
 
     public boolean passedMs(long ms) {
@@ -50,7 +50,7 @@ public class Timer implements MC {
     }
 
     public boolean delay(double var1) {
-        return (double)MathHelper.clamp((float)(this.getCurrentMS() - this.lastMS), (float)0.0f, (float)((float)var1)) >= var1;
+        return (double) MathHelper.clamp((float) (this.getCurrentMS() - this.lastMS), 0.0f, (float) var1) >= var1;
     }
 
     public boolean hasReached(long passedTime) {
@@ -58,7 +58,7 @@ public class Timer implements MC {
     }
 
     public boolean passed(double ms) {
-        return (double)(System.currentTimeMillis() - this.current) >= ms;
+        return (double) (System.currentTimeMillis() - this.current) >= ms;
     }
 
     public long getMs(long time) {

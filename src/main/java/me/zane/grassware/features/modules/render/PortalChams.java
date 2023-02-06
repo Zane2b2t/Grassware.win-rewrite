@@ -20,12 +20,12 @@ public class PortalChams extends Module {
     private static final ResourceLocation END_PORTAL_TEXTURE = new ResourceLocation("textures/entity/end_portal.png");
     private static final FloatBuffer MODELVIEW = GLAllocation.createDirectFloatBuffer(16);
     private static final FloatBuffer PROJECTION = GLAllocation.createDirectFloatBuffer(16);
-    private final FloatBuffer buffer = GLAllocation.createDirectFloatBuffer(16);
     private static final Random RANDOM = new Random(31100L);
+    private final FloatBuffer buffer = GLAllocation.createDirectFloatBuffer(16);
 
     @SubscribeEvent
     public void onRender(RenderWorldLastEvent event) {
-        for(Entity entity : mc.world.loadedEntityList){
+        for (Entity entity : mc.world.loadedEntityList) {
             render(entity, entity.posX, entity.posY, entity.posZ);
         }
     }
@@ -68,8 +68,8 @@ public class PortalChams extends Module {
             GlStateManager.loadIdentity();
             GlStateManager.translate(0.5F, 0.5F, 0.0F);
             GlStateManager.scale(0.5F, 0.5F, 1.0F);
-            float f2 = (float)(j + 1);
-            GlStateManager.translate(17.0F / f2, (2.0F + f2 / 1.5F) * ((float)Minecraft.getSystemTime() % 800000.0F / 800000.0F), 0.0F);
+            float f2 = (float) (j + 1);
+            GlStateManager.translate(17.0F / f2, (2.0F + f2 / 1.5F) * ((float) Minecraft.getSystemTime() % 800000.0F / 800000.0F), 0.0F);
             GlStateManager.rotate((f2 * f2 * 4321.0F + f2 * 9.0F) * 2.0F, 0.0F, 0.0F, 1.0F);
             GlStateManager.scale(4.5F - f2 / 4.0F, 4.5F - f2 / 4.0F, 1.0F);
             GlStateManager.multMatrix(PROJECTION);
@@ -106,11 +106,11 @@ public class PortalChams extends Module {
 
         if (p_191286_1_ > 36864.0D) {
             i = 1;
-        }else if (p_191286_1_ > 25600.0D) {
+        } else if (p_191286_1_ > 25600.0D) {
             i = 3;
-        }else if (p_191286_1_ > 16384.0D) {
+        } else if (p_191286_1_ > 16384.0D) {
             i = 5;
-        }else if (p_191286_1_ > 9216.0D) {
+        } else if (p_191286_1_ > 9216.0D) {
             i = 7;
         } else if (p_191286_1_ > 4096.0D) {
             i = 9;
