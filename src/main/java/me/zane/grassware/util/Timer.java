@@ -6,6 +6,11 @@ public class Timer implements MC {
     private long time = -1L;
     private long current;
     private long lastMS = 0L;
+    
+    
+    public void sync() {
+        this.time = System.nanoTime();
+    }
 
     public boolean passedS(double s) {
         return this.passedMs((long)s * 1000L);
