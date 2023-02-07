@@ -25,11 +25,11 @@ This project was made for the popular group, Grassers. Hence the name Grassware.
 * ghostlead (removed the backdoors tos the clients)
 * [Paoo2](https://github.com/Paoo2) (Tester)
 ## Features
-* Combat <br>Aura (KillAura), AutoCrystal, Offhand
+* Combat <br>Aura (KillAura), AutoCrystal, AutoSand, Offhand
 * Misc <br>CoordLeaker, SpawnHomeBipass (8b8t), QuranFacts
-* Movement <br>NoSlow, ReverseStep, Speed, Sprint, Step, Velocity, (Soon) HoleSnap
+* Movement <br>NoSlow, ReverseStep, Speed, Sprint, Step, Velocity
 * Player <br>WallPhase, FakePlayer 
-* Render <br>HoleESP, NameTags, NoRender, PopESP, ShaderESP, World
+* Render <br>BlockHighlight, ItemChams, PortalChams, HoleESP, NameTags, NoRender, PopESP, ShaderESP, World
 * Client <br>ClickGUI, Hud, DiscordRPC
 
 ## Installing
