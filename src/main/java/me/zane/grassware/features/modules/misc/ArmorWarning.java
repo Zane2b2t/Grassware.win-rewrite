@@ -1,9 +1,12 @@
 import net.minecraftforge.eventbus.api.*;
 
 import net.minecraftforge.event.*;
+import me.zane.grassware.features.command.Command;
+
+import me.zane.grassware.features.modules.Module
 
 
-public class ArmorWarning {
+public class ArmorWarning extends Module{
 
 @SubscribeEvent
 
@@ -17,4 +20,4 @@ int maxDamageOfPiece=armorItem!=null ? armorItem.getMaxDamage() : 0; // get Max 
 
 float percentageRemaining=(maxDamageOfPiece>0 && armorItem!=null)?(float)(((float)armorItem.(maxDamage-1)- armorItem))/(maxDamage-1)*100: 0f ; // Calculate the % remaining based on damage taken and max damage points of he piece
 
-System.outWARNING: Your Armor is at "+percentageRemaining+"% Remaining!!\n); /// Send out your warning message !! } }}
+Command.sendMessage(ChatFormatting.RED Your Armor is at "+percentageRemaining+"% Remaining!!\n); /// Send out your warning message !! } }}
