@@ -37,9 +37,9 @@ public class ItemChams extends Module{
        if (this.yes.getValue()) {
            FramebufferShader.startDraw(event.getPartialTicks());
            
-        GlStateManager.enableAlpha();
-        GlStateManager.pushMatrix();
-        GlStateManager.pushAttrib();
+     //   GlStateManager.enableAlpha();
+       // GlStateManager.pushMatrix();
+       // GlStateManager.pushAttrib();
 // my first module made from scratch :D -ZANE 1/19/2022 (intelij so ez wtf)
 
          //   ((IEntityRenderer) mc.entityRenderer).invokeRenderHand(mc.getRenderPartialTicks(), 2);
@@ -59,6 +59,8 @@ public class ItemChams extends Module{
         ((IEntityRenderer) mc.entityRenderer).invokeRenderHand(mc.getRenderPartialTicks(), 2);
         
          FramebufferShader.stopDraw((float)this.linewidth.getValue(), (float)this.opacity.getValue());
+        GlStateManager.popMatrix();
+        GlStateManager.popAttrib();
         
         GradientShader.finish();
     }
