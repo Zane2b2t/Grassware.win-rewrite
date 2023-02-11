@@ -45,8 +45,8 @@ public class ItemChams extends Module{
          //   ((IEntityRenderer) mc.entityRenderer).invokeRenderHand(mc.getRenderPartialTicks(), 2);
          //  FramebufferShader.stopDraw((float)this.linewidth.getValue(), (float)this.opacity.getValue());
            
-        GlStateManager.popMatrix();
-        GlStateManager.popAttrib();
+      //  GlStateManager.popMatrix();
+      //  GlStateManager.popAttrib();
        }
         GradientShader.setup(
                 ClickGui.Instance.step.getValue(),
@@ -59,8 +59,8 @@ public class ItemChams extends Module{
         ((IEntityRenderer) mc.entityRenderer).invokeRenderHand(mc.getRenderPartialTicks(), 2);
         
          FramebufferShader.stopDraw((float)this.linewidth.getValue(), (float)this.opacity.getValue());
-        GlStateManager.popMatrix();
-        GlStateManager.popAttrib();
+      //  GlStateManager.popMatrix();
+      //  GlStateManager.popAttrib();
         
         GradientShader.finish();
     }
