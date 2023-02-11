@@ -11,11 +11,17 @@ import me.zane.grassware.mixin.mixins.IEntityRenderer;
 
 import net.minecraftforge.client.event.RenderHandEvent;
 
-public class ItemChams extends Module{
+public class ItemChams extends Module {
     private final FloatSetting opacity = register("Opacity", 0.5f, 0.1f, 1.0f);
     
     private boolean criticalSection = true;
    
+    @EventListener
+    public void onRenderItemInFirstPerson(final RenderItemInFirstPersonEvent event) {
+        if(criticalSection) {
+            event.setCancelled(true);
+        }
+    }
 
     @EventListener
     public void onRender2D(final Render2DEvent event) {
@@ -28,10 +34,4 @@ public class ItemChams extends Module{
         GradientShader.finish();
     }
     
-    @EventListener
-    public void onRenderItemInFirstPerson(final RenderItemInFirstPersonEvent event) {
-        if(criticalSection) {
-            event.setCancelled(true);
-        }
-    }
 } 
