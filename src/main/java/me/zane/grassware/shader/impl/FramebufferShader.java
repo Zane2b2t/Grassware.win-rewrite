@@ -1,19 +1,17 @@
 package me.zane.grassware.shader.impl;
 
+import me.zane.grassware.shader.Shader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.shader.Framebuffer;
-
-import me.zane.grassware.util.MC;
-import me.zane.grassware.shader.Shader;
-import me.zane.grassware.shader.ShaderUtil;
-
-import org.lwjgl.opengl.*;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL20;
 
 public abstract class FramebufferShader extends Shader {
-    public Minecraft mc;
     public static Framebuffer framebuffer;
+    public Minecraft mc;
     public boolean entityShadows;
     public int animationSpeed;
 
@@ -29,8 +27,8 @@ public abstract class FramebufferShader extends Shader {
         (FramebufferShader.framebuffer = setupFrameBuffer(FramebufferShader.framebuffer)).framebufferClear();
         FramebufferShader.framebuffer.bindFramebuffer(true);
         entityShadows = mc.gameSettings.entityShadows;
-        mc.gameSettings.entityShadows = false;
-        mc.entityRenderer.setupCameraTransform(mc.getRenderPartialTicks(), 1);
+/       mc.gameSettings.entityShadows = false;
+//        mc.entityRenderer.setupCameraTransform(mc.getRenderPartialTicks(), 2);
     }
 
     public void stopDraw() {
