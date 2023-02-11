@@ -42,8 +42,8 @@ public class ItemChams extends Module{
         GlStateManager.pushAttrib();
 // my first module made from scratch :D -ZANE 1/19/2022 (intelij so ez wtf)
 
-            ((IEntityRenderer) mc.entityRenderer).invokeRenderHand(mc.getRenderPartialTicks(), 2);
-           FramebufferShader.stopDraw((float)this.linewidth.getValue(), (float)this.opacity.getValue());
+         //   ((IEntityRenderer) mc.entityRenderer).invokeRenderHand(mc.getRenderPartialTicks(), 2);
+         //  FramebufferShader.stopDraw((float)this.linewidth.getValue(), (float)this.opacity.getValue());
            
         GlStateManager.popMatrix();
         GlStateManager.popAttrib();
@@ -55,6 +55,11 @@ public class ItemChams extends Module{
                 ClickGui.Instance.getGradient()[1],
                 opacity.getValue()
         );
+        
+        ((IEntityRenderer) mc.entityRenderer).invokeRenderHand(mc.getRenderPartialTicks(), 2);
+        
+         FramebufferShader.stopDraw((float)this.linewidth.getValue(), (float)this.opacity.getValue());
+        
         GradientShader.finish();
     }
 
