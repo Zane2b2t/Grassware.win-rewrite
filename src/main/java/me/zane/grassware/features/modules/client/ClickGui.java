@@ -31,8 +31,12 @@ public class ClickGui extends Module {
     public final IntSetting gradientRed2 = register("Red2", 5, 0, 255).invokeVisibility(z -> mode.getValue().equals("Gradient"));
     public final IntSetting gradientGreen2 = register("Green2", 255, 0, 255).invokeVisibility(z -> mode.getValue().equals("Gradient"));
     public final IntSetting gradientBlue2 = register("Blue2", 5, 0, 255).invokeVisibility(z -> mode.getValue().equals("Gradient"));
+    
+    public final IntSetting gradientRed3 = register("Red3", 5, 0, 255).invokeVisibility(z -> mode.getValue().equals("Gradient"));
+    public final IntSetting gradientGreen3 = register("Green3", 255, 0, 255).invokeVisibility(z -> mode.getValue().equals("Gradient"));
+    public final IntSetting gradientBlue3 = register("Blue3", 5, 0, 255).invokeVisibility(z -> mode.getValue().equals("Gradient"));
 
-    private final BooleanSetting snowing = register("Snowing", true);
+   // private final BooleanSetting snowing = register("Snowing", true);
 
     public ClickGui() {
         bind.invokeValue(Keyboard.KEY_O);
@@ -50,7 +54,8 @@ public class ClickGui extends Module {
     public Color[] getGradient() {
         return new Color[]{
                 new Color(gradientRed1.getValue(), gradientGreen1.getValue(), gradientBlue1.getValue()),
-                new Color(gradientRed2.getValue(), gradientGreen2.getValue(), gradientBlue2.getValue())
+                new Color(gradientRed2.getValue(), gradientGreen2.getValue(), gradientBlue2.getValue()),
+                new Color(gradientRed3.getValue(), gradientGreen3.getValue(), gradientBlue3.getValue())
         };
     }
 
