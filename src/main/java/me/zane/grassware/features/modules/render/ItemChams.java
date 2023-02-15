@@ -35,7 +35,7 @@ public class ItemChams extends Module{
     @EventListener
     public void onRender2D(final Render2DEvent event) {
        if (this.yes.getValue()) {
-           FramebufferShader.startDraw(event.getPartialTicks());
+           FramebufferShader.startDraw(mc.getRenderPartialTicks());
            
      //   GlStateManager.enableAlpha();
        // GlStateManager.pushMatrix();
@@ -58,7 +58,7 @@ public class ItemChams extends Module{
         
         ((IEntityRenderer) mc.entityRenderer).invokeRenderHand(mc.getRenderPartialTicks(), 2);
         
-         FramebufferShader.stopDraw((float)this.linewidth.getValue(), (float)this.opacity.getValue());
+         FramebufferShader.stopDraw();
       //  GlStateManager.popMatrix();
       //  GlStateManager.popAttrib();
         

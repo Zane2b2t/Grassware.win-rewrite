@@ -11,8 +11,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class Shader {
-    public int program;
-    public Map<String, Integer> uniformsMap;
+    public static int program;
+    public static Map<String, Integer> uniformsMap;
 
     public Shader(final String fragmentShader) {
         int vertexShaderID;
@@ -41,25 +41,25 @@ public abstract class Shader {
         ARBShaderObjects.glValidateProgramARB(this.program);
     }
 
-    public void startShader() {
+    public static void startShader() {
         GL11.glPushMatrix();
-        GL20.glUseProgram(this.program);
-        if (this.uniformsMap == null) {
-            this.uniformsMap = new HashMap<>();
-            this.setupUniforms();
+        GL20.glUseProgram(program);
+        if (uniformsMap == null) {
+            uniformsMap = new HashMap<>();
+            setupUniforms();
         }
-        this.updateUniforms();
+        updateUniforms();
     }
 
-    public void stopShader() {
+    public static void stopShader() {
         GL20.glUseProgram(0);
         GL11.glPopMatrix();
     }
 
-    public void setupUniforms() {
+    public static void setupUniforms() {
     }
 
-    public void updateUniforms() {
+    public static void updateUniforms() {
     }
 
     public int createShader(final String shaderSource, final int shaderType) {
