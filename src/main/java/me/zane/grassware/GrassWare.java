@@ -1,4 +1,7 @@
-package me.zane.grassware;
+import java.util.Random;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import me.zane.grassware.discord.Discord;
 import me.zane.grassware.event.bus.EventBus;
@@ -8,10 +11,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import org.lwjgl.opengl.Display;
-
-import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
 
 @Mod(modid = "grassware.win", name = "GrassWare.win", version = GrassWare.MODVER)
 public class GrassWare {
@@ -31,7 +30,6 @@ public class GrassWare {
     public static EventManager eventManager;
     public static TextManager textManager;
     public static RotationManager rotationManager;
-    private static Timer titleUpdateTimer;
 
     public static void load() {
         mc = Minecraft.getMinecraft();
@@ -51,39 +49,26 @@ public class GrassWare {
         moduleManager.init();
         configManager.init();
         AltGui.loadAlts();
-
-        // Schedule a task to update the title every 5 seconds
-        titleUpdateTimer = new Timer();
-        titleUpdateTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                Display.setTitle(getRandomTitle());
-            }
-        }, 0, 5000);
-
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             configManager.saveConfig(GrassWare.configManager.config.replaceFirst("grassware/", ""));
             AltGui.saveAlts();
         }));
     }
 
-    private static String getRandomTitle() {
-        // Define a list of custom messages
-        String[] messages = {"GrassWare " + MODVER, "Best Minecraft Hacked Client!", "Get GrassWare today!", "Don't play Minecraft without GrassWare!", "GrassWare - Your new best friend!"};
-
-        // Choose a random message from the list
+    public static void setRandomWindowTitle() {
+        String[] messages = {"1", "2", "3"}; // Customize your messages here
         Random random = new Random();
-        int index = random.nextInt(messages.length);
-        return messages[index];
+        String message = messages[random.nextInt(messages.length)];
+        Display.setTitle("GrassWare " + GrassWare.MODVER + " | " + message);
     }
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
-        // Set the initial title
-        Display.setTitle(getRandomTitle());
-
-        // Load the rest of the client
+        ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+        executorService.scheduleAtFixedRate(GrassWare::setRandomWindowTitle, 0, 5, TimeUnit.SECONDS);
+        Display.setTitle("GrassWare " + GrassWare.MODVER);
         GrassWare.load();
         Discord.startRPC();
     }
+
 }
