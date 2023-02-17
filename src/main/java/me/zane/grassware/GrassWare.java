@@ -9,6 +9,10 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import org.lwjgl.opengl.Display;
 
+import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
+
 @Mod(modid = "grassware.win", name = "GrassWare.win", version = GrassWare.MODVER)
 public class GrassWare {
     public static final String MODNAME = "GrassWare.win";
@@ -52,14 +56,25 @@ public class GrassWare {
         }));
     }
 
-
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
-        Display.setTitle("GrassWare " + GrassWare.MODVER);
         GrassWare.load();
+
+        // Create a Timer and a TimerTask to randomly change the Display title every 5 seconds
+        Timer timer = new Timer();
+        TimerTask task = new TimerTask() {
+            String[] options = {"Brought to you by ZANE#4417", "Rat#7632 is a NOOB", "GrassWare ON TOP!", "MrBubbleCu- Gum is cool"};
+
+            Random random = new Random();
+
+            @Override
+            public void run() {
+                int index = random.nextInt(options.length);
+                Display.setTitle(options[index]);
+            }
+        };
+        timer.schedule(task, 0, 5000); // Run the task every 5 seconds
+
         Discord.startRPC();
-
     }
-
 }
-
