@@ -1,10 +1,5 @@
 package me.zane.grassware;
 
-import java.util.Random;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
 import me.zane.grassware.discord.Discord;
 import me.zane.grassware.event.bus.EventBus;
 import me.zane.grassware.features.gui.alt.AltGui;
@@ -57,20 +52,13 @@ public class GrassWare {
         }));
     }
 
-    public static void setRandomWindowTitle() {
-        String[] messages = {"1", "2", "3"}; // Customize your messages here
-        Random random = new Random();
-        String message = messages[random.nextInt(messages.length)];
-        Display.setTitle("GrassWare " + GrassWare.MODVER + " | " + message);
-    }
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
-        ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-        executorService.scheduleAtFixedRate(GrassWare::setRandomWindowTitle, 0, 5, TimeUnit.SECONDS);
         Display.setTitle("GrassWare " + GrassWare.MODVER);
         GrassWare.load();
         Discord.startRPC();
+
     }
 
 }
