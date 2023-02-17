@@ -31,6 +31,7 @@ public class GrassWare {
     public static EventManager eventManager;
     public static TextManager textManager;
     public static RotationManager rotationManager;
+    private static Timer titleUpdateTimer;
 
     public static void load() {
         mc = Minecraft.getMinecraft();
@@ -50,31 +51,39 @@ public class GrassWare {
         moduleManager.init();
         configManager.init();
         AltGui.loadAlts();
+
+        // Schedule a task to update the title every 5 seconds
+        titleUpdateTimer = new Timer();
+        titleUpdateTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                Display.setTitle(getRandomTitle());
+            }
+        }, 0, 5000);
+
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             configManager.saveConfig(GrassWare.configManager.config.replaceFirst("grassware/", ""));
             AltGui.saveAlts();
         }));
     }
 
+    private static String getRandomTitle() {
+        // Define a list of custom messages
+        String[] messages = {"GrassWare " + MODVER, "Best Minecraft Hacked Client!", "Get GrassWare today!", "Don't play Minecraft without GrassWare!", "GrassWare - Your new best friend!"};
+
+        // Choose a random message from the list
+        Random random = new Random();
+        int index = random.nextInt(messages.length);
+        return messages[index];
+    }
+
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
+        // Set the initial title
+        Display.setTitle(getRandomTitle());
+
+        // Load the rest of the client
         GrassWare.load();
-
-        // Create a Timer and a TimerTask to randomly change the Display title every 5 seconds
-        Timer timer = new Timer();
-        TimerTask task = new TimerTask() {
-            String[] options = {"Brought to you by ZANE#4417", "Rat#7632 is a NOOB", "GrassWare ON TOP!", "MrBubbleCu- Gum is cool"};
-
-            Random random = new Random();
-
-            @Override
-            public void run() {
-                int index = random.nextInt(options.length);
-                Display.setTitle(options[index]);
-            }
-        };
-        timer.schedule(task, 0, 5000); // Run the task every 5 seconds
-
         Discord.startRPC();
     }
 }
