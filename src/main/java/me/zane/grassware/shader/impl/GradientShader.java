@@ -32,7 +32,7 @@ public class GradientShader implements MC {
     public static void setup(final float opacity) {
         setup(ClickGui.Instance.step.getValue(), ClickGui.Instance.speed.getValue(), ClickGui.Instance.getGradient()[0], ClickGui.Instance.getGradient()[1], ClickGui.Instance.getGradient()[2], opacity);
     }
-    public static void setup(final float step, final float speed, final Color color, final Color color2, final Color color3, final Float opacity) {
+    public static void setup(final float step, final float speed, final Color color, final Color color2, final Float opacity) {
         setup(step, speed, color, color2, opacity);
     }
 
