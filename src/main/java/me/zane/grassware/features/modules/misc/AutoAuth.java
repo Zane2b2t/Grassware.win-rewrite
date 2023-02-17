@@ -1,3 +1,5 @@
+// very china but works
+
 package me.zane.grassware.features.modules.misc;
 import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.features.setting.impl.StringSetting;
