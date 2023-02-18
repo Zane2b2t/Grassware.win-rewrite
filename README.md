@@ -24,6 +24,7 @@ This project was made for the popular group, Grassers. Hence the name Grassware.
 * [SirHilarious](https://github.com/SirHilarious) (literally just the Discord RPC)
 * ghostlead (removed the backdoors tos the clients)
 * [Paoo2](https://github.com/Paoo2) (Tester)
+* [Eralp232](https://github.com/Eralp232) (Tester)
 ## Features
 * Combat <br>Aura (KillAura), AutoCrystal, AutoSand, Offhand
 * Misc <br>CoordLeaker, SpawnHomeBipass (8b8t), QuranFacts, AutoAuth
