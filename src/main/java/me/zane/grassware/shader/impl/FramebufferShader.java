@@ -1,20 +1,18 @@
 package me.zane.grassware.shader.impl;
 
+import me.zane.grassware.shader.Shader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.shader.Framebuffer;
-
-import me.zane.grassware.util.MC;
-import me.zane.grassware.shader.Shader;
-import me.zane.grassware.shader.ShaderUtil;
-
-import org.lwjgl.opengl.*;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL20;
 
 public abstract class FramebufferShader extends Shader {
-    public static Minecraft mc;
     public static Framebuffer framebuffer;
-    public static boolean entityShadows;
+    public Minecraft mc;
+    public boolean entityShadows;
     public int animationSpeed;
 
     public FramebufferShader(final String fragmentShader) {
@@ -22,19 +20,19 @@ public abstract class FramebufferShader extends Shader {
         this.mc = Minecraft.getMinecraft();
     }
 
-    public static void startDraw(final float partialTicks) {
-        GlStateManager.enableAlpha();
-        GlStateManager.pushMatrix();
-        GlStateManager.pushAttrib();
-        (FramebufferShader.framebuffer = setupFrameBuffer(FramebufferShader.framebuffer)).framebufferClear();
-        FramebufferShader.framebuffer.bindFramebuffer(true);
-        entityShadows = mc.gameSettings.entityShadows;
-        mc.gameSettings.entityShadows = false;
-        //  mc.entityRenderer.setupCameraTransform(mc.getPartialTicks(), 1);
-    }
+//    public void startDraw(final float partialTicks) {
+//        GlStateManager.enableAlpha();
+//        GlStateManager.pushMatrix();
+//        GlStateManager.pushAttrib();
+//        (FramebufferShader.framebuffer = setupFrameBuffer(FramebufferShader.framebuffer)).framebufferClear();
+//        FramebufferShader.framebuffer.bindFramebuffer(true);
+//        entityShadows = mc.gameSettings.entityShadows;
+//        mc.gameSettings.entityShadows = false;
+//        mc.entityRenderer.setupCameraTransform(mc.getRenderPartialTicks(), 2);
+//    }
 
-    public static void stopDraw() {
-        mc.gameSettings.entityShadows = entityShadows;
+    public void stopDraw() {
+        mc.gameSettings.entityShadows = this.entityShadows;
         GL11.glEnable(3042);
         GL11.glBlendFunc(770, 771);
         mc.getFramebuffer().bindFramebuffer(true);
@@ -49,14 +47,14 @@ public abstract class FramebufferShader extends Shader {
         GlStateManager.popAttrib();
     }
 
-    public static Framebuffer setupFrameBuffer(Framebuffer frameBuffer) {
+    public Framebuffer setupFrameBuffer(Framebuffer frameBuffer) {
         if (frameBuffer != null) frameBuffer.deleteFramebuffer();
-        frameBuffer = new Framebuffer(mc.displayWidth, mc.displayHeight, true);
+        frameBuffer = new Framebuffer(this.mc.displayWidth, this.mc.displayHeight, true);
         return frameBuffer;
     }
 
-    public static void drawFramebuffer(final Framebuffer framebuffer) {
-        final ScaledResolution scaledResolution = new ScaledResolution(mc);
+    public void drawFramebuffer(final Framebuffer framebuffer) {
+        final ScaledResolution scaledResolution = new ScaledResolution(this.mc);
         GL11.glBindTexture(3553, framebuffer.framebufferTexture);
         GL11.glBegin(7);
         GL11.glTexCoord2d(Double.longBitsToDouble(Double.doubleToLongBits(1.7921236082576344E308) ^ 0x7FEFE69EB44D9FE1L), Double.longBitsToDouble(Double.doubleToLongBits(4.899133169559449) ^ 0x7FE398B65D9806D1L));
