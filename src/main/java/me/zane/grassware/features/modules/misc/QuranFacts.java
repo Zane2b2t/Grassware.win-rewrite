@@ -4,6 +4,8 @@ import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.features.setting.impl.BooleanSetting;
 import me.zane.grassware.features.setting.impl.IntSetting;
 import me.zane.grassware.util.Timer;
+me.zane.grassware.event.events.UpdateEvent:
+
 import net.minecraft.network.play.client.CPacketChatMessage;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -17,7 +19,7 @@ public class QuranFacts
 
 
     @SubscribeEvent
-    public void onUpdate() {
+    public void onUpdate(final UpdateEvent Event) {
         if (this.messageCount == 1 && this.timer.passedS(this.delay.getValue().intValue())) {
             if (this.packetMessage.getValue().booleanValue()) {
                 QuranFacts.mc.player.connection.sendPacket(new CPacketChatMessage("<AutoFitFag> 2b2t is the oldest anarchy server in all of minecraft."));
