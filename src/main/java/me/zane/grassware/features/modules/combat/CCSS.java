@@ -3,9 +3,9 @@ package me.zane.grassware.features.modules.combat;
 import me.zane.grassware.features.modules.Module;
 
 import net.minecraft.init.Items;
-import net.minecraft.item.ItemPickaxe;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Item;
 
-import static net.minecraft.init.Items.DIAMOND_PICKAXE;
 
 public class CCSS extends Module {
   
