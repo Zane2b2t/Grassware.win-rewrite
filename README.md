@@ -1,4 +1,4 @@
-<img src="https://i.imgur.com/uf6VMzP.png" style="width: 91%">
+<img src="https://i.imgur.com/uf6VMzP.png" style="width: 100%">
 
 <!-- TABLE OF CONTENTS -->
 ## Table of Contents
