@@ -14,7 +14,7 @@ public class CustomJD extends Module {
 
     @Override
     public void onEnable() {
-        Command.sendMessage(ChatFormatting.GOLD + "[" + ChatFormatting.DARK_BLUE + "8b" + ChatFormatting.BLUE + "8t" + ChatFormatting.GOLD + "]" + "You joined the server on " + ChatFormatting.RED + this.CustomText.getValue());
+        Command.sendSilentMessage(ChatFormatting.GOLD + "[" + ChatFormatting.DARK_BLUE + "8b" + ChatFormatting.BLUE + "8t" + ChatFormatting.GOLD + "]" + " You joined the server on " + ChatFormatting.RED + this.CustomText.getValue());
     }
 
 
