@@ -5,6 +5,7 @@ import me.zane.grassware.event.bus.EventListener;
 import me.zane.grassware.event.events.Render3DPreEvent;
 import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.features.modules.client.ClickGui;
+import me.zane.grassware.features.setting.impl.IntSetting;
 import me.zane.grassware.util.EntityUtil;
 import me.zane.grassware.util.RenderUtil;
 import me.zane.grassware.util.Timer;
@@ -19,12 +20,15 @@ import java.awt.*;
 import static org.lwjgl.opengl.GL11.*;
 
 public class Aura extends Module {
+
+    private final IntSetting Range = register("Range", 5,1,5);
+
     private final Timer timer = new Timer();
     private float i = 0.0f;
 
     @EventListener
     public void onRender3DPre(final Render3DPreEvent event) {
-        final EntityPlayer entityPlayer = EntityUtil.entityPlayer(5.0f);
+        final EntityPlayer entityPlayer = EntityUtil.entityPlayer(this.Range.getValue());
         if (entityPlayer == null || !mc.player.getHeldItemMainhand().getItem().equals(Items.DIAMOND_SWORD)) {
             return;
         }
