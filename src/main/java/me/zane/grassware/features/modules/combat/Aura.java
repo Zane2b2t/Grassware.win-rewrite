@@ -21,7 +21,7 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class Aura extends Module {
 
-   // private final IntSetting Range = register("Range", 5,1,5);
+    private final IntSetting Range = register("Range", 5,1,5);
 
     private final Timer timer = new Timer();
     private float i = 0.0f;
