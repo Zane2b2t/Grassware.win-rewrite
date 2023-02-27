@@ -10,16 +10,10 @@ import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 
-
 public class AutoSand extends Module {
-
+    
     @Override
-    public void onEnable() {
-        placeSand();
-        disable();
-    }
-
-    public void placeSand() {
+    public void onUpdate() {
         final EntityPlayer entityPlayer = EntityUtil.entityPlayer(8);
 
         BlockPos sandPlacePos = new BlockPos(Math.floor(entityPlayer.posX), Math.floor(entityPlayer.posY + 2), Math.floor(entityPlayer.posZ));
@@ -36,5 +30,6 @@ public class AutoSand extends Module {
         } else {
             disable();
         }
+        disable();
     }
 }
