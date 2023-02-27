@@ -13,7 +13,7 @@ import net.minecraft.util.math.BlockPos;
 public class AutoSand extends Module {
     
     @Override
-    public void onUpdate() {
+    public void onEnable() {
         final EntityPlayer entityPlayer = EntityUtil.entityPlayer(8);
 
         BlockPos sandPlacePos = new BlockPos(Math.floor(entityPlayer.posX), Math.floor(entityPlayer.posY + 2), Math.floor(entityPlayer.posZ));
