@@ -98,4 +98,12 @@ public class Speed extends Module {
             }
         }
     }
+    
+    @Override
+
+    public String getInfo() {
+
+        return mode.getValue();
+
+    }
 }
