@@ -6,7 +6,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemExpBottle;
 import net.minecraft.item.ItemStack;
 
-import me.zane.grassware.features.module.Module;
+import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.mixin.mixins.IMinecraft;
 
 public class XP extends Module {
