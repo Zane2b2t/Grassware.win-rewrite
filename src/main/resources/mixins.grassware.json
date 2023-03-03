@@ -5,7 +5,6 @@
   "refmap": "mixins.grassware.refmap.json",
   "mixins": [
     "IMinecraft",
-  //  "IEntityRenderer",
     "MixinChunkRenderDispatcher",
     "MixinEntityPlayerSP",
     "MixinEntityRenderer",
