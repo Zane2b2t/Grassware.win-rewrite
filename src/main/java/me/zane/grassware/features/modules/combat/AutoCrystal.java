@@ -7,12 +7,19 @@ import me.zane.grassware.event.events.Render3DEvent;
 import me.zane.grassware.event.events.UpdatePlayerWalkingEvent;
 import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.features.setting.impl.BooleanSetting;
+import me.zane.grassware.event.events.Render3DPreEvent;
+import me.zane.grassware.event.events.TickEvent;
+import me.zane.grassware.event.events.UpdatePlayerWalkingEvent;
+import me.zane.grassware.features.modules.Module;
+import me.zane.grassware.features.modules.client.ClickGui;
 import me.zane.grassware.features.setting.impl.FloatSetting;
 import me.zane.grassware.features.setting.impl.ModeSetting;
 import me.zane.grassware.shader.impl.GradientShader;
 import me.zane.grassware.util.BlockUtil;
 import me.zane.grassware.util.MC;
 import me.zane.grassware.util.RenderUtil;
+import me.zane.grassware.event.events.Render3DPreEvent;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.player.EntityPlayer;
@@ -27,10 +34,14 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
+import java.awt.*;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.glPopMatrix;
 
 public class AutoCrystal extends Module {
     private final ModeSetting breakMode = register("Break Mode", "Sequential", Arrays.asList("Sequential", "Adaptive"));
@@ -48,6 +59,7 @@ public class AutoCrystal extends Module {
     private final FloatSetting opacity = register("Opacity", 0.5f, 0.1f, 1.0f);
     private final Map<Integer, Long> breakMap = new ConcurrentHashMap<>();
     private BlockPos placedPos;
+
     private long placeTime;
     private long breakTime;
 
@@ -56,6 +68,15 @@ public class AutoCrystal extends Module {
     public void onUpdate(final UpdatePlayerWalkingEvent event) {
         final EntityPlayer entityPlayer = target(targetRange.getValue());
         if (entityPlayer == null) {
+
+    private long sys;
+    private float i = 0.0f;
+
+    @EventListener
+    public void onUpdate(final UpdatePlayerWalkingEvent event) {
+        final EntityPlayer entityPlayer = EntityUtil.entityPlayer(targetRange.getValue());
+        if(entityPlayer == null){
+
             placedPos = null;
             return;
         }
@@ -159,6 +180,47 @@ public class AutoCrystal extends Module {
     }
 
     @EventListener
+    public void onRender3DPre(final Render3DPreEvent event) {
+        final EntityPlayer entityPlayer = EntityUtil.entityPlayer(5.0f);
+        if (entityPlayer == null || !mc.player.getHeldItemOffhand().getItem().equals(Items.END_CRYSTAL) && !mc.player.getHeldItemMainhand().getItem().equals(Items.END_CRYSTAL)) {
+            return;
+        }
+
+        final Vec3d vec = RenderUtil.interpolateEntity(entityPlayer);
+        final Color color = ClickGui.Instance.getGradient()[0];
+        final Color color2 = ClickGui.Instance.getGradient()[1];
+        final Color top = new Color(color2.getRed(), color2.getGreen(), color2.getBlue(), 0);
+        final float sin = ((float) Math.sin(i / 25.0f) / 2.0f);
+        i++;
+        glPushMatrix();
+        glEnable(GL_BLEND);
+        glDisable(GL_TEXTURE_2D);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glDisable(GL_DEPTH_TEST);
+        glShadeModel(GL_SMOOTH);
+        glDisable(GL_CULL_FACE);
+        glBegin(GL_QUAD_STRIP);
+
+        for (int i = 0; i <= 360; i++) {
+            final double x = ((Math.cos(i * Math.PI / 180F) * entityPlayer.width) + vec.x);
+            final double y = (vec.y + (entityPlayer.height / 2.0f));
+            final double z = ((Math.sin(i * Math.PI / 180F) * entityPlayer.width) + vec.z);
+            RenderUtil.glColor(color);
+            glVertex3d(x, y + (sin * entityPlayer.height), z);
+            RenderUtil.glColor(top);
+            glVertex3d(x, y + (sin * entityPlayer.height / 2.0f), z);
+        }
+
+        glEnd();
+        glEnable(GL_CULL_FACE);
+        glShadeModel(GL_FLAT);
+        glEnable(GL_DEPTH_TEST);
+        glEnable(GL_TEXTURE_2D);
+        glDisable(GL_BLEND);
+        glPopMatrix();
+    }
+
+    @EventListener
     public void onRender3D(final Render3DEvent event) {
         if (placedPos != null) {
             GradientShader.setup(opacity.getValue());
@@ -167,6 +229,7 @@ public class AutoCrystal extends Module {
             GradientShader.finish();
         }
     }
+
 
     private EntityEnderCrystal crystal(final EntityPlayer entityPlayer) {
         final TreeMap<Float, EntityEnderCrystal> map = new TreeMap<>();
