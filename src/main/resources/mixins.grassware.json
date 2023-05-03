@@ -16,7 +16,6 @@
     "MixinNetworkManager",
     "MixinParticleManager",
     "MixinRender",
-    "MixinRenderArmor",
-    "MixinRenderItem"
+    "MixinRenderArmor"
   ]
 }
