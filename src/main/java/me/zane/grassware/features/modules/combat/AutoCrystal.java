@@ -4,6 +4,7 @@ import me.zane.grassware.GrassWare;
 import me.zane.grassware.event.bus.EventListener;
 import me.zane.grassware.event.events.PacketEvent;
 import me.zane.grassware.event.events.Render3DEvent;
+import me.zane.grassware.event.events.Render3DPreEvent;
 import me.zane.grassware.event.events.UpdatePlayerWalkingEvent;
 import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.features.setting.impl.BooleanSetting;
@@ -11,8 +12,10 @@ import me.zane.grassware.features.setting.impl.FloatSetting;
 import me.zane.grassware.features.setting.impl.ModeSetting;
 import me.zane.grassware.shader.impl.GradientShader;
 import me.zane.grassware.util.BlockUtil;
+import me.zane.grassware.util.EntityUtil;
 import me.zane.grassware.util.MC;
 import me.zane.grassware.util.RenderUtil;
+import me.zane.grassware.features.modules.client.ClickGui;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.player.EntityPlayer;
@@ -31,6 +34,9 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
+import java.awt.*;
+
+import static org.lwjgl.opengl.GL11.*;
 
 public class AutoCrystal extends Module {
     private final ModeSetting breakMode = register("Break Mode", "Sequential", Arrays.asList("Sequential", "Adaptive"));
@@ -46,10 +52,12 @@ public class AutoCrystal extends Module {
     private final ModeSetting setDead = register("Set Dead", "Set Dead", Arrays.asList("None", "Set Dead", "Remove", "Both"));
     private final BooleanSetting fastRemove = register("Fast Remove", false);
     private final FloatSetting opacity = register("Opacity", 0.5f, 0.1f, 1.0f);
+    private final BooleanSetting renderRing = register("Ring", true);
     private final Map<Integer, Long> breakMap = new ConcurrentHashMap<>();
     private BlockPos placedPos;
     private long placeTime;
     private long breakTime;
+    private float i = 0.0f;
 
     @EventListener
 
@@ -157,6 +165,48 @@ public class AutoCrystal extends Module {
         if (setDead.getValue().equals("Remove") || setDead.getValue().equals("Both"))
             mc.world.removeEntity(crystal);
     }
+    @EventListener
+    public void onRender3DPre(final Render3DPreEvent event) {
+
+            final EntityPlayer entityPlayer = EntityUtil.entityPlayer(5.0f);
+            if (entityPlayer == null || !mc.player.getHeldItemOffhand().getItem().equals(Items.END_CRYSTAL) && !mc.player.getHeldItemMainhand().getItem().equals(Items.END_CRYSTAL) && renderRing.getValue()) {
+                return;
+            }
+
+            final Vec3d vec = RenderUtil.interpolateEntity(entityPlayer);
+            final Color color = ClickGui.Instance.getGradient()[0];
+            final Color color2 = ClickGui.Instance.getGradient()[1];
+            final Color top = new Color(color2.getRed(), color2.getGreen(), color2.getBlue(), 0);
+            final float sin = ((float) Math.sin(i / 25.0f) / 2.0f);
+            i++;
+            glPushMatrix();
+            glEnable(GL_BLEND);
+            glDisable(GL_TEXTURE_2D);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            glDisable(GL_DEPTH_TEST);
+            glShadeModel(GL_SMOOTH);
+            glDisable(GL_CULL_FACE);
+            glBegin(GL_QUAD_STRIP);
+
+            for (int i = 0; i <= 360; i++) {
+                final double x = ((Math.cos(i * Math.PI / 180F) * entityPlayer.width) + vec.x);
+                final double y = (vec.y + (entityPlayer.height / 2.0f));
+                final double z = ((Math.sin(i * Math.PI / 180F) * entityPlayer.width) + vec.z);
+                RenderUtil.glColor(color);
+                glVertex3d(x, y + (sin * entityPlayer.height), z);
+                RenderUtil.glColor(top);
+                glVertex3d(x, y + (sin * entityPlayer.height / 2.0f), z);
+            }
+
+            glEnd();
+            glEnable(GL_CULL_FACE);
+            glShadeModel(GL_FLAT);
+            glEnable(GL_DEPTH_TEST);
+            glEnable(GL_TEXTURE_2D);
+            glDisable(GL_BLEND);
+            glPopMatrix();
+        }
+
 
     @EventListener
     public void onRender3D(final Render3DEvent event) {
