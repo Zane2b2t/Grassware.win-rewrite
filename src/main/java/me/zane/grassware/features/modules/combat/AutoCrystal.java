@@ -52,6 +52,7 @@ public class AutoCrystal extends Module {
     private final ModeSetting setDead = register("Set Dead", "Set Dead", Arrays.asList("None", "Set Dead", "Remove", "Both"));
     private final BooleanSetting fastRemove = register("Fast Remove", false);
     private final FloatSetting opacity = register("Opacity", 0.5f, 0.1f, 1.0f);
+    private final FloatSetting defualtOpacityVal = register("DOV", 0.5f, 0.1f, 1.0f);
     private final BooleanSetting renderRing = register("Ring", true);
     private final Map<Integer, Long> breakMap = new ConcurrentHashMap<>();
     private BlockPos placedPos;
@@ -211,6 +212,7 @@ public class AutoCrystal extends Module {
     @EventListener
     public void onRender3D(final Render3DEvent event) {
         if (placedPos != null) {
+            opacity.setValue(defualtOpacityVal.getValue()); //makes it so that the opacity doesnt stay at 0 after fading even after the box renders again
           //  glAlphaFunc(GL_GREATER, 0.001f);
             GradientShader.setup(opacity.getValue());
             RenderUtil.boxShader(placedPos);
@@ -218,7 +220,7 @@ public class AutoCrystal extends Module {
             GradientShader.finish();
         } else {
             if (opacity.getValue() > 0) {
-                opacity.setValue(opacity.getValue() - 0.01f);
+                opacity.setValue(opacity.getValue() - 0.01f); //gradually decreases opacity by 0.01 every ms, only when there's no where to place anymore
             }
         }
     }
