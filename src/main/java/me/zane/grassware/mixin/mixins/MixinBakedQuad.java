@@ -1,4 +1,4 @@
-package me.zane.grassware.mixin.mixins.optmization;
+package me.zane.grassware.mixin.mixins;
 
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;

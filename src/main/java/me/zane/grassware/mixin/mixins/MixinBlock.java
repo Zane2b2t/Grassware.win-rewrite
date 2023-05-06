@@ -1,4 +1,4 @@
-package me.zane.grassware.mixin.mixins.optmization;
+package me.zane.grassware.mixin.mixins;
 
 import me.zane.grassware.event.events.BoundingBoxEvent;
 import net.minecraft.block.Block;

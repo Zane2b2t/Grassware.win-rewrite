@@ -16,6 +16,9 @@
     "MixinNetworkManager",
     "MixinParticleManager",
     "MixinRender",
-    "MixinRenderArmor"
+    "MixinRenderArmor",
+    "MixinBakedQuad",
+    "MixinBlockModelRenderer",
+    "MixinBlock"
   ]
 }

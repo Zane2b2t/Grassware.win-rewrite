@@ -16,5 +16,8 @@ public class FloatSetting extends Setting<Float> {
         super.invokeVisibility(visible);
         return this;
     }
+
+    public void setValue(double v) {
+    }
 }
 

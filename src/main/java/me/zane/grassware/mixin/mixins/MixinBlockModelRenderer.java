@@ -1,4 +1,4 @@
-package me.zane.grassware.mixin.mixins.optmization;
+package me.zane.grassware.mixin.mixins;
 
 import net.minecraft.client.renderer.BlockModelRenderer;
 import net.minecraft.util.EnumFacing;

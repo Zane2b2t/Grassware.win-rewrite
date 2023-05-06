@@ -1,6 +1,7 @@
 package me.zane.grassware.shader.impl;
 
 import me.zane.grassware.features.modules.client.ClickGui;
+import me.zane.grassware.features.setting.impl.FloatSetting;
 import me.zane.grassware.shader.ShaderUtil;
 import me.zane.grassware.util.MC;
 import me.zane.grassware.util.RenderUtil;
@@ -56,4 +57,5 @@ public class GradientShader implements MC {
         GlStateManager.bindTexture(0);
         glEnable(GL_BLEND);
     }
+
 }

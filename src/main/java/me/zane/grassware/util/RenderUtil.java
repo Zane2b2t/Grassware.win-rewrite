@@ -1,6 +1,7 @@
 package me.zane.grassware.util;
 
 import me.zane.grassware.features.modules.client.ClickGui;
+import me.zane.grassware.features.setting.impl.FloatSetting;
 import me.zane.grassware.shader.impl.GradientShader;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.shader.Framebuffer;
@@ -393,6 +394,12 @@ public class RenderUtil implements MC {
             return new Framebuffer(mc.displayWidth, mc.displayHeight, true);
         }
         return framebuffer;
+    }
+
+    public static void boxShader(double placedPos, FloatSetting opacity) {
+    }
+
+    public static void boxShader(Double aDouble, double v) {
     }
 }
 
