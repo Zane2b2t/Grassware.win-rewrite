@@ -20,6 +20,8 @@ public abstract class Setting<T> {
         return value;
     }
 
+    public T setValue(final T value){return this.value = value;}
+
     public void invokeValue(final T value) {
         this.value = value;
     }

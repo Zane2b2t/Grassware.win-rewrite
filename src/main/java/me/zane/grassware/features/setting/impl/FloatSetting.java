@@ -11,13 +11,16 @@ public class FloatSetting extends Setting<Float> {
         super(name, value);
     }
 
+    public Float setValue(Float value) {
+        this.value = value;
+        return value;
+    }
+
     @Override
     public FloatSetting invokeVisibility(Predicate<Float> visible) {
         super.invokeVisibility(visible);
         return this;
     }
 
-    public void setValue(double v) {
-    }
 }
 

@@ -211,11 +211,15 @@ public class AutoCrystal extends Module {
     @EventListener
     public void onRender3D(final Render3DEvent event) {
         if (placedPos != null) {
-            glAlphaFunc(GL_GREATER, 0.001f);
+          //  glAlphaFunc(GL_GREATER, 0.001f);
             GradientShader.setup(opacity.getValue());
             RenderUtil.boxShader(placedPos);
             RenderUtil.outlineShader(placedPos);
             GradientShader.finish();
+        } else {
+            if (opacity.getValue() > 0) {
+                opacity.setValue(opacity.getValue() - 0.01f);
+            }
         }
     }
 
