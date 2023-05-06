@@ -219,11 +219,12 @@ public class AutoCrystal extends Module {
             RenderUtil.outlineShader(placedPos);
             //GradientShader.finish();
         } else {
-            RenderUtil.boxShader(lastPos);
-            RenderUtil.outlineShader(lastPos);
-            GradientShader.finish();
+            RenderUtil.boxShader(placePos);
+            RenderUtil.outlineShader(placePos);
+           // GradientShader.finish();
             if (opacity.getValue() > 0) {
                 opacity.setValue(opacity.getValue() - 0.01f); //gradually decreases opacity by 0.01 every ms, only when there's no where to place anymore
+                GradientShader.finish();
             }
         }
     }
