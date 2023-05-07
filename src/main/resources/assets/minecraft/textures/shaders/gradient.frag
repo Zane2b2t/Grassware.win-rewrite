@@ -14,7 +14,8 @@ void main() {
 
         distance = distance / step;
 
-        distance = ((sin(distance) + 1.0) / 2.0);
+     //   distance = ((sin(distance) + 1.0) / 2.0);
+        distance = ((sin(distance) + cos(distance) + 2.0) / 2.0); // attempt to make the shader lines more wiggly
 
         float distanceInv = 1 - distance;
         float r = rgb.r * distance + rgb1.r * distanceInv;
