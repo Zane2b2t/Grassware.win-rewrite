@@ -209,7 +209,7 @@ public class AutoCrystal extends Module {
     }
 
 
-    @EventListener
+@EventListener
     public void onRender3D(final Render3DEvent event) {
         if (placedPos != null) {
             opacity.setValue(defualtOpacityVal.getValue()); //makes it so that the opacity doesnt stay at 0 after fading even after the box renders again
@@ -217,14 +217,10 @@ public class AutoCrystal extends Module {
             GradientShader.setup(opacity.getValue());
             RenderUtil.boxShader(placedPos);
             RenderUtil.outlineShader(placedPos);
-            //GradientShader.finish();
+            GradientShader.finish();
         } else {
-            RenderUtil.boxShader(placedPos);
-            RenderUtil.outlineShader(placedPos);
-           // GradientShader.finish();
             if (opacity.getValue() > 0) {
-                opacity.setValue(opacity.getValue() - 0.01f); //gradually decreases opacity by 0.01 every ms, only when there's no where to place anymore
-                GradientShader.finish();
+                opacity.setValue(opacity.getValue() - 0.01f);   // gradually decreases opacity by 0.01 every ms, only when there's no where to place anymore
             }
         }
     }
