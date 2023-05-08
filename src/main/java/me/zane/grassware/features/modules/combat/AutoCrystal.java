@@ -56,6 +56,7 @@ public class AutoCrystal extends Module {
     private final BooleanSetting renderRing = register("Ring", true);
     private final Map<Integer, Long> breakMap = new ConcurrentHashMap<>();
     private BlockPos placedPos;
+    private BlockPos lastPos;
     private long placeTime;
     private long breakTime;
     private float i = 0.0f;
@@ -218,9 +219,14 @@ public class AutoCrystal extends Module {
             RenderUtil.boxShader(placedPos);
             RenderUtil.outlineShader(placedPos);
             GradientShader.finish();
+            lastPos = placedPos;
         } else {
             if (opacity.getValue() > 0) {
                 opacity.setValue(opacity.getValue() - 0.01f);   // gradually decreases opacity by 0.01 every ms, only when there's no where to place anymore
+                GradientShader.setup(opacity.getValue());
+                RenderUtil.boxShader(lastPos);
+                RenderUtil.outlineShader(lastPos);
+                GradientShader.finish();
             }
         }
     }
