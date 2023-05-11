@@ -6,10 +6,8 @@ import me.zane.grassware.event.events.Render3DEvent;
 import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.features.modules.client.ClickGui;
 import me.zane.grassware.features.setting.impl.IntSetting;
-import me.zane.grassware.features.setting.impl.FloatSetting;
 import me.zane.grassware.manager.EventManager;
 import me.zane.grassware.manager.HoleManager;
-import me.zane.grassware.shader.impl.GradientShader;
 import me.zane.grassware.util.MathUtil;
 import me.zane.grassware.util.RenderUtil;
 import net.minecraft.client.renderer.culling.Frustum;
@@ -23,7 +21,6 @@ import java.util.Objects;
 public class HoleESP extends Module {
     private final IntSetting range = register("Range", 5, 1, 20);
     private final IntSetting speed = register("Speed", 50, 1, 200);
-    public final FloatSetting opacity = register("Opacity", 0.5f, 0.1f, 1.0f);
     private final ArrayList<Hole> renderHoles = new ArrayList<>();
     private final ICamera camera = new Frustum();
 
@@ -37,13 +34,6 @@ public class HoleESP extends Module {
 
     @EventListener
     public void onRender3D(final Render3DEvent event) {
-        GradientShader.setup(
-                ClickGui.Instance.step.getValue(),
-                ClickGui.Instance.speed.getValue(),
-                ClickGui.Instance.getGradient()[0],
-                ClickGui.Instance.getGradient()[1],
-                opacity.getValue()
-        );
         camera.setPosition(Objects.requireNonNull(mc.getRenderViewEntity()).posX, mc.getRenderViewEntity().posY, mc.getRenderViewEntity().posZ);
 
         GrassWare.threadManager.invokeThread(() -> {
@@ -69,7 +59,6 @@ public class HoleESP extends Module {
             }
             hole.render();
         });
-        GradientShader.finish();
     }
 
     public class Hole {
@@ -105,7 +94,6 @@ public class HoleESP extends Module {
                 RenderUtil.boxShader(bb.minX, bb.minY, bb.minZ, bb.maxX, bb.maxY - 1 + size, bb.maxZ, color);
                 RenderUtil.renderGradientLine(bb.minX, bb.minY, bb.minZ, bb.maxX, bb.maxY - 1 + size, bb.maxZ, color);
             }
-
         }
     }
 }
