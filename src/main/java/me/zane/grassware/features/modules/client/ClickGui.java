@@ -5,7 +5,6 @@ import me.zane.grassware.event.events.Render3DEvent;
 import me.zane.grassware.event.events.TickEvent;
 import me.zane.grassware.features.gui.GrassWareGui;
 import me.zane.grassware.features.modules.Module;
-import me.zane.grassware.features.setting.impl.BooleanSetting;
 import me.zane.grassware.features.setting.impl.FloatSetting;
 import me.zane.grassware.features.setting.impl.IntSetting;
 import me.zane.grassware.features.setting.impl.ModeSetting;
@@ -31,12 +30,12 @@ public class ClickGui extends Module {
     public final IntSetting gradientRed2 = register("Red2", 5, 0, 255).invokeVisibility(z -> mode.getValue().equals("Gradient"));
     public final IntSetting gradientGreen2 = register("Green2", 255, 0, 255).invokeVisibility(z -> mode.getValue().equals("Gradient"));
     public final IntSetting gradientBlue2 = register("Blue2", 5, 0, 255).invokeVisibility(z -> mode.getValue().equals("Gradient"));
-    
+
     public final IntSetting gradientRed3 = register("Red3", 5, 0, 255).invokeVisibility(z -> mode.getValue().equals("Gradient"));
     public final IntSetting gradientGreen3 = register("Green3", 255, 0, 255).invokeVisibility(z -> mode.getValue().equals("Gradient"));
     public final IntSetting gradientBlue3 = register("Blue3", 5, 0, 255).invokeVisibility(z -> mode.getValue().equals("Gradient"));
 
-   // private final BooleanSetting snowing = register("Snowing", true);
+    // private final BooleanSetting snowing = register("Snowing", true);
 
     public ClickGui() {
         bind.invokeValue(Keyboard.KEY_O);

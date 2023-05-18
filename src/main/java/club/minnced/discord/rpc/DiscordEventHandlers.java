@@ -97,6 +97,7 @@ public class DiscordEventHandlers extends Structure {
     protected List<String> getFieldOrder() {
         return FIELD_ORDER;
     }
+
     /**
      * Handler function for the ready event
      */

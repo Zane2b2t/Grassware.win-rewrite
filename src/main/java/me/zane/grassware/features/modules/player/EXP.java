@@ -1,15 +1,12 @@
 package org.hockey.hockeyware.client.features.module.modules.Player;
 
-import net.minecraft.init.Items;
-
-import me.zane.grassware.features.modules.Module;
-import me.zane.grassware.event.events.UpdatePlayerWalkingEvent;
 import me.zane.grassware.event.bus.EventListener;
+import me.zane.grassware.event.events.UpdatePlayerWalkingEvent;
+import me.zane.grassware.features.modules.Module;
+import net.minecraft.init.Items;
 
 public class EXP extends Module {
 
-
-    
 
     @EventListener
     public void onUpdate(final UpdatePlayerWalkingEvent event) {

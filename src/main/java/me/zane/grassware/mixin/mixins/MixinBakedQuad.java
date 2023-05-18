@@ -27,8 +27,8 @@ public class MixinBakedQuad {
     }
 
     /**
-     * @author Cache Lol
      * @return Cache Lol
+     * @author Cache Lol
      */
     @Overwrite
     public boolean hasTintIndex() {

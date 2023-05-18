@@ -1,18 +1,15 @@
 // very china but works
 
 package me.zane.grassware.features.modules.misc;
-import me.zane.grassware.features.modules.Module;
-import me.zane.grassware.features.setting.impl.StringSetting;
-import me.zane.grassware.features.command.Command;
-
 
 import com.mojang.realmsclient.gui.ChatFormatting;
-
+import me.zane.grassware.features.command.Command;
+import me.zane.grassware.features.modules.Module;
+import me.zane.grassware.features.setting.impl.StringSetting;
 import me.zane.grassware.util.Util;
+import net.minecraft.network.play.client.CPacketChatMessage;
 import net.minecraftforge.client.event.ClientChatEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraft.network.play.client.CPacketChatMessage;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class AutoAuth extends Module {
@@ -29,6 +26,7 @@ public class AutoAuth extends Module {
             event.setCanceled(true);
         }
     }
+
     @Override
     public void onEnable() {
         MinecraftForge.EVENT_BUS.register(this); // Register the event listener

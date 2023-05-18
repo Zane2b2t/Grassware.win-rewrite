@@ -8,8 +8,7 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 
 import java.util.List;
 
-public class BoundingBoxEvent extends Event
-{
+public class BoundingBoxEvent extends Event {
 
     private Block block;
     private BlockPos pos;
@@ -37,16 +36,16 @@ public class BoundingBoxEvent extends Event
         return boundingBox;
     }
 
+    public void setBoundingBox(AxisAlignedBB boundingBox) {
+        this.boundingBox = boundingBox;
+    }
+
     public List<AxisAlignedBB> getCollidingBoxes() {
         return collidingBoxes;
     }
 
     public Entity getEntity() {
         return entity;
-    }
-
-    public void setBoundingBox(AxisAlignedBB boundingBox) {
-        this.boundingBox = boundingBox;
     }
 
 }

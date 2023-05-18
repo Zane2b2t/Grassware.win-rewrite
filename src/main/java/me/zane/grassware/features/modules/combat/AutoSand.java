@@ -11,7 +11,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 
 public class AutoSand extends Module {
-    
+
     @Override
     public void onEnable() {
         final EntityPlayer entityPlayer = EntityUtil.entityPlayer(8);

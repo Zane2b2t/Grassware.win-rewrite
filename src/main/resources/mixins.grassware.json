@@ -5,6 +5,9 @@
   "refmap": "mixins.grassware.refmap.json",
   "mixins": [
     "IMinecraft",
+    "MixinBakedQuad",
+    "MixinBlock",
+    "MixinBlockModelRenderer",
     "MixinChunkRenderDispatcher",
     "MixinEntityPlayerSP",
     "MixinEntityRenderer",
@@ -16,9 +19,6 @@
     "MixinNetworkManager",
     "MixinParticleManager",
     "MixinRender",
-    "MixinRenderArmor",
-    "MixinBakedQuad",
-    "MixinBlockModelRenderer",
-    "MixinBlock"
+    "MixinRenderArmor"
   ]
 }

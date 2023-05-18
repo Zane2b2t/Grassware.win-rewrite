@@ -3,10 +3,9 @@ package me.zane.grassware.util;
 import net.minecraft.util.math.MathHelper;
 
 public class Timer implements MC {
+    private final long lastMS = 0L;
     private long time = -1L;
     private long current;
-    private final long lastMS = 0L;
-
 
     public void sync() {
         this.time = System.nanoTime();
