@@ -14,12 +14,8 @@ void main() {
 
         distance = distance / step;
 
-float distance = length(gl_FragCoord.xy - vec2(0.5));
-if (distance > 0.5) {
-    discard;
-}
 
-distance = ((sin(distance) - cos(distance) + 2.0) / 3.0);
+    distance = ((sin(distance) - cos(distance) + 2.0) / 3.0);
 
         float distanceInv = 1 - distance;
         float r = rgb.r * distance + rgb1.r * distanceInv;
