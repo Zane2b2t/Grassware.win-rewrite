@@ -55,6 +55,7 @@ This project was made for the popular group, Grassers. Hence the name Grassware.
    can
    only put the mod jar in the `/mods` folder!
 4. Launch Minecraft using the Forge profile. GrassWare.win should now be loaded.
+5. Bind the clickgui using the "!" prefix
 
 <p align="center">
 </p>
