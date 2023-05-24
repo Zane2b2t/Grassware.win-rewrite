@@ -1,9 +1,9 @@
 [
   {
-    "modid": "grassware",
-    "name": "grassware",
+    "modid": "grassware.win",
+    "name": "Grassware.win",
     "description": "Prefix is !",
-    "version": "0.6",
+    "version": "v0.7",
     "mcversion": "1.12.2",
     "logoFile": "grassware.png",
     "url": "https://discord.gg/JdYGZntM48",
