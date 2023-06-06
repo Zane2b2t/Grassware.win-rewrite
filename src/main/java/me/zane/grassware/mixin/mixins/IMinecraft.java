@@ -8,6 +8,9 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 @Mixin(Minecraft.class)
 public interface IMinecraft {
 
+    @Accessor("rightClickDelayTimer")
+    void setRightClickDelayTimer(int rightClickDelayTimer);
+
     @Accessor("session")
     void setSession(Session session);
 

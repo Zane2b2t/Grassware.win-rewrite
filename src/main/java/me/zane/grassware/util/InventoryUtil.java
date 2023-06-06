@@ -39,6 +39,21 @@ public class InventoryUtil implements MC {
             InventoryUtil.switchToHotbarSlot(slot, silent);
         }
     }
+    public static void switchToSlot(int slot) {
+        if (slot == -1) {
+            return;
+        }
+        PacketUtil.invoke(new CPacketHeldItemChange(slot));
+        mc.player.inventory.currentItem = slot;
+        mc.playerController.updateController();
+    }
+    public static void switchBack(int slot) {
+        if (slot == -1) {
+            return;
+        }
+        mc.player.inventory.currentItem = slot;
+        mc.playerController.updateController();
+    }
 
     public static boolean isNull(ItemStack stack) {
         return stack == null || stack.getItem() instanceof ItemAir;
