@@ -33,6 +33,7 @@ public class BlockHighlight
         if (outline.getValue()) {
             GL11.glLineWidth(lineWidth.getValue());
             RenderUtil.outlineShader(pos);
+            RenderUtil.outlineShader(pos);
         }
         GradientShader.finish();
     }
