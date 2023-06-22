@@ -120,5 +120,8 @@ public class Module extends Feature {
             return name;
         }
     }
+    protected boolean nullSafe() {
+        return mc.player != null && mc.world != null;
+    }
 }
 

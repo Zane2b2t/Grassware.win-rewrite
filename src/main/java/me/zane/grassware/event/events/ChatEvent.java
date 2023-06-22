@@ -8,5 +8,6 @@ public class ChatEvent extends Event {
     public ChatEvent(final String msg) {
         this.msg = msg;
     }
+
 }
 

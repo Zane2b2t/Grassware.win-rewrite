@@ -1,21 +1,21 @@
 package me.zane.grassware.features.modules.combat;
 
+import me.zane.grassware.event.bus.EventListener;
 import me.zane.grassware.features.modules.Module;
+import me.zane.grassware.event.events.TickEvent;
+
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.InventoryEffectRenderer;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
-
 
 public class AA extends Module {
 
 
-    @SubscribeEvent
-    public void onTick(TickEvent.ClientTickEvent event) {
+    @EventListener
+    public void onTick(final TickEvent event) {
         if (mc.player == null || mc.world == null || mc.player.ticksExisted % 2 == 0 || mc.currentScreen instanceof GuiContainer && !(mc.currentScreen instanceof InventoryEffectRenderer)) {
             return;
         }

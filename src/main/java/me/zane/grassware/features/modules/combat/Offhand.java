@@ -4,6 +4,7 @@ import me.zane.grassware.event.bus.EventListener;
 import me.zane.grassware.event.events.TickEvent;
 import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.features.setting.impl.FloatSetting;
+
 import net.minecraft.init.Items;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.item.Item;

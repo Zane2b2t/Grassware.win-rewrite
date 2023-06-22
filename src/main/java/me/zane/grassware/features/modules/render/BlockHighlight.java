@@ -16,7 +16,7 @@ public class BlockHighlight
         extends Module {
 
     public final BooleanSetting box = register("Box", true);
-    public final IntSetting boxAlpha = register("BoxAlpha", 90, 0, 255);
+    public final IntSetting opacity = register("Opacity", 90, 0, 255);
     public final BooleanSetting outline = register("Outline", true);
     public final FloatSetting lineWidth = register("LineWidth", 1f, 0f, 5f);
 
@@ -27,7 +27,7 @@ public class BlockHighlight
         if (ray == null || ray.typeOfHit != RayTraceResult.Type.BLOCK)
             return;
         BlockPos pos = ray.getBlockPos();
-        GradientShader.setup(boxAlpha.getValue().floatValue() / 255f);
+        GradientShader.setup(opacity.getValue().floatValue() / 255f);
         if (box.getValue())
             RenderUtil.boxShader(pos);
         if (outline.getValue()) {

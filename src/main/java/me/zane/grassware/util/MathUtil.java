@@ -2,6 +2,11 @@ package me.zane.grassware.util;
 
 public class MathUtil implements MC {
 
+    public static float gaussian(float x, float s) {
+        double output = 1.0 / Math.sqrt(2.0 * Math.PI * (s * s));
+        return (float) (output * Math.exp(-(x * x) / (2.0 * (s * s))));
+    }
+
     public static double round(final double value, final int places) {
         double scale = Math.pow(10, places);
         return Math.round(value * scale) / scale;

@@ -55,7 +55,7 @@ public class AutoCrystal extends Module {
     private final BooleanSetting inhibit = register("Inhibit", false);
     private final FloatSetting opacity = register("Opacity", 0.5f, 0.1f, 1.0f);
     private final FloatSetting defualtOpacityVal = register("DOV", 0.5f, 0.1f, 1.0f);
-    private final BooleanSetting renderRing = register("Ring", true);
+    private final BooleanSetting renderRing = register("Ring", false); //for some reason this is banga langa. when disabled it renders ring. when enabled it doesnt?
     private final Map<Integer, Long> breakMap = new ConcurrentHashMap<>();
     ArrayList<EntityEnderCrystal> crystals = new ArrayList<>();
     private BlockPos currentPos;
@@ -215,8 +215,8 @@ public class AutoCrystal extends Module {
     @EventListener
     public void onRender3DPre(final Render3DPreEvent event) {
 
-        final EntityPlayer entityPlayer = EntityUtil.entityPlayer(5.0f);
-        if (entityPlayer == null || renderRing.getValue() || !mc.player.getHeldItemOffhand().getItem().equals(Items.END_CRYSTAL) && !mc.player.getHeldItemMainhand().getItem().equals(Items.END_CRYSTAL)) {
+        final EntityPlayer entityPlayer = EntityUtil.entityPlayer(targetRange.getValue());
+        if (entityPlayer == null || !mc.player.getHeldItemOffhand().getItem().equals(Items.END_CRYSTAL) && !mc.player.getHeldItemMainhand().getItem().equals(Items.END_CRYSTAL)) {
             return;
         }
 
@@ -265,6 +265,7 @@ public class AutoCrystal extends Module {
             GradientShader.setup(opacity.getValue());
             RenderUtil.boxShader(renderPos);
             RenderUtil.outlineShader(renderPos);
+            RenderUtil.outlineShader(renderPos); //idk maybe doubling this makes the outline have 2x the opacity?
             GradientShader.finish();
 
             if (placedPos != null) {

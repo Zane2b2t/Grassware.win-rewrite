@@ -18,8 +18,10 @@ public class GrassWare {
     public static ThreadManager threadManager;
     public static HoleManager holeManager;
     public static CommandManager commandManager;
-    public static FriendManager friendManager;
+    public static  FriendManager friendManager;
+    public static LastDamageManager lastDamageManager;
     public static ModuleManager moduleManager;
+    public static MotionPredictionManager motionPredictManager;
     public static InventoryManager inventoryManager;
     public static ColorManager colorManager;
     public static FileManager fileManager;
@@ -38,6 +40,8 @@ public class GrassWare {
         friendManager = new FriendManager();
         inventoryManager = new InventoryManager();
         moduleManager = new ModuleManager();
+        lastDamageManager = new LastDamageManager();
+        motionPredictManager = new MotionPredictionManager();
         eventManager = new EventManager();
         fileManager = new FileManager();
         colorManager = new ColorManager();

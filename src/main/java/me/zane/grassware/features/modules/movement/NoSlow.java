@@ -25,7 +25,7 @@ public class NoSlow extends Module {
         }
     }
 
-    @SubscribeEvent
+    @SubscribeEvent           // ignore this fake IDE error. it works and builds
     public void onPacketSend(PacketEvent.Send event) {
         if (slowed() && toobee.getValue()) {
             mc.player.connection.sendPacket(new CPacketHeldItemChange(mc.player.inventory.currentItem));

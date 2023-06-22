@@ -20,6 +20,7 @@
     "MixinParticleManager",
     "MixinRender",
     "MixinRenderArmor",
+    "ICPacketUseEntity",
     "MixinRenderItem"
   ]
 }

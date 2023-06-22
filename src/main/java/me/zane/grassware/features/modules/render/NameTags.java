@@ -1,6 +1,5 @@
 package me.zane.grassware.features.modules.render;
 
-
 import me.zane.grassware.GrassWare;
 import me.zane.grassware.event.bus.EventListener;
 import me.zane.grassware.event.events.NameplateEvent;
@@ -10,6 +9,7 @@ import me.zane.grassware.features.setting.impl.FloatSetting;
 import me.zane.grassware.shader.impl.GradientShader;
 import me.zane.grassware.util.MathUtil;
 import me.zane.grassware.util.RenderUtil;
+
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;

@@ -39,6 +39,12 @@ public class BlockUtil implements MC {
                 && (mc.world.getBlockState(pos).getBlock().equals(Blocks.OBSIDIAN)
                 || mc.world.getBlockState(pos).getBlock().equals(Blocks.BEDROCK));
     }
+    public static boolean valid(BlockPos pos, boolean updated) {
+        return mc.world.getBlockState(pos.up()).getBlock().equals(Blocks.AIR)
+                && (mc.world.getBlockState(pos.up().up()).getBlock().equals(Blocks.AIR) || updated)
+                && (mc.world.getBlockState(pos).getBlock().equals(Blocks.OBSIDIAN)
+                || mc.world.getBlockState(pos).getBlock().equals(Blocks.BEDROCK));
+    }
 
     public static double[] calculateAngle(Vec3d to) {
         final Vec3d eye = mc.player.getPositionEyes(mc.getRenderPartialTicks());
@@ -52,6 +58,12 @@ public class BlockUtil implements MC {
     }
     public static BlockPos getPosition() {
         return new BlockPos(Math.floor(mc.player.posX), Math.floor(mc.player.posY), Math.floor(mc.player.posZ));
+    }
+    public static boolean empty(BlockPos pos) {
+        return mc.world.getEntitiesWithinAABB(EntityPlayer.class, new AxisAlignedBB(new BlockPos(pos.getX() + 0.5f, pos.getY() + 1.0f, pos.getZ() + 0.5f))).isEmpty();
+    }
+    public static boolean isReplaceable(BlockPos pos){
+        return mc.world.getBlockState(pos).getMaterial().isReplaceable();
     }
 
     public static BlockPos getPosition(EntityPlayer entityPlayer) {

@@ -103,7 +103,7 @@ public class Speed extends Module {
 
     public String getInfo() {
 
-        return mode.getValue();
+        return ChatFormatting.GRAY + "[" + ChatFormatting.WHITE + mode.getValue().toString().toLowerCase() +ChatFormatting.RESET + ChatFormatting.GRAY + "]";
 
     }
 }

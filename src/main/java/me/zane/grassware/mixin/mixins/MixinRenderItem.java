@@ -1,5 +1,6 @@
 package me.zane.grassware.mixin.mixins;
 
+import me.zane.grassware.features.modules.client.ClickGui;
 import me.zane.grassware.features.modules.render.Hand;
 
 import net.minecraft.client.Minecraft;
@@ -102,7 +103,7 @@ public abstract class MixinRenderItem {
                 if (useCustomAlpha) {
                     GlStateManager.color(1, 1, 1, Hand.INSTANCE.alpha.getValue() / 255.0F);
                 } else {
-                    GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+                    GlStateManager.color(1.0F, 1.0F, 1.0F, Hand.INSTANCE.alpha.getValue());
                 }
                 GlStateManager.enableRescaleNormal();
                 stack.getItem().getTileEntityItemStackRenderer().renderByItem(stack);
@@ -137,7 +138,7 @@ public abstract class MixinRenderItem {
         GlStateManager.popMatrix();
         if (!Hand.INSTANCE.renderGlintOnce.getValue()) {
             GlStateManager.pushMatrix();
-            GlStateManager.scale(8.0F, 8.0F, 8.0F);
+            GlStateManager.scale(12.0F, 12.0F, 12.0F);
             float f1 = (float) (Minecraft.getSystemTime() % 4873L) / 4873.0F / 8.0F;
             GlStateManager.translate(-f1, 0.0F, 0.0F);
             GlStateManager.rotate(10.0F, 0.0F, 0.0F, 1.0F);

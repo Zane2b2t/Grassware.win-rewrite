@@ -8,7 +8,6 @@ import me.zane.grassware.util.Util;
 import net.minecraft.network.play.client.CPacketChatMessage;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-
 public class SpawnHomeBipass extends Module {
 
     private final StringSetting HomeName = register("Home Name", "Home1");

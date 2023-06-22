@@ -7,7 +7,6 @@ import me.zane.grassware.event.events.RenderLivingEntityEvent;
 import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.features.setting.impl.BooleanSetting;
 
-
 public class NoRender extends Module {
     private final BooleanSetting hurtCam = register("HurtCam", false);
     private final BooleanSetting overlays = register("Overlays", false);

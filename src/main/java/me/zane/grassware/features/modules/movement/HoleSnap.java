@@ -14,6 +14,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.Comparator;
+// this garbage works but also not at the same time
 
 public class HoleSnap extends Module {
     private final FloatSetting boundingBoxSize = register("Bounding Box Size", 1.0f, 0.1f, 10.0f);
