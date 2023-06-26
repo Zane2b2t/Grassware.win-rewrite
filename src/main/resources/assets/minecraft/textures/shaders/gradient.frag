@@ -8,19 +8,23 @@ uniform float offset;
 uniform float mix;
 
 void main() {
-    float alpha =texture2D(texture, gl_TexCoord[0].xy).a;
-    if (alpha != 0.0) {
-        float distance = sqrt(gl_FragCoord.x * gl_FragCoord.x + gl_FragCoord.y * gl_FragCoord.y) + offset;
+float wiggle = 0.1;
+float thickness = 0.1;
+float noise = abs(fract(sin(dot(gl_FragCoord.xy ,vec2(12.9898,78.233))) * 43758.5453));
+float line = smoothstep(thickness - wiggle, thickness + wiggle, noise);
 
-        distance = distance / step;
+float alpha =texture2D(texture, gl_TexCoord[0].xy).a;
+if (alpha != 0.0) {
+    float distance = sqrt(gl_FragCoord.x * gl_FragCoord.x + gl_FragCoord.y * gl_FragCoord.y) + offset;
+
+    distance = distance / step;
 
 
-    distance = ((sin(distance) + 1.0) / 2.0);
+distance = ((sin(distance) + 1.0) / 2.0);
 
-        float distanceInv = 1 - distance;
-        float r = rgb.r * distance + rgb1.r * distanceInv;
-        float g = rgb.g * distance + rgb1.g * distanceInv;
-        float b = rgb.b * distance + rgb1.b * distanceInv;
-        gl_FragColor = vec4(r, g, b, mix);
-    }
+    float distanceInv = 1 - distance;
+    float r = rgb.r * distance + rgb1.r * distanceInv;
+    float g = rgb.g * distance + rgb1.g * distanceInv;
+    float b = rgb.b * distance + rgb1.b * distanceInv;
+    gl_FragColor = vec4(r, g, b, mix);
 }
