@@ -20,6 +20,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
+import net.minecraft.network.Packet;
+import net.minecraft.network.play.client.CPacketAnimation;
 import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock;
 import net.minecraft.network.play.client.CPacketUseEntity;
 import net.minecraft.network.play.server.SPacketDestroyEntities;
@@ -29,6 +31,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -52,6 +55,7 @@ public class AutoCrystal extends Module {
     private final FloatSetting breakDelay = register("Break Delay", 50.0f, 0f, 500.0f);
     private final ModeSetting setDead = register("Set Dead", "Set Dead", Arrays.asList("None", "Set Dead", "Remove", "Both"));
     private final BooleanSetting fastRemove = register("Fast Remove", false);
+    private final BooleanSetting predict = register("predict", false);
     private final BooleanSetting inhibit = register("Inhibit", false);
     private final FloatSetting opacity = register("Opacity", 0.5f, 0.1f, 1.0f);
     private final FloatSetting defualtOpacityVal = register("DOV", 0.5f, 0.1f, 1.0f);
@@ -149,7 +153,10 @@ public class AutoCrystal extends Module {
             if (selfDamage > mc.player.getHealth() + mc.player.getAbsorptionAmount()) {
                 return;
             }
+            CPacketUseEntity packetUseEntity = new CPacketUseEntity();
             mc.getConnection().sendPacket(new CPacketUseEntity(crystal));
+            packetUseEntity.entityId = packet.getEntityID();
+            packetUseEntity.action = CPacketUseEntity.Action.ATTACK;
             swingHand();
             handleSetDead(crystal);
             breakTime = System.currentTimeMillis();
@@ -188,6 +195,20 @@ public class AutoCrystal extends Module {
                     placeCrystal(currentPos);
                 }
             }
+        }
+    }
+    @EventListener
+    public void onPredict(PacketEvent.Receive event) {
+        if (event.getPacket() instanceof SPacketSpawnObject && this.predict.getValue()) {
+            SPacketSpawnObject packet = (SPacketSpawnObject) event.getPacket();
+            if (packet.getType() != 51) {
+                return;
+            }
+            EntityEnderCrystal crystal = new EntityEnderCrystal((World) AutoCrystal.mc.world, packet.getX(), packet.getY(), packet.getZ());
+            CPacketUseEntity crystalPacket = new CPacketUseEntity();
+            crystalPacket.entityId = packet.getEntityID();
+            crystalPacket.action = CPacketUseEntity.Action.ATTACK;
+            AutoCrystal.mc.player.connection.sendPacket((Packet) crystalPacket);
         }
     }
 

@@ -6,6 +6,7 @@ import net.minecraft.network.Packet;
 public class PacketEvent extends Event {
     private final Packet<?> packet;
 
+
     public PacketEvent(final Packet<?> packet) {
         this.packet = packet;
     }
