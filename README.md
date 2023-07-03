@@ -33,12 +33,12 @@ This project was made for the popular group, Grassers. Hence the name Grassware.
 
 ## Features
 
-* Combat <br>Aura (KillAura), AutoCrystal, AutoSand, Offhand
-* Misc <br>CoordLeaker, SpawnHomeBipass (8b8t), QuranFacts, AutoAuth
-* Movement <br>NoSlow, ReverseStep, Speed, Sprint, Step, Velocity
+* Combat <br>Aura (KillAura), AutoCrystal, AutoSand, Offhand, AA (AutoArmour), Crits (Criticals)
+* Misc <br>CoordLeaker, SpawnHomeBipass (8b8t), AutoAuth, CustomJD
+* Movement <br>NoSlow, ReverseStep, Speed, Sprint, Step, Velocity, HoleAssist
 * Player <br>WallPhase, FakePlayer
-* Render <br>BlockHighlight, ItemChams, PortalChams, HoleESP, NameTags, NoRender, PopESP, ShaderESP, World
-* Client <br>ClickGUI, Hud, DiscordRPC
+* Render <br>BlockHighlight, HoleESP, NameTags, NoRender, PopESP, ShaderESP, World, Hand
+* Client <br>ClickGUI, Hud
 
 ## Installing
 
