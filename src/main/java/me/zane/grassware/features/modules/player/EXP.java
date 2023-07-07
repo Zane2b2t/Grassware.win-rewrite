@@ -1,4 +1,4 @@
-package org.hockey.hockeyware.client.features.module.modules.Player;
+package me.zane.grassware.features.modules.player;
 
 import me.zane.grassware.event.bus.EventListener;
 import me.zane.grassware.event.events.UpdatePlayerWalkingEvent;
