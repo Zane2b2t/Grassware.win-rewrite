@@ -20,14 +20,17 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.client.CPacketAnimation;
 import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock;
 import net.minecraft.network.play.client.CPacketUseEntity;
 import net.minecraft.network.play.server.SPacketDestroyEntities;
+import net.minecraft.network.play.server.SPacketSoundEffect;
 import net.minecraft.network.play.server.SPacketSpawnObject;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -55,6 +58,7 @@ public class AutoCrystal extends Module {
     private final FloatSetting breakDelay = register("Break Delay", 50.0f, 0f, 500.0f);
     private final ModeSetting setDead = register("Set Dead", "Set Dead", Arrays.asList("None", "Set Dead", "Remove", "Both"));
     private final BooleanSetting fastRemove = register("Fast Remove", false);
+    private final BooleanSetting soundRemove = register("Sound Remove", false);
     private final BooleanSetting predict = register("predict", false);
     private final BooleanSetting inhibit = register("Inhibit", false);
     private final FloatSetting opacity = register("Opacity", 0.5f, 0.1f, 1.0f);
@@ -178,6 +182,18 @@ public class AutoCrystal extends Module {
                     mc.world.removeEntityFromWorld(id);
                 } catch (Exception ignored) {
                 }
+            }
+        }
+        if (event.getPacket() instanceof SPacketSoundEffect && soundRemove.getValue()) {
+            final SPacketSoundEffect packet = (SPacketSoundEffect) event.getPacket();
+            if (packet.getCategory() == SoundCategory.BLOCKS && packet.getSound() == SoundEvents.ENTITY_GENERIC_EXPLODE) {
+                mc.addScheduledTask(() -> {
+                    for (Entity entity : mc.world.loadedEntityList) {
+                        if (entity instanceof EntityEnderCrystal && entity.getDistanceSq(packet.getX(), packet.getY(), packet.getZ()) < 36) {
+                            entity.setDead();
+                        }
+                    }
+                });
             }
         }
     }
