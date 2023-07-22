@@ -29,7 +29,7 @@ public class FakePlayer extends Module {
 
     private final BooleanSetting inv = register("Inventory", true);
     private final BooleanSetting pop = register("TotemPop", true);
-    private final StringSetting plrName = register("Name", "Fit");
+    private final StringSetting plrName = register("Name", "ZANE");
     private EntityOtherPlayerMP falesnejhrac;
 
     public static float calculateDamage(double posX, double posY, double posZ, Entity entity) {
@@ -138,4 +138,3 @@ public class FakePlayer extends Module {
         }
     }
 }
-

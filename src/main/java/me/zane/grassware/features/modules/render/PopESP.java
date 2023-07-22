@@ -1,11 +1,14 @@
 package me.zane.grassware.features.modules.render;
-
+//TODO: fix player name showing on popchams
+//WARNING: ALL CONTENT BELONGS TO https://github.com/Zane2b2t , IF ANY OF THE CLASSES CONTAINING THIS WARNING ARENT IN https://github.com/Zane2b2t/Grassware.win-Rewrite INFORM GITHUB TO DMCA
 import me.zane.grassware.event.bus.EventListener;
 import me.zane.grassware.event.events.*;
 import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.features.modules.client.ClickGui;
+import me.zane.grassware.features.modules.player.FakePlayer;
 import me.zane.grassware.features.setting.impl.FloatSetting;
 import me.zane.grassware.shader.impl.GradientShader;
+import me.zane.grassware.util.MC;
 
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.entity.Entity;
@@ -20,6 +23,7 @@ import static org.lwjgl.opengl.GL11.*;
 public class PopESP extends Module {
     private final FloatSetting lineWidth = register("Line Width", 1.0f, 0f, 5.0f);
     private final HashMap<EntityPlayer, Long> playerList = new HashMap<>();
+
 
     @EventListener
     public void onRender3D(final Render3DEvent event) {

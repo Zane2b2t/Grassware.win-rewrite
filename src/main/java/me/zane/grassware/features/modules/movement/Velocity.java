@@ -1,5 +1,6 @@
 package me.zane.grassware.features.modules.movement;
 
+import com.mojang.realmsclient.gui.ChatFormatting;
 import me.zane.grassware.event.bus.EventListener;
 import me.zane.grassware.event.events.PacketEvent;
 import me.zane.grassware.event.events.PushBlockEvent;
@@ -24,6 +25,6 @@ public class Velocity extends Module {
 
     @Override
     public String getInfo() {
-        return " %0, %0";
+        return "[" + ChatFormatting.WHITE + "%0, %0" + ChatFormatting.GRAY + "]";
     }
 }

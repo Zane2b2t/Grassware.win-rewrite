@@ -1,6 +1,6 @@
 package me.zane.grassware.features.modules.combat;
-
-
+//WARNING: ALL CONTENT BELONGS TO https://github.com/Zane2b2t , IF ANY OF THE CLASSES CONTAINING THIS WARNING ARENT IN https://github.com/Zane2b2t/Grassware.win-Rewrite INFORM GITHUB TO DMCA
+import com.mojang.realmsclient.gui.ChatFormatting;
 import me.zane.grassware.event.bus.EventListener;
 import me.zane.grassware.event.events.Render3DPreEvent;
 import me.zane.grassware.features.modules.Module;
@@ -66,11 +66,15 @@ public class Aura extends Module {
         glDisable(GL_BLEND);
         glPopMatrix();
 
-        if (!timer.passedMs(650)) {
+        if (!timer.passedMs(600)) {
             return;
         }
         mc.player.connection.sendPacket(new CPacketUseEntity(entityPlayer));
         mc.player.swingArm(EnumHand.MAIN_HAND);
         timer.sync();
+    }
+    @Override
+    public String getInfo() {
+        return "[" + ChatFormatting.WHITE + "Closest" + ChatFormatting.GRAY + "]";
     }
 }

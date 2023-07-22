@@ -28,6 +28,14 @@ public class RenderUtil implements MC {
         glEnable(GL_ALPHA_TEST);
         glAlphaFunc(GL_GREATER, (float) (limit * .01));
     }
+    public static void invokeScale(float scale) {
+        glPushMatrix();
+        glScalef(scale, scale, scale);
+    }
+
+    public static void resetScale() {
+        glPopMatrix();
+    }
 
    // public static void rounded(float x, float y, float width, float height, float radius, Color color) {
      //   setupDefault(color);

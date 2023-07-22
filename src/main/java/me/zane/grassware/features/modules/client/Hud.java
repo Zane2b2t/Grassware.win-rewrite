@@ -1,9 +1,10 @@
 package me.zane.grassware.features.modules.client;
-
+//WARNING: ALL CONTENT BELONGS TO https://github.com/Zane2b2t , IF ANY OF THE CLASSES CONTAINING THIS WARNING ARENT IN https://github.com/Zane2b2t/Grassware.win-Rewrite INFORM GITHUB TO DMCA
 import me.zane.grassware.GrassWare;
 import me.zane.grassware.event.bus.EventListener;
 import me.zane.grassware.event.events.Render2DEvent;
 import me.zane.grassware.event.events.RenderHotbarEvent;
+import me.zane.grassware.event.events.RenderHungerEvent;
 import me.zane.grassware.event.events.RenderPotionEffectsEvent;
 import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.features.setting.impl.BooleanSetting;
@@ -36,10 +37,9 @@ public class Hud extends Module {
         }
 
         if (welcomer.getValue()) {
-            final String text = "Welcome to " + GrassWare.MODNAME + " " + GrassWare.MODVER + ", " + mc.player.getName() + "!";
+            final String text = "Welcome to " + GrassWare.MODNAME + ", " + mc.player.getName() + "!";
             registerHudText(text, event.scaledResolution.getScaledWidth() / 2.0f - GrassWare.textManager.stringWidth(text) / 2.0f, 0.0f, false);
         }
-
 
         if (moduleList.getValue()) {
             GrassWare.moduleManager.modules.stream().filter(module -> module.isEnabled() && !modules.contains(module)).forEach(modules::add);
@@ -60,7 +60,6 @@ public class Hud extends Module {
             }
         }
     }
-
 
     private void registerHudText(final String text, final float x, final float y, final boolean gray) {
         if (gray) {
@@ -86,45 +85,50 @@ public class Hud extends Module {
     @EventListener
     public void onRenderHotbar(final RenderHotbarEvent event) {
         if (!customHotbar.getValue()) {
-            return;
-        }
-        final ScaledResolution scaledResolution = event.scaledResolution;
-        final float centerX = scaledResolution.getScaledWidth() / 2.0f;
-        final float height = scaledResolution.getScaledHeight();
-        GradientShader.setup();
-        float x = -81.0f;
-        for (int i = 0; i < 9; i++) {
-            RenderUtil.texturedOutline(centerX + x, height - 18.0f, centerX + x + 18.0f, height);
-            x += 18.0f;
-        }
-        GradientShader.finish();
+                     return;
+               }
+                 final ScaledResolution scaledResolution = event.scaledResolution;
+                 final float centerX = scaledResolution.getScaledWidth() / 2.0f;
+                final float height = scaledResolution.getScaledHeight();
+                 GradientShader.setup();
+                float x = -81.0f;
+                 for (int i = 0; i < 9; i++) {
+                     RenderUtil.texturedOutline(centerX + x, height - 18.0f, centerX + x + 18.0f, height);
+                     x += 18.0f;
+               }
+                 GradientShader.finish();
 
-        x = -81.0f;
-        for (int i = 0; i < 9; i++) {
-            if (mc.player.inventory.currentItem == i) {
-                RenderUtil.rect(centerX + x + 1, height - 17.0f, centerX + x + 17.0f, height - 1, new Color(0, 0, 0, 150));
+                 x = -81.0f;
+                  for (int i = 0; i < 9; i++) {
+                       if (mc.player.inventory.currentItem == i) {
+                           RenderUtil.rect(centerX + x + 1, height - 17.0f, centerX + x + 17.0f, height - 1, new Color(0, 0, 0, 150));
+                       }
+                      final ItemStack itemStack = mc.player.inventory.getStackInSlot(i);
+                       glPushMatrix();
+                      glClear(256);
+                      RenderHelper.enableStandardItemLighting();
+                   glEnable(GL_DEPTH_TEST);
+                 glEnable(GL_BLEND);
+                 mc.getRenderItem().zLevel = -150.0f;
+                 mc.getRenderItem().renderItemAndEffectIntoGUI(itemStack, (int) (centerX + x + 1.0f), (int) (height - 17.0f));
+                  mc.getRenderItem().renderItemOverlays(mc.fontRenderer, itemStack, (int) (centerX + x + 1.0f), (int) (height - 17.0f));
+                  mc.getRenderItem().zLevel = 0.0f;
+                  RenderHelper.disableStandardItemLighting();
+                  glDisable(GL_BLEND);
+                    glDisable(GL_DEPTH_TEST);
+                    glPopMatrix();
+                    x += 18.0f;
+                 }
+                  event.setCancelled(true);
+             }
+
+         @EventListener
+         public void onRenderHunger(final RenderHungerEvent event) { //idk if there's an event called that i just made this up lmao
+             event.setCancelled(true);
+         }
+            @EventListener
+            public void onRenderPotionEffects(final RenderPotionEffectsEvent event) {
+                event.setCancelled(true);
             }
-            final ItemStack itemStack = mc.player.inventory.getStackInSlot(i);
-            glPushMatrix();
-            glClear(256);
-            RenderHelper.enableStandardItemLighting();
-            glEnable(GL_DEPTH_TEST);
-            glEnable(GL_BLEND);
-            mc.getRenderItem().zLevel = -150.0f;
-            mc.getRenderItem().renderItemAndEffectIntoGUI(itemStack, (int) (centerX + x + 1.0f), (int) (height - 17.0f));
-            mc.getRenderItem().renderItemOverlays(mc.fontRenderer, itemStack, (int) (centerX + x + 1.0f), (int) (height - 17.0f));
-            mc.getRenderItem().zLevel = 0.0f;
-            RenderHelper.disableStandardItemLighting();
-            glDisable(GL_BLEND);
-            glDisable(GL_DEPTH_TEST);
-            glPopMatrix();
-            x += 18.0f;
-        }
-        event.setCancelled(true);
-    }
+ }
 
-    @EventListener
-    public void onRenderPotionEffects(final RenderPotionEffectsEvent event) {
-        event.setCancelled(true);
-    }
-}

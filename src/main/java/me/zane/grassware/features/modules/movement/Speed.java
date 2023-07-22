@@ -98,12 +98,8 @@ public class Speed extends Module {
             }
         }
     }
-
     @Override
-
     public String getInfo() {
-
-        return ChatFormatting.GRAY + "[" + ChatFormatting.WHITE + mode.getValue().toString().toLowerCase() +ChatFormatting.RESET + ChatFormatting.GRAY + "]";
-
+        return "[" + ChatFormatting.WHITE + mode.getValue() + ChatFormatting.GRAY + "]";
     }
 }

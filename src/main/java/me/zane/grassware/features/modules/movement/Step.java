@@ -1,5 +1,6 @@
 package me.zane.grassware.features.modules.movement;
 
+import com.mojang.realmsclient.gui.ChatFormatting;
 import me.zane.grassware.event.bus.EventListener;
 import me.zane.grassware.event.events.TickEvent;
 import me.zane.grassware.features.modules.Module;
@@ -17,5 +18,9 @@ public class Step extends Module {
     @EventListener
     public void onTick(final TickEvent event) {
         mc.player.stepHeight = height.getValue();
+    }
+    @Override
+    public String getInfo() {
+        return ChatFormatting.GRAY + "[" + ChatFormatting.WHITE + "Vanilla, " + height.getValue() + ChatFormatting.GRAY + "]";
     }
 }

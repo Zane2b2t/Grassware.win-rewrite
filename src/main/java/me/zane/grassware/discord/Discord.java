@@ -1,6 +1,5 @@
 package me.zane.grassware.discord;
 
-
 import club.minnced.discord.rpc.DiscordEventHandlers;
 import club.minnced.discord.rpc.DiscordRPC;
 import club.minnced.discord.rpc.DiscordRichPresence;
@@ -17,9 +16,9 @@ public class Discord {
         discordRPC.Discord_Initialize(discordID, eventHandlers, true, null);
 
         discordRichPresence.startTimestamp = System.currentTimeMillis() / 1000L;
-        discordRichPresence.details = "v0.7";
+        discordRichPresence.details = "v0.8";
         discordRichPresence.largeImageKey = "large";
-        discordRichPresence.largeImageText = "Grassware v0.7";
+        discordRichPresence.largeImageText = "Grassware v0.8";
         discordRichPresence.smallImageKey = "small";
         // discordRichPresence.smallImageText = "AtAt HQ";
         discordRichPresence.state = null;

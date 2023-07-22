@@ -1,5 +1,5 @@
 package me.zane.grassware.features.modules.render;
-
+//WARNING: ALL CONTENT BELONGS TO https://github.com/Zane2b2t , IF ANY OF THE CLASSES CONTAINING THIS WARNING ARENT IN https://github.com/Zane2b2t/Grassware.win-Rewrite INFORM GITHUB TO DMCA
 import me.zane.grassware.GrassWare;
 import me.zane.grassware.event.bus.EventListener;
 import me.zane.grassware.event.events.NameplateEvent;
@@ -44,7 +44,7 @@ public class NameTags extends Module {
             glRotatef((mc.getRenderManager().options.thirdPersonView == 2 ? -1 : 1) * mc.getRenderManager().playerViewX, 1.0f, 0.0f, 0.0f);
 
             double distance = ((mc.getRenderViewEntity() == null) ? mc.player : mc.getRenderViewEntity()).getDistance(vec.x + mc.getRenderManager().viewerPosX, vec.y + mc.getRenderManager().viewerPosY, vec.z + mc.getRenderManager().viewerPosZ);
-            double scale = 0.0018 + scaleVal * distance;
+            double scale = 0.0018 + scaleVal * 6; //fix dumb scaling by replacing * distance with * 6 so it's static
 
             glScaled(-scale, -scale, scale);
             glDisable(GL_DEPTH_TEST);

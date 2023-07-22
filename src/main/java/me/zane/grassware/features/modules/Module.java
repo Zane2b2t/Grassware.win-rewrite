@@ -24,6 +24,10 @@ public class Module extends Feature {
 
     public void onToggle() {
     }
+    public BooleanSetting getEnabled() {
+        return enabled;
+    }
+
 
     public void setEnabled(boolean enabled) {
         if (enabled) {

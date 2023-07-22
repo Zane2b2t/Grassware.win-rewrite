@@ -1,6 +1,6 @@
 //this module is china. RenderGlientOnce always works even when module is disabled. also shit no worky
 package me.zane.grassware.features.modules.render;
-
+//WARNING: ALL CONTENT BELONGS TO https://github.com/Zane2b2t , IF ANY OF THE CLASSES CONTAINING THIS WARNING ARENT IN https://github.com/Zane2b2t/Grassware.win-Rewrite INFORM GITHUB TO DMCA
 import me.zane.grassware.event.bus.EventListener;
 import me.zane.grassware.event.bus.Event;
 import me.zane.grassware.event.events.Render2DEvent;
