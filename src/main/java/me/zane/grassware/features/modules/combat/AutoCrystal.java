@@ -58,6 +58,7 @@ public class AutoCrystal extends Module {
     private final FloatSetting maximumDamage = register("Maximum Damage", 8.0f, 0.1f, 12.0f);
     private final FloatSetting placeDelay = register("Place Delay", 0.0f, 0f, 500.0f);
     private final FloatSetting breakDelay = register("Break Delay", 50.0f, 0f, 500.0f);
+    private final BooleanSetting updated = register("1.13+", false);
     private final ModeSetting setDead = register("Set Dead", "Set Dead", Arrays.asList("None", "Set Dead", "Remove", "Both"));
     private final BooleanSetting fastRemove = register("Fast Remove", false);
     private final BooleanSetting soundRemove = register("Sound Remove", false);
@@ -414,7 +415,7 @@ public class AutoCrystal extends Module {
     private BlockPos pos(final EntityPlayer entityPlayer) {
         final TreeMap<Float, BlockPos> map = new TreeMap<>();
 
-        BlockUtil.getBlocksInRadius(targetRange.getValue()).stream().filter(BlockUtil::valid).forEach(pos -> {
+        BlockUtil.getBlocksInRadius(targetRange.getValue()).stream().filter(pos -> BlockUtil.valid(pos, updated.getValue())).forEach(pos -> {
             if (mc.world.rayTraceBlocks(mc.player.getPositionVector().add(0, mc.player.eyeHeight, 0), new Vec3d(pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5), false, true, false) != null) {
                 if (mc.player.getDistance(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5) > placeWallRange.getValue())
                     return;
