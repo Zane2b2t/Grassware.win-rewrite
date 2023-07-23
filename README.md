@@ -18,8 +18,7 @@ This project was made for the popular group, Grassers. Hence the name Grassware.
 #### Grassware.win Contributors
 
 * alpha432 (client base)
-* [zpisstige](https://github.com/RealzPrestige) (client basev2 + all of the good visuals as now he knows how to use
-  OpenGL and shaders and is an absolute coding god)
+* [zpisstige](https://github.com/RealzPrestige) (client basev2)
 * [Zane2b2t](https://github.com/Zane2b2t) (head developer, pro paster, maintainer)
 * [Hockeyl8](https://github.com/hockeyl8) (Stuff and error fixes)
 * [Cuubicc](https://github.com/Cuubicc) (Crazy Fixes)
