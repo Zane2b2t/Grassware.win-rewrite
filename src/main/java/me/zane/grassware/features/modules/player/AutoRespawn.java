@@ -18,7 +18,7 @@ public class AutoRespawn extends Module {
 
     @EventListener
     public void onUpdate(final UpdatePlayerWalkingEvent event) {
-        if (mc.currentScreen instanceof GuiGameOver && stopWatch.passed(3500)) {
+        if (mc.currentScreen instanceof GuiGameOver && stopWatch.passed(4500)) {
             mc.getConnection().sendPacket(new CPacketClientStatus(CPacketClientStatus.State.PERFORM_RESPAWN));
             if (chat.getValue()) {
                 Command.sendMessage(ChatFormatting.RED + "Respawning.");

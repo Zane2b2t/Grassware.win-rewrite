@@ -62,6 +62,7 @@ public class AutoCrystal extends Module {
     private final ModeSetting setDead = register("Set Dead", "Set Dead", Arrays.asList("None", "Set Dead", "Remove", "Both"));
     private final BooleanSetting fastRemove = register("Fast Remove", false);
     private final BooleanSetting soundRemove = register("Sound Remove", false);
+    private final BooleanSetting ping = register("PingCalc", false);
     private final BooleanSetting boost = register("Boost", false); //dev setting
     private final BooleanSetting interact = register("Interact", false); //dev setting
     private final BooleanSetting attack = register("Attack", false); //dev setting
@@ -247,21 +248,27 @@ public class AutoCrystal extends Module {
                     highestEntity = entity;
                 }
             }
-            if (highestEntity != null) { //this makes the AutoCrystal require internet to use. even when disabled. using without internet in singleplayer will result in minecraft crashing
-                int latency = Objects.requireNonNull(mc.getConnection()).getPlayerInfo(mc.getConnection().getGameProfile().getId()).getResponseTime() / 50; //this
-                for (int i = latency; i < latency + 10; i++) {
-                    try {
-                        CPacketUseEntity cPacketUseEntity = new CPacketUseEntity();
+            if (highestEntity != null) {//this makes the AutoCrystal require internet to use. even when disabled. using without internet in singleplayer will result in minecraft crashing
+                    int latency = Objects.requireNonNull(mc.getConnection()).getPlayerInfo(mc.getConnection().getGameProfile().getId()).getResponseTime() / 50; //this
+                    for (int i = latency; i < latency + 10; i++) {
+                        try {
+                            CPacketUseEntity cPacketUseEntity = new CPacketUseEntity();
 
-                        ((ICPacketUseEntity) cPacketUseEntity).setEntityId(highestEntity.getEntityId() + i);
-                        ((ICPacketUseEntity) cPacketUseEntity).setAction(ATTACK);
-                        PacketUtil.invoke(cPacketUseEntity);
-                    } catch (Exception ignored) {
+                          if (ping.getValue()) {
+                              ((ICPacketUseEntity) cPacketUseEntity).setEntityId(highestEntity.getEntityId() + i);
+                          }
+                          else {
+                              ((ICPacketUseEntity) cPacketUseEntity).setEntityId(highestEntity.getEntityId());
+                          }
+                            ((ICPacketUseEntity) cPacketUseEntity).setAction(ATTACK);
+                            PacketUtil.invoke(cPacketUseEntity);
+                        } catch (Exception ignored) {
+                        }
                     }
-                }
             }
         }
     }
+
 
     @EventListener
     public void onPacketSend(PacketEvent.Send event) {
