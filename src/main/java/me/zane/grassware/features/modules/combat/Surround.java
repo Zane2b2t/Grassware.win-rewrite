@@ -41,6 +41,7 @@ public class Surround extends Module {
     private final BooleanSetting extend = register("Extend", false);
     private final BooleanSetting center = register("Center", true);
     private final BooleanSetting rotate = register("Rotate", false);
+    private final BooleanSetting packet = register("Packet", false);
     private final BooleanSetting instant = register("Instant", true);
     private final BooleanSetting confirm = register("Confirm", true);
 
@@ -257,7 +258,7 @@ public class Surround extends Module {
                 mc.player.connection.sendPacket(new CPacketPlayer.Rotation(rots[0], rots[1], mc.player.onGround));
             }
 
-            BlockUtil.placeBlock(pos, EnumHand.MAIN_HAND, false, false);
+            BlockUtil.placeBlock(pos, EnumHand.MAIN_HAND, packet.getValue(), false);
 
             if (rotate.getValue()) {
                 mc.player.connection.sendPacket(new CPacketPlayer.Rotation(mc.player.rotationYaw, mc.player.rotationPitch, mc.player.onGround));
