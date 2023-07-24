@@ -66,7 +66,7 @@ public class AutoCrystal extends Module {
     private final BooleanSetting attack = register("Attack", false); //dev setting
     private final BooleanSetting brr = register("BRR", false); //dev setting
     private final BooleanSetting instantExplode = register("InstantBreak", false); //dev setting
-    private final BooleanSetting predict = register("predict", false);
+    private final BooleanSetting predict = register("Predict", false);
     private final BooleanSetting inhibit = register("Inhibit", false);
     private final IntSetting packetAmount = register("PacketAmount", 1, 1, 20);
     private final FloatSetting opacity = register("Opacity", 0.5f, 0.1f, 1.0f);
