@@ -49,6 +49,8 @@ public class Surround extends Module {
     private final BooleanSetting fast = register("Fast", true);
     private final IntSetting packets = register("Packets", 1, 1, 5);
 
+    private final BooleanSetting autoDisable = register("Auto Disable", false);
+
     //private final Queue<BlockPos> queue = new ConcurrentLinkedQueue<>();
     private int ticks;
     private int slot;
@@ -107,6 +109,10 @@ public class Surround extends Module {
         surroundBlocks.clear();
         surroundBlocks.addAll(getBlocks());
         placeBlocks(surroundBlocks);
+
+        if (autoDisable.getValue()) {
+            disable();
+        }
     }
 
     @EventListener
