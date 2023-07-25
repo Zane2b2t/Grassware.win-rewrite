@@ -1,4 +1,4 @@
-#version 330
+#version 120
 
 uniform sampler2D texture;
 uniform vec3 rgb;
@@ -8,12 +8,8 @@ uniform float step;
 uniform float offset;
 uniform float mix;
 
-in vec2 TexCoord;
-
-out vec4 FragColor;
-
 void main() {
-    float alpha = texture2D(texture, TexCoord).a;
+    float alpha =texture2D(texture, gl_TexCoord[0].xy).a;
     if (alpha != 0f) {
         float distance = sqrt(gl_FragCoord.x * gl_FragCoord.x + gl_FragCoord.y * gl_FragCoord.y) + offset;
         float distance2 = sqrt((gl_FragCoord.x - 800.0) * (gl_FragCoord.x - 800.0) + gl_FragCoord.y * gl_FragCoord.y) + offset;
@@ -28,6 +24,6 @@ void main() {
         float r = rgb.r * distance + rgb1.r * distanceInv + rgb2.r * distance2;
         float g = rgb.g * distance + rgb1.g * distanceInv + rgb2.g * distance2;
         float b = rgb.b * distance + rgb1.b * distanceInv + rgb2.b * distance2;
-        FragColor = vec4(r, g, b, mix);
+        gl_FragColor = vec4(r, g, b, mix);
     }
 }
