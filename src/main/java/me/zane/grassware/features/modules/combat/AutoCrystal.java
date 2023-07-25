@@ -16,6 +16,7 @@ import me.zane.grassware.features.setting.impl.ModeSetting;
 import me.zane.grassware.mixin.mixins.ICPacketUseEntity;
 import me.zane.grassware.shader.impl.GradientShader;
 import me.zane.grassware.util.*;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.player.EntityPlayer;
@@ -68,6 +69,7 @@ public class AutoCrystal extends Module {
     private final BooleanSetting attack = register("Attack", false); //dev setting
     private final BooleanSetting brr = register("BRR", false); //dev setting
     private final BooleanSetting instantExplode = register("InstantBreak", false); //dev setting
+    private final BooleanSetting breakMop = register("breakMap", false); //dev setting
     private final BooleanSetting predict = register("Predict", false);
     private final BooleanSetting inhibit = register("Inhibit", false);
     private final IntSetting packetAmount = register("PacketAmount", 1, 1, 20);
@@ -292,6 +294,7 @@ public class AutoCrystal extends Module {
     @EventListener
     public void onPredict(PacketEvent.Receive event) {
         if (event.getPacket() instanceof SPacketSpawnObject && this.predict.getValue()) {
+            final ICPacketUseEntity hitPacket = (ICPacketUseEntity) new CPacketUseEntity();
             SPacketSpawnObject packet = (SPacketSpawnObject) event.getPacket();
             if (packet.getType() != 51) {
                 return;
@@ -300,6 +303,9 @@ public class AutoCrystal extends Module {
             CPacketUseEntity crystalPacket = new CPacketUseEntity();
             crystalPacket.entityId = packet.getEntityID();
             crystalPacket.action = ATTACK;
+            if (breakMop.getValue()) {
+                breakMap.put(packet.getEntityID(), breakMap.containsKey(packet.getEntityID()) ? breakMap.get(packet.getEntityID()) + 1 : 1);
+            }
             AutoCrystal.mc.player.connection.sendPacket((Packet) crystalPacket);
         }
     }

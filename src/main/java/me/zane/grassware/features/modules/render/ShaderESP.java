@@ -30,6 +30,7 @@ public class ShaderESP extends Module {
                 ClickGui.Instance.speed.getValue(),
                 ClickGui.Instance.getGradient()[0],
                 ClickGui.Instance.getGradient()[1],
+                ClickGui.Instance.getGradient()[2],
                 opacity.getValue()
         );
         for (final Entity entity : mc.world.loadedEntityList) {
