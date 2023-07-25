@@ -15,15 +15,15 @@ public class GradientShader implements MC {
     private final static ShaderUtil shader = new ShaderUtil("/assets/minecraft/textures/shaders/gradient.frag");
     private static Framebuffer framebuffer = new Framebuffer(1, 1, false);
 
-    public static void setupUniforms(final float step, final float speed, final Color color, final Color color2, final Color color3, final float opacity) {
-        shader.setUniformi("texture", 0);
-        shader.setUniformf("rgb", color.getRed() / 255.0f, color.getGreen() / 255.0f, color.getBlue() / 255.0f);
-        shader.setUniformf("rgb1", color2.getRed() / 255.0f, color2.getGreen() / 255.0f, color2.getBlue() / 255.0f);
-        shader.setUniformf("rgb2", color3.getRed() / 255.0f, color3.getGreen() / 255.0f, color3.getBlue() / 255.0f);
-        shader.setUniformf("step", 300 * step);
-        shader.setUniformf("offset", (float) ((((double) System.currentTimeMillis() * (double) speed) % (mc.displayWidth * mc.displayHeight)) / 10.0f));
-        shader.setUniformf("mix", opacity);
-    }
+public static void setupUniforms(final float step, final float speed, final Color color, final Color color2, final Color color3, final float opacity) {
+    shader.setUniformi("texture", 0);
+    shader.setUniformf("rgb", color.getRed() / 255.0f, color.getGreen() / 255.0f, color.getBlue() / 255.0f);
+    shader.setUniformf("rgb1", color2.getRed() / 255.0f, color2.getGreen() / 255.0f, color2.getBlue() / 255.0f);
+    shader.setUniformf("rgb2", color3.getRed() / 255.0f, color3.getGreen() / 255.0f, color3.getBlue() / 255.0f);
+    shader.setUniformf("step", 300 * step);
+    shader.setUniformf("offset", (float) ((((double) System.currentTimeMillis() * (double) speed) % (mc.displayWidth * mc.displayHeight)) / 10.0f));
+    shader.setUniformf("mix", opacity);
+}
 
     public static void setup() {
         setup(ClickGui.Instance.step.getValue(), ClickGui.Instance.speed.getValue(), ClickGui.Instance.getGradient()[0], ClickGui.Instance.getGradient()[1], ClickGui.Instance.getGradient()[2]);
