@@ -21,9 +21,9 @@ void main() {
         distance2 = ((sin(distance2) + 1.0) / 2.0);
 
         float distanceInv = 1 - distance;
-        float r *= rgb.r * distance + rgb1.r * distanceInv + rgb2.r * distance2;
-        float g *= rgb.g * distance + rgb1.g * distanceInv + rgb2.g * distance2;
-        float b *= rgb.b * distance + rgb1.b * distanceInv + rgb2.b * distance2;
+        float r = rgb.r * distance + rgb1.r * distanceInv + rgb2.r * distance2;
+        float g = rgb.g * distance + rgb1.g * distanceInv + rgb2.g * distance2;
+        float b = rgb.b * distance + rgb1.b * distanceInv + rgb2.b * distance2;
         gl_FragColor = vec4(r, g, b, mix);
     }
 }
