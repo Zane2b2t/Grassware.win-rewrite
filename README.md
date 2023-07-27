@@ -17,13 +17,13 @@ This project was made for the popular group, Grassers. Hence the name Grassware.
 
 #### Grassware.win Contributors
 
-* alpha432 (client base)
+* [alpha432](https://github.com/Alpha-4-3-2) (client base)
 * [zpisstige](https://github.com/RealzPrestige) (client basev2)
 * [Zane2b2t](https://github.com/Zane2b2t) (head developer, pro paster, maintainer)
 * [Hockeyl8](https://github.com/hockeyl8) (Stuff and error fixes)
-* [Cuubicc](https://github.com/Cuubicc) (Crazy Fixes)
+* [Cuubicc](https://github.com/Cuubicc) (Helping with BlockHighlight and AutoCrystal)
 * [\_kisman_](https://github.com/kisman2000) (Improved shader stuff)
-* [MrBubblegum](https://github.com/MrBubblegum) (Random Stuff)
+* [MrBubblegum](https://github.com/MrBubblegum) (Assistment on lots of stuff)
 * [Rat2b2t](https://github.com/Rat2b2t) (that one guy that always starts off with the readme)
 * [SirHilarious](https://github.com/SirHilarious) (literally just the Discord RPC)
 * ghostlead (removed the backdoors tos the clients)
@@ -32,12 +32,12 @@ This project was made for the popular group, Grassers. Hence the name Grassware.
 
 ## Features
 
-* Combat <br>Aura (KillAura), AutoCrystal, AutoSand, Offhand, AA (AutoArmour), Crits (Criticals)
-* Misc <br>CoordLeaker, SpawnHomeBipass (8b8t), AutoAuth, CustomJD
-* Movement <br>NoSlow, ReverseStep, Speed, Sprint, Step, Velocity, HoleAssist
-* Player <br>WallPhase, FakePlayer
+* Combat <br>Aura (KillAura), AutoCrystal, AutoSand, Offhand, AA (AutoArmour), Crits (Criticals), Surround
+* Misc <br>CoordLeaker, SpawnHomeBipass (8b8t), AutoAuth, CustomJD, PlaceConfirm
+* Movement <br>NoSlow, ReverseStep, Speed, Sprint, Step, Velocity, HoleAssist, CounterStrafe
+* Player <br>WallPhase, FakePlayer, EXP, AutoRespawn
 * Render <br>BlockHighlight, HoleESP, NameTags, NoRender, PopESP, ShaderESP, World, Hand
-* Client <br>ClickGUI, Hud
+* Client <br>ClickGUI, Hud.
 
 ## Installing
 
