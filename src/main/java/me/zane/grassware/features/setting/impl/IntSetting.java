@@ -16,4 +16,8 @@ public class IntSetting extends Setting<Integer> {
         super.invokeVisibility(visible);
         return this;
     }
+
+    public int getMax() {
+        return max;
+    }
 }

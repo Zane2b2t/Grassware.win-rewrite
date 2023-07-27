@@ -22,5 +22,12 @@ public class FloatSetting extends Setting<Float> {
         return this;
     }
 
+    public float getMax() {
+        return max;
+    }
+
+    public float getMin() {
+        return min;
+    }
 }
 
