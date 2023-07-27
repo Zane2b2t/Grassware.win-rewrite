@@ -66,7 +66,7 @@ public class ClickGui extends Module {
                 gradientGreen3.setValue(random.nextInt(256));
                 gradientBlue3.setValue(random.nextInt(256));
             }
-            tickDelay = (tickDelay + 1) % maxTickDelay;
+            tickDelay = (tickDelay + 5) % maxTickDelay;
         }
         if (!(mc.currentScreen instanceof GrassWareGui)) {
             disable();

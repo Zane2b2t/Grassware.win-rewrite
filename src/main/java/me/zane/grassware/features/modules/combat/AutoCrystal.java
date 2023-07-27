@@ -49,6 +49,7 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class AutoCrystal extends Module {
     private final ModeSetting mode = register("Mode", "Sequential", Arrays.asList("Sequential", "Adaptive"));
+    private final ModeSetting syncMode = register("SynMode", "instant", Arrays.asList("Instant", "Sound"));
     private final ModeSetting logic = register("Logic", "BreakPlace", Arrays.asList("BreakPlace", "PlaceBreak"));
     private final FloatSetting placeRange = register("Place Range", 5.0f, 1.0f, 6.0f);
     private final FloatSetting placeWallRange = register("Place Wall Range", 3.0f, 1.0f, 6.0f);
@@ -305,6 +306,11 @@ public class AutoCrystal extends Module {
 
     @EventListener
     public void onPacketSend(PacketEvent.Send event) {
+        CPacketUseEntity packet;
+        if (event.getPacket() instanceof CPacketUseEntity && this.syncMode.getValue().equals("Instant") && (packet = (CPacketUseEntity)event.getPacket()).getEntityFromWorld((World)AutoCrystal.mc.world) instanceof EntityEnderCrystal) {
+            Objects.requireNonNull(packet.getEntityFromWorld((World) AutoCrystal.mc.world)).setDead();
+            AutoCrystal.mc.world.removeEntityFromWorld(packet.entityId);
+        }
         if (event.getPacket() instanceof CPacketPlayerTryUseItemOnBlock) {
             handleCPacketPlayerTryUseItemOnBlock(event);
         } else if (event.getPacket() instanceof CPacketUseEntity) {
@@ -337,7 +343,7 @@ public class AutoCrystal extends Module {
     @EventListener
     public void onPredict(PacketEvent.Receive event) {
         if (event.getPacket() instanceof SPacketSpawnObject && this.predict.getValue()) {
-            SPacketSpawnObject packet = (SPacketSpawnObject) event.getPacket();
+            SPacketSpawnObject packet = (SPacketSpawnObject)event.getPacket();
             if (packet.getType() != 51) {
                 return;
             }
@@ -349,6 +355,8 @@ public class AutoCrystal extends Module {
                 breakMap.put(packet.getEntityID(), breakMap.containsKey(packet.getEntityID()) ? breakMap.get(packet.getEntityID()) + 1 : 1);
             }
             AutoCrystal.mc.player.connection.sendPacket((Packet) crystalPacket);
+            swingHand();
+            crystals.add(crystal);
         }
     }
 

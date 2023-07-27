@@ -12,7 +12,7 @@ import org.lwjgl.opengl.Display;
 @Mod(modid = "grassware.win", name = "GrassWare.win", version = GrassWare.MODVER)
 public class GrassWare {
     public static final String MODNAME = "GrassWare.win";
-    public static final String MODVER = "v0.8";
+    public static final String MODVER = "v0.9";
     public static Minecraft mc;
     public static EventBus eventBus;
     public static ThreadManager threadManager;
