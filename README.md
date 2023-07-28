@@ -7,7 +7,7 @@
 * [Information](#Information)
 * [About](#About)
 * [Grassware.win Contributors](#Grassware.winContributors)
-* [Features](#Features)
+* [Features]([#Features](https://github.com/Zane2b2t/Grassware.win-rewrite#features))
 * [Installation](#Installing)
 
 #### About
