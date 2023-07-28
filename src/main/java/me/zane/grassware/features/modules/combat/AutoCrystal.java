@@ -65,6 +65,7 @@ public class AutoCrystal extends Module {
     private final BooleanSetting brr = register("BRR", false); //dev setting
     private final BooleanSetting instantExplode = register("InstantBreak", false); //dev setting
     private final BooleanSetting breakMop = register("breakMap", false); //dev setting
+    private final BooleanSetting test = register("Test", false);
     private final BooleanSetting bongo = register("bongo", false);
     private final BooleanSetting predict = register("Predict", false);
     private final BooleanSetting inhibit = register("Inhibit", false);
@@ -175,6 +176,12 @@ public class AutoCrystal extends Module {
             }
             swingHand();
             handleSetDead(entityEnderCrystal);
+            if (test.getValue()) {
+                mc.addScheduledTask(() -> {
+                    mc.world.removeEntity(entityEnderCrystal);
+                    mc.world.removeEntityDangerously(entityEnderCrystal);
+                });
+            }
         }
         breakTime = System.currentTimeMillis();
         try {
@@ -182,58 +189,10 @@ public class AutoCrystal extends Module {
         } catch (Exception ignored) {
         }
     }
-
     @EventListener
     public void onPacketReceive(PacketEvent.Receive event) {
-        if (event.getPacket() instanceof SPacketSpawnObject) {
-            handleSPacketSpawnObject(event);
-        } else if (event.getPacket() instanceof SPacketDestroyEntities) {
-            handleSPacketDestroyEntities(event);
-        } else if (event.getPacket() instanceof SPacketSoundEffect) {
-            handleSPacketSoundEffect(event);
-        }
-        if (brr.getValue() && event.getPacket() instanceof CPacketPlayerTryUseItemOnBlock) {
-            handleCPacketPlayerTryUseItemOnBlock(event);
-        }
-    }
-
-    private void handleCPacketPlayerTryUseItemOnBlock(PacketEvent.Receive event) {
-        CPacketPlayerTryUseItemOnBlock packet;
-        packet = event.getPacket();
-
-        Entity highestEntity = null;
-        int entityId = 0;
-        for (Entity entity : mc.world.loadedEntityList) {
-            if (entity instanceof EntityEnderCrystal) {
-                if (entity.getEntityId() > entityId) {
-                    entityId = entity.getEntityId();
-                }
-                highestEntity = entity;
-            }
-        }
-        if (highestEntity == null) {
-            return;
-        }
-        int latency = Objects.requireNonNull(mc.getConnection()).getPlayerInfo(mc.getConnection().getGameProfile().getId()).getResponseTime() / 50;
-        for (int i = latency; i < latency + 10; i++) {
-            try {
-                CPacketUseEntity cPacketUseEntity = new CPacketUseEntity();
-                if (ping.getValue()) {
-                    ((ICPacketUseEntity) cPacketUseEntity).setEntityId(highestEntity.getEntityId() + i);
-                } else {
-                    ((ICPacketUseEntity) cPacketUseEntity).setEntityId(highestEntity.getEntityId());
-                }
-                ((ICPacketUseEntity) cPacketUseEntity).setAction(ATTACK);
-                PacketUtil.invoke(cPacketUseEntity);
-            } catch (Exception ignored) {
-            }
-        }
-    }
-
-
-    private void handleSPacketSpawnObject(PacketEvent.Receive event) {
-        SPacketSpawnObject packet = event.getPacket();
-        if (mode.getValue().equals("Adaptive")) {
+        if (event.getPacket() instanceof SPacketSpawnObject && mode.getValue().equals("Adaptive")) {
+            SPacketSpawnObject packet = event.getPacket();
             if (packet.getType() != 51 || !(mc.world.getEntityByID(packet.getEntityID()) instanceof EntityEnderCrystal))
                 return;
             EntityEnderCrystal crystal = (EntityEnderCrystal) mc.world.getEntityByID(packet.getEntityID());
@@ -255,10 +214,15 @@ public class AutoCrystal extends Module {
             }
             Objects.requireNonNull(mc.getConnection()).sendPacket(new CPacketUseEntity(crystal));
             if (predict.getValue()) {
-                CPacketUseEntity packetUseEntity;
-                packetUseEntity = new CPacketUseEntity();
+                CPacketUseEntity packetUseEntity = new CPacketUseEntity();
                 packetUseEntity.entityId = packet.getEntityID();
                 packetUseEntity.action = ATTACK;
+                if (test.getValue()) {
+                    mc.addScheduledTask(() -> {
+                        mc.world.removeEntity(crystal);
+                        mc.world.removeEntityDangerously(crystal);
+                    });
+                }
             }
             swingHand();
             handleSetDead(crystal);
@@ -268,8 +232,38 @@ public class AutoCrystal extends Module {
             } catch (Exception ignored) {
             }
         }
+        if (event.getPacket() instanceof SPacketDestroyEntities) {
+            SPacketDestroyEntities packet = event.getPacket();
+            for (int id : packet.getEntityIDs()) {
+                try {
+                    if (breakMap.containsKey(id) && breakMap.containsKey(packet.getEntityIDs()) && breakMap.get(id) > 1500) {
+                        breakMap.remove(id);
+                        continue;
+                    }
+                    if (!fastRemove.getValue()) continue;
+                    if (!breakMap.containsKey(id)) continue;
+                    mc.world.removeEntityFromWorld(id);
+                } catch (Exception ignored) {
+                }
+            }
+        }
+        if (event.getPacket() instanceof SPacketSoundEffect && soundRemove.getValue()) {
+            final SPacketSoundEffect packet = (SPacketSoundEffect) event.getPacket();
+            if (packet.getCategory() == SoundCategory.BLOCKS && packet.getSound() == SoundEvents.ENTITY_GENERIC_EXPLODE) {
+                mc.addScheduledTask(() -> {
+                    for (Entity entity : mc.world.loadedEntityList) {
+                        if (entity instanceof EntityEnderCrystal && entity.getDistanceSq(packet.getX(), packet.getY(), packet.getZ()) < 36) {
+                            entity.setDead();
+                            if (setDead.getValue().equals("Both")) {
+                                mc.world.removeEntity(entity);
+                            }
+                        }
+                    }
+                });
+            }
+        }
         SPacketSpawnObject spawnedCrystal = new SPacketSpawnObject();
-        if ((spawnedCrystal = event.getPacket()).getType() == 51 && this.instantExplode.getValue()) {
+        if (event.getPacket() instanceof SPacketSpawnObject && (spawnedCrystal = event.getPacket()).getType() == 51 && this.instantExplode.getValue()) {
             CPacketUseEntity attackPacket = new CPacketUseEntity();
             ((ICPacketUseEntity) attackPacket).setEntityId(spawnedCrystal.getEntityID());
             ((ICPacketUseEntity) attackPacket).setAction(ATTACK);
@@ -278,39 +272,40 @@ public class AutoCrystal extends Module {
                 mc.player.connection.sendPacket(attackPacket);
             }
         }
-    }
+        if (brr.getValue() && event.getPacket() instanceof CPacketPlayerTryUseItemOnBlock) {
+            CPacketPlayerTryUseItemOnBlock packet = (CPacketPlayerTryUseItemOnBlock) event.getPacket();
 
-    private void handleSPacketDestroyEntities(PacketEvent.Receive event) {
-        SPacketDestroyEntities packet = event.getPacket();
-        for (int id : packet.getEntityIDs()) {
-            try {
-                if (breakMap.containsKey(id) && breakMap.containsKey(packet.getEntityIDs()) && breakMap.get(id) > 1500) {
-                    breakMap.remove(id);
-                    continue;
+            Entity highestEntity = null;
+            int entityId = 0;
+            for (Entity entity : mc.world.loadedEntityList) {
+                if (entity instanceof EntityEnderCrystal) {
+                    if (entity.getEntityId() > entityId) {
+                        entityId = entity.getEntityId();
+                    }
+                    highestEntity = entity;
                 }
-                if (!fastRemove.getValue()) continue;
-                if (!breakMap.containsKey(id)) continue;
-                mc.world.removeEntityFromWorld(id);
-            } catch (Exception ignored) {
+            }
+            if (highestEntity != null) {//this makes the AutoCrystal require internet to use. even when disabled. using without internet in singleplayer will result in minecraft crashing
+                int latency = Objects.requireNonNull(mc.getConnection()).getPlayerInfo(mc.getConnection().getGameProfile().getId()).getResponseTime() / 50; //this
+                for (int i = latency; i < latency + 10; i++) {
+                    try {
+                        CPacketUseEntity cPacketUseEntity = new CPacketUseEntity();
+
+                        if (ping.getValue()) {
+                            ((ICPacketUseEntity) cPacketUseEntity).setEntityId(highestEntity.getEntityId() + i);
+                        }
+                        else {
+                            ((ICPacketUseEntity) cPacketUseEntity).setEntityId(highestEntity.getEntityId());
+                        }
+                        ((ICPacketUseEntity) cPacketUseEntity).setAction(ATTACK);
+                        PacketUtil.invoke(cPacketUseEntity);
+                    } catch (Exception ignored) {
+                    }
+                }
             }
         }
     }
 
-    private void handleSPacketSoundEffect(PacketEvent.Receive event) {
-        final SPacketSoundEffect packet = event.getPacket();
-        if (soundRemove.getValue() && packet.getCategory() == SoundCategory.BLOCKS && packet.getSound() == SoundEvents.ENTITY_GENERIC_EXPLODE) {
-            mc.addScheduledTask(() -> {
-                for (Entity entity : mc.world.loadedEntityList) {
-                    if (entity instanceof EntityEnderCrystal && entity.getDistanceSq(packet.getX(), packet.getY(), packet.getZ()) < 36) {
-                        entity.setDead();
-                        if (setDead.getValue().equals("Both")) {
-                            mc.world.removeEntity(entity);
-                        }
-                    }
-                }
-            });
-        }
-    }
 
 
     @EventListener
@@ -360,6 +355,12 @@ public class AutoCrystal extends Module {
                 CPacketUseEntity crystalPacket = new CPacketUseEntity();
                 crystalPacket.entityId = packet.getEntityID();
                 crystalPacket.action = ATTACK;
+            if (test.getValue()) {
+                mc.addScheduledTask(() -> {
+                    mc.world.removeEntity(crystal);
+                    mc.world.removeEntityDangerously(crystal);
+                });
+            }
                 if (breakMop.getValue()) {
                     breakMap.put(packet.getEntityID(), breakMap.containsKey(packet.getEntityID()) ? breakMap.get(packet.getEntityID()) + 1 : 1);
                 }
