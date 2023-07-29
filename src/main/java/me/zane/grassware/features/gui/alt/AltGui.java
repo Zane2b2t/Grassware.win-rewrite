@@ -109,7 +109,7 @@ public class AltGui implements MC {
                 p = mouseY > height - 55.0f && mouseY < height - 35.0f;
             }
         }
-        new ArrayList<>(altButtons).forEach(altButton -> altButton.mouseClicked(mouseX, mouseY, mouseButton));
+        new ArrayList<>(altButtons).forEach(altButton -> altButton.mouseClicked(mouseX, mouseY, mouseButton)); //e
     }
 
     public static void updateButtons() {

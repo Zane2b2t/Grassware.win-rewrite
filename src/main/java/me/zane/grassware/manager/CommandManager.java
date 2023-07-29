@@ -69,4 +69,3 @@ public class CommandManager extends Feature {
         this.prefix = prefix;
     }
 }
-

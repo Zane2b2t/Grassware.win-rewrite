@@ -12,6 +12,7 @@ import net.minecraft.init.SoundEvents;
 import java.awt.*;
 
 public class Button extends Item {
+    private float animationProgress = 0.0f;
     private boolean state;
 
     public Button(String name) {
@@ -19,16 +20,27 @@ public class Button extends Item {
         height = 15;
     }
 
+
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         state = getState();
         if (state) {
-            RenderUtil.rectGuiTex(x, y, x + width, y + height - 0.5f, isHovering(mouseX, mouseY) ? ClickGui.Instance.getColorAlpha() : ClickGui.Instance.getColor());
+            animationProgress += 0.1f;
+            if (animationProgress > 1.0f) {
+                animationProgress = 1.0f;
+            }
+            RenderUtil.rectGuiTex(x, y, x + width * animationProgress, y + height - 0.5f, isHovering(mouseX, mouseY) ? ClickGui.Instance.getColorAlpha() : ClickGui.Instance.getColor());
         } else {
-            RenderUtil.rect(x, y, x + width, y + height - 0.5f, isHovering(mouseX, mouseY) ? new Color(0, 0, 0, 75) : new Color(0, 0, 0, 50));
+            //no work. maybe closing happens b4 the animation blah blah idc guis are useless
+            animationProgress -= 0.1f;
+            if (animationProgress < 0.0f) {
+                animationProgress = 0.0f;
+            }
+            RenderUtil.rect(x, y, x + width * animationProgress, y + height - 0.5f, isHovering(mouseX, mouseY) ? new Color(0, 0, 0, 75) : new Color(0, 0, 0, 50));
         }
         GrassWare.textManager.renderString(getName(), x + 2.3f, y - 2.0f - GrassWareGui.getClickGui().getTextOffset(), getState() ? Color.WHITE : new Color(-5592406));
     }
+
 
     @Override
     public void mouseClicked(int mouseX, int mouseY, int mouseButton) {

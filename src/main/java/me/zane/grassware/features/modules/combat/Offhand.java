@@ -2,9 +2,9 @@ package me.zane.grassware.features.modules.combat;
 //WARNING: ALL CONTENT BELONGS TO https://github.com/Zane2b2t , IF ANY OF THE CLASSES CONTAINING THIS WARNING ARENT IN https://github.com/Zane2b2t/Grassware.win-Rewrite INFORM GITHUB TO DMCA
 import com.mojang.realmsclient.gui.ChatFormatting;
 import me.zane.grassware.event.bus.EventListener;
-import me.zane.grassware.event.events.TickEvent;
 import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.features.setting.impl.FloatSetting;
+import me.zane.grassware.event.events.UpdatePlayerWalkingEvent;
 
 import net.minecraft.init.Items;
 import net.minecraft.inventory.ClickType;
@@ -18,7 +18,7 @@ public class Offhand extends Module {
     private final FloatSetting health = register("Health", 14.0f, 0.0f, 36.0f);
 
     @EventListener
-    public void onTick(final TickEvent event) {
+    public void onUpdate(final UpdatePlayerWalkingEvent event) {
         final int slot = slot();
         if (slot != -1) {
             swapItem(slot);

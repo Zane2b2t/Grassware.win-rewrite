@@ -49,7 +49,7 @@ public class AltButton {
             return;
         }
         if (mouseX > x + 5.0f && mouseX < x + width / 2.0f - 5.0f && mouseY > y + height - 17.5f && mouseY < y + height - 2.5f) {
-            new Alt(email, password, altType).login();
+            new Alt(email, password, altType).login(); //why no work?
         }
         if (mouseX > x + width / 2.0f + 2.5f && mouseX < x + width - 5.0f && mouseY > y + height - 17.5f && mouseY < y + height - 2.5f) {
             AltGui.altButtons.remove(this);

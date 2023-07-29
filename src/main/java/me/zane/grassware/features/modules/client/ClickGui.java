@@ -10,6 +10,8 @@ import me.zane.grassware.features.setting.impl.BooleanSetting;
 import me.zane.grassware.features.setting.impl.FloatSetting;
 import me.zane.grassware.features.setting.impl.IntSetting;
 import me.zane.grassware.features.setting.impl.ModeSetting;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
@@ -88,7 +90,6 @@ public class ClickGui extends Module {
                 new Color(gradientRed3.getValue(), gradientGreen3.getValue(), gradientBlue3.getValue())
         };
     }
-
     @EventListener
     public void onRender3D(final Render3DEvent event) {
     }

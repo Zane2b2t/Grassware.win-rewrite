@@ -131,6 +131,7 @@ public class AutoCrystal extends Module {
     }
 
     public void placeCrystal(BlockPos pos) {
+        hasPlaced = false;
         if (pos == null) {
             placedPos = null;
             return;
@@ -146,6 +147,7 @@ public class AutoCrystal extends Module {
             if (placedPos != null && bongo.getValue()) {
                 Objects.requireNonNull(mc.getConnection()).sendPacket(new CPacketPlayerTryUseItemOnBlock(placedPos, EnumFacing.UP, enumHand, 0.5f, 0.5f, 0.5f));
             }
+            hasPlaced = true;
         }
     }
 
@@ -247,6 +249,7 @@ public class AutoCrystal extends Module {
                 }
             }
         }
+
         if (event.getPacket() instanceof SPacketSoundEffect && soundRemove.getValue()) {
             final SPacketSoundEffect packet = (SPacketSoundEffect) event.getPacket();
             if (packet.getCategory() == SoundCategory.BLOCKS && packet.getSound() == SoundEvents.ENTITY_GENERIC_EXPLODE) {

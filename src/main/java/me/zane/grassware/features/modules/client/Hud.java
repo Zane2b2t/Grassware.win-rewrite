@@ -16,6 +16,8 @@ import me.zane.grassware.util.RenderUtil;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -29,6 +31,7 @@ public class Hud extends Module {
     private final BooleanSetting welcomer = register("Welcomer", false);
     private final BooleanSetting moduleList = register("Module List", false);
     private final BooleanSetting customHotbar = register("Custom Hotbar", false);
+    private final BooleanSetting fixer = register("Fix", false);
 
     @EventListener
     public void onRender2D(final Render2DEvent event) {
@@ -81,7 +84,18 @@ public class Hud extends Module {
         GrassWare.textManager.renderStringNoShadow(text, x, y, ClickGui.Instance.getColor());
         GradientShader.finish();
     }
-
+    //hud fix. well. yea.
+    @SubscribeEvent
+    public void hideHungerBar(RenderGameOverlayEvent event) {//shoutout Siku on mcreator.net for providing this
+        if (fixer.getValue()) {
+            if (event.getType() == RenderGameOverlayEvent.ElementType.FOOD) {
+                event.setCanceled(true);
+            }
+            if (event.getType() == RenderGameOverlayEvent.ElementType.ARMOR) {
+                event.setCanceled(true);
+            }
+        }
+    }
     @EventListener
     public void onRenderHotbar(final RenderHotbarEvent event) {
         if (!customHotbar.getValue()) {

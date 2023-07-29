@@ -19,12 +19,19 @@ public class EnumButton extends Button {
         width = 15;
     }
 
+    private float animationProgress = 0.0f;
+
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        RenderUtil.rectGuiTex(x, y, x + width + 7.4f, y + height - 0.5f, isHovering(mouseX, mouseY) ? ClickGui.Instance.getColorAlpha() : ClickGui.Instance.getColor());
+        animationProgress += 0.1f;
+        if (animationProgress > 1.0f) {
+            animationProgress = 1.0f;
+        }
+        RenderUtil.rectGuiTex(x, y, x + (width + 7.4f) * animationProgress, y + height - 0.5f, isHovering(mouseX, mouseY) ? ClickGui.Instance.getColorAlpha() : ClickGui.Instance.getColor());
         GrassWare.textManager.renderString(getName(), x + 2.3f, y - 1.7f - GrassWareGui.getClickGui().getTextOffset(), Color.WHITE);
         GrassWare.textManager.renderString(setting.getValue() + "", x + 2.3f + GrassWare.textManager.stringWidth(getName() + " "), y - 1.7f - GrassWareGui.getClickGui().getTextOffset(), Color.GRAY);
     }
+
 
     @Override
     public void update() {

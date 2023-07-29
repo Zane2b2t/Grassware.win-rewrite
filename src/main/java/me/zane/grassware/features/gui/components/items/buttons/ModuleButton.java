@@ -13,6 +13,8 @@ import java.util.List;
 
 public class ModuleButton
         extends Button {
+    private float anim;
+    private float anim2;
     private final Module module;
     private List<Item> items = new ArrayList<>();
     private boolean subOpen;
@@ -51,10 +53,18 @@ public class ModuleButton
         items = newItems;
     }
 
+
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
         if (!items.isEmpty()) {
+            if (subOpen) {
+                anim = calculateCompensation(88, anim, 30, 5);
+                anim2 = calculateCompensation(88, anim2, 30, 5);
+            } else {
+                anim = calculateCompensation(0, anim, 30, 5);
+                anim2 = calculateCompensation(0, anim2, 30, 5);
+            }
             if (subOpen) {
                 float height = 1.0f;
                 for (Item item : items) {
@@ -70,6 +80,18 @@ public class ModuleButton
             }
         }
     }
+
+    private float calculateCompensation(float target, float current, long delta, int speed) {
+        float diff = current - target;
+        if (delta < 1) {
+            delta = 1;
+        }
+        float factor = (float) Math.pow(0.5, delta / (speed / 2.0));
+        return target + (diff * factor);
+    }
+
+
+
 
     @Override
     public void mouseClicked(int mouseX, int mouseY, int mouseButton) {

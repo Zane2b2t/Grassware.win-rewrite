@@ -20,4 +20,3 @@ public class PrefixCommand extends Command {
         Command.sendMessage("Prefix changed to " + ChatFormatting.GRAY + commands[0]);
     }
 }
-
