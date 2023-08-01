@@ -245,6 +245,7 @@ public class AutoCrystal extends Module {
                     if (!fastRemove.getValue()) continue;
                     if (!breakMap.containsKey(id)) continue;
                     mc.world.removeEntityFromWorld(id);
+                    mc.world.removeEntityDangerously(id);
                 } catch (Exception ignored) {
                 }
             }
