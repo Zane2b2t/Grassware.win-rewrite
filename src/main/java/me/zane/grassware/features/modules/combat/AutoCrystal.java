@@ -55,6 +55,7 @@ public class AutoCrystal extends Module {
     private final FloatSetting placeDelay = register("Place Delay", 0.0f, 0f, 500.0f);
     private final FloatSetting breakDelay = register("Break Delay", 50.0f, 0f, 500.0f);
     private final BooleanSetting updated = register("1.13+", false);
+    private final BooleanSetting await = register("Await", false);
     private final ModeSetting setDead = register("Set Dead", "Set Dead", Arrays.asList("None", "Set Dead", "Remove", "Both"));
     private final BooleanSetting fastRemove = register("Fast Remove", false);
     private final BooleanSetting soundRemove = register("Sound Remove", false);
@@ -128,12 +129,14 @@ public class AutoCrystal extends Module {
         }
     }
 public void test (BlockPos pos, EntityPlayer entityPlayer ) {
-    final EntityEnderCrystal entityEnderCrystal = crystal(entityPlayer);
-        if (hasBroken = true) {
-            (mc.getConnection()).sendPacket(new CPacketPlayerTryUseItemOnBlock(pos, EnumFacing.UP, enumHand, 0.5f, 0.5f, 0.5f));
-        }
-        if (hasPlaced = true) {
-            (mc.getConnection()).sendPacket(new CPacketUseEntity(entityEnderCrystal));
+        if (await.getValue()) {
+            final EntityEnderCrystal entityEnderCrystal = crystal(entityPlayer);
+            if (hasBroken = true) {
+                (mc.getConnection()).sendPacket(new CPacketPlayerTryUseItemOnBlock(pos, EnumFacing.UP, enumHand, 0.5f, 0.5f, 0.5f));
+            }
+            if (hasPlaced = true) {
+                (mc.getConnection()).sendPacket(new CPacketUseEntity(entityEnderCrystal));
+            }
         }
 }
     public void placeCrystal(BlockPos pos) {
@@ -275,18 +278,35 @@ public void test (BlockPos pos, EntityPlayer entityPlayer ) {
         if (brr.getValue() && event.getPacket() instanceof CPacketPlayerTryUseItemOnBlock) {
             CPacketPlayerTryUseItemOnBlock packet = (CPacketPlayerTryUseItemOnBlock) event.getPacket();
 
-            Optional<Entity> highestEntity = mc.world.loadedEntityList.stream()
-                    .filter(entity -> entity instanceof EntityEnderCrystal)
-                    .max(Comparator.comparingInt(Entity::getEntityId));
+            Entity highestEntity = null;
+            int entityId = 0;
+            for (Entity entity : mc.world.loadedEntityList) {
+                if (entity instanceof EntityEnderCrystal) {
+                    if (entity.getEntityId() > entityId) {
+                        entityId = entity.getEntityId();
+                    }
+                    highestEntity = entity;
+                }
+            }
+            if (highestEntity != null) {//this makes the AutoCrystal require internet to use. even when disabled. using without internet in singleplayer will result in minecraft crashing
+                int latency = Objects.requireNonNull(mc.getConnection()).getPlayerInfo(mc.getConnection().getGameProfile().getId()).getResponseTime() / 50; //this
+                for (int i = latency; i < latency + 10; i++) {
+                    try {
+                        CPacketUseEntity cPacketUseEntity = new CPacketUseEntity();
 
-            if (highestEntity.isPresent()) {
-                CPacketUseEntity cPacketUseEntity = new CPacketUseEntity();
-                ((ICPacketUseEntity) cPacketUseEntity).setEntityId(highestEntity.get().getEntityId());
-                ((ICPacketUseEntity) cPacketUseEntity).setAction(ATTACK);
-                PacketUtil.invoke(cPacketUseEntity);
+                        if (ping.getValue()) {
+                            ((ICPacketUseEntity) cPacketUseEntity).setEntityId(highestEntity.getEntityId() + i);
+                        }
+                        else {
+                            ((ICPacketUseEntity) cPacketUseEntity).setEntityId(highestEntity.getEntityId());
+                        }
+                        ((ICPacketUseEntity) cPacketUseEntity).setAction(ATTACK);
+                        PacketUtil.invoke(cPacketUseEntity);
+                    } catch (Exception ignored) {
+                    }
+                }
             }
         }
-
     }
 
 
