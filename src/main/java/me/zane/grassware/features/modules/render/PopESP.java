@@ -42,6 +42,7 @@ public class PopESP extends Module {
                     ClickGui.Instance.getGradient()[0],
                     ClickGui.Instance.getGradient()[1],
                     ClickGui.Instance.getGradient()[2],
+                    ClickGui.Instance.getGradient()[3],
                     Math.max(0.0f, 1.0f - alpha)
             );
             glPushMatrix();

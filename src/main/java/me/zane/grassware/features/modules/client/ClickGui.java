@@ -43,6 +43,9 @@ public class ClickGui extends Module {
     public final IntSetting gradientRed3 = register("Red3", 5, 0, 255).invokeVisibility(z -> mode.getValue().equals("Gradient"));
     public final IntSetting gradientGreen3 = register("Green3", 255, 0, 255).invokeVisibility(z -> mode.getValue().equals("Gradient"));
     public final IntSetting gradientBlue3 = register("Blue3", 5, 0, 255).invokeVisibility(z -> mode.getValue().equals("Gradient"));
+    public final IntSetting gradientRed4 = register("Red3", 5, 0, 255).invokeVisibility(z -> mode.getValue().equals("Gradient"));
+    public final IntSetting gradientGreen4 = register("Green3", 255, 0, 255).invokeVisibility(z -> mode.getValue().equals("Gradient"));
+    public final IntSetting gradientBlue4 = register("Blue3", 5, 0, 255).invokeVisibility(z -> mode.getValue().equals("Gradient"));
     private int tickDelay = 0;
     private final int maxTickDelay = 20;
 
@@ -67,6 +70,9 @@ public class ClickGui extends Module {
                 gradientRed3.setValue(random.nextInt(256));
                 gradientGreen3.setValue(random.nextInt(256));
                 gradientBlue3.setValue(random.nextInt(256));
+                gradientRed4.setValue(random.nextInt(256));
+                gradientBlue4.setValue(random.nextInt(256));
+                gradientGreen4.setValue(random.nextInt(256));
             }
             tickDelay = (tickDelay + 5) % maxTickDelay;
         }
@@ -87,7 +93,8 @@ public class ClickGui extends Module {
         return new Color[]{
                 new Color(gradientRed1.getValue(), gradientGreen1.getValue(), gradientBlue1.getValue()),
                 new Color(gradientRed2.getValue(), gradientGreen2.getValue(), gradientBlue2.getValue()),
-                new Color(gradientRed3.getValue(), gradientGreen3.getValue(), gradientBlue3.getValue())
+                new Color(gradientRed3.getValue(), gradientGreen3.getValue(), gradientBlue3.getValue()),
+                new Color(gradientRed4.getValue(), gradientGreen4.getValue(), gradientBlue4.getValue())
         };
     }
     @EventListener

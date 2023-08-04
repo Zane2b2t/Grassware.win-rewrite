@@ -64,6 +64,9 @@ public class AutoCrystal extends Module {
     private final BooleanSetting brr = register("BRR", false); //dev setting
     private final BooleanSetting instantExplode = register("InstantBreak", false); //dev setting
     private final BooleanSetting breakMop = register("breakMap", false); //dev setting
+    private final BooleanSetting boost = register("Boost", false);
+    private final BooleanSetting attack = register("Attack", false);
+
     private final BooleanSetting test = register("Test", false);
     private final BooleanSetting bongo = register("bongo", false);
     private final BooleanSetting predict = register("Predict", false);
@@ -128,7 +131,7 @@ public class AutoCrystal extends Module {
             enumHand = EnumHand.OFF_HAND;
         }
     }
-public void test (BlockPos pos, EntityPlayer entityPlayer ) {
+public void doAwait (BlockPos pos, EntityPlayer entityPlayer ) {
         if (await.getValue()) {
             final EntityEnderCrystal entityEnderCrystal = crystal(entityPlayer);
             if (hasBroken = true) {
@@ -136,6 +139,13 @@ public void test (BlockPos pos, EntityPlayer entityPlayer ) {
             }
             if (hasPlaced = true) {
                 (mc.getConnection()).sendPacket(new CPacketUseEntity(entityEnderCrystal));
+                handleSetDead(entityEnderCrystal);
+                if (test.getValue()) {
+                    mc.addScheduledTask(() -> {
+                        mc.world.removeEntity(entityEnderCrystal);
+                        mc.world.removeEntityDangerously(entityEnderCrystal);
+                    });
+                }
             }
         }
 }
@@ -182,6 +192,16 @@ public void test (BlockPos pos, EntityPlayer entityPlayer ) {
                     mc.world.removeEntity(entityEnderCrystal);
                     mc.world.removeEntityDangerously(entityEnderCrystal);
                 });
+            }
+            if (boost.getValue()) {
+                if (attack.getValue()) {
+                    CPacketUseEntity packetUseEntity = new CPacketUseEntity();
+                    packetUseEntity.action = ATTACK;
+                }
+                if (interact.getValue()) {
+                    CPacketUseEntity packetUseEntity = new CPacketUseEntity();
+                    packetUseEntity.action = CPacketUseEntity.Action.INTERACT;
+                }
             }
         }
         breakTime = System.currentTimeMillis();
@@ -277,7 +297,6 @@ public void test (BlockPos pos, EntityPlayer entityPlayer ) {
         }
         if (brr.getValue() && event.getPacket() instanceof CPacketPlayerTryUseItemOnBlock) {
             CPacketPlayerTryUseItemOnBlock packet = (CPacketPlayerTryUseItemOnBlock) event.getPacket();
-
             Entity highestEntity = null;
             int entityId = 0;
             for (Entity entity : mc.world.loadedEntityList) {
