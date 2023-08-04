@@ -13,16 +13,15 @@ import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.network.play.client.CPacketHeldItemChange;
 import net.minecraft.network.play.client.CPacketPlayer;
 import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock;
 import net.minecraft.network.play.client.CPacketUseEntity;
-import net.minecraft.network.play.server.SPacketBlockChange;
-import net.minecraft.network.play.server.SPacketDestroyEntities;
-import net.minecraft.network.play.server.SPacketMaps;
-import net.minecraft.network.play.server.SPacketMultiBlockChange;
+import net.minecraft.network.play.server.*;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -58,6 +57,7 @@ public class Surround extends Module {
     private final List<BlockPos> unconfirmed = new Vector<>();
     private final List<BlockPos> surroundBlocks = new Vector<>();
     private double originalY;
+    private List<EntityEnderCrystal> lastHitCrystals;
 
     @Override
     public void onEnable() {
@@ -182,6 +182,44 @@ public class Surround extends Module {
                 }
             }
         }
+
+        if (event.getPacket() instanceof SPacketExplosion) {
+            SPacketExplosion packet = event.getPacket();
+
+            if (mc.player.getDistance(packet.getX(), packet.getY(), packet.getZ()) >= 3.5) {
+                return;
+            }
+
+            unconfirmed.clear();
+            unconfirmed.addAll(surroundBlocks);
+
+            if (instant.getValue()) {
+                event.setCancelled(true);
+                mc.player.connection.handleExplosion(packet);
+                placeBlocks(surroundBlocks);
+            }
+        }
+
+        if (event.getPacket() instanceof SPacketSoundEffect) {
+            SPacketSoundEffect packet = event.getPacket();
+
+            if (
+                    packet.getCategory() == SoundCategory.BLOCKS
+                    && packet.getSound() == SoundEvents.ENTITY_GENERIC_EXPLODE
+                    && mc.player.getDistance(packet.getX(), packet.getY(), packet.getZ()) < 4
+            ) {
+                unconfirmed.clear();
+                unconfirmed.addAll(surroundBlocks);
+
+                for (EntityEnderCrystal c : lastHitCrystals) {
+                    mc.world.removeEntity(c);
+                }
+
+                if (instant.getValue()) {
+                    placeBlocks(surroundBlocks);
+                }
+            }
+        }
     }
 
     private List<BlockPos> getBlocks() {
@@ -222,10 +260,11 @@ public class Surround extends Module {
         blocks.remove(offsets);
         List<BlockPos> theBlocks = new ArrayList<>(blocks);
         for (BlockPos pos : blocks) {
-            theBlocks.add(0, pos);
+            theBlocks.add(0, pos.down());
         }
         return blocks.stream()
                 .distinct()
+                .filter(pos -> mc.world.getBlockState(pos).getBlock().isReplaceable(mc.world, pos) || unconfirmed.contains(pos))
                 .collect(Collectors.toList());
     }
 
@@ -298,6 +337,8 @@ public class Surround extends Module {
                 mc.world.removeEntity(c);
             }
         }
+
+        lastHitCrystals = new Vector<>(crystals);
     }
 
     private void breakCrystal(EntityEnderCrystal crystal) {
