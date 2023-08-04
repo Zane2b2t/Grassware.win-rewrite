@@ -17,6 +17,14 @@ import me.zane.grassware.features.setting.impl.ModeSetting;
 import me.zane.grassware.mixin.mixins.ICPacketUseEntity;
 import me.zane.grassware.shader.impl.GradientShader;
 import me.zane.grassware.util.*;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemEndCrystal;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.world.BlockEvent;
+import net.minecraft.world.World;
+import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.player.EntityPlayer;
@@ -27,11 +35,9 @@ import net.minecraft.network.play.client.CPacketUseEntity;
 import net.minecraft.network.play.server.SPacketDestroyEntities;
 import net.minecraft.network.play.server.SPacketSoundEffect;
 import net.minecraft.network.play.server.SPacketSpawnObject;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
 import java.awt.*;
@@ -66,8 +72,7 @@ public class AutoCrystal extends Module {
     private final BooleanSetting breakMop = register("breakMap", false); //dev setting
     private final BooleanSetting boost = register("Boost", false);
     private final BooleanSetting attack = register("Attack", false);
-
-    private final BooleanSetting test = register("Test", false);
+    private final BooleanSetting doubleTap = register("DoubleTap", false);
     private final BooleanSetting bongo = register("bongo", false);
     private final BooleanSetting predict = register("Predict", false);
     private final BooleanSetting inhibit = register("Inhibit", false);
@@ -85,7 +90,7 @@ public class AutoCrystal extends Module {
     private long placeTime;
     private long breakTime;
     private float i = 0.0f;
-    private EnumHand enumHand;
+    public EnumHand enumHand;
     private boolean hasPlaced = false;
     private boolean hasBroken = false;
 
@@ -136,15 +141,21 @@ public void doAwait (BlockPos pos, EntityPlayer entityPlayer ) {
             final EntityEnderCrystal entityEnderCrystal = crystal(entityPlayer);
             if (hasBroken = true) {
                 (mc.getConnection()).sendPacket(new CPacketPlayerTryUseItemOnBlock(pos, EnumFacing.UP, enumHand, 0.5f, 0.5f, 0.5f));
+                if (doubleTap.getValue()) {
+                    (mc.getConnection()).sendPacket(new CPacketUseEntity(entityEnderCrystal));
+                }
             }
             if (hasPlaced = true) {
                 (mc.getConnection()).sendPacket(new CPacketUseEntity(entityEnderCrystal));
                 handleSetDead(entityEnderCrystal);
-                if (test.getValue()) {
+                if (fastRemove.getValue() || setDead.getValue().equals("Both")) {
                     mc.addScheduledTask(() -> {
                         mc.world.removeEntity(entityEnderCrystal);
                         mc.world.removeEntityDangerously(entityEnderCrystal);
                     });
+                }
+                if (doubleTap.getValue()) {
+                    (mc.getConnection()).sendPacket(new CPacketPlayerTryUseItemOnBlock(pos, EnumFacing.UP, enumHand, 0.5f, 0.5f, 0.5f));
                 }
             }
         }
@@ -153,6 +164,9 @@ public void doAwait (BlockPos pos, EntityPlayer entityPlayer ) {
         hasPlaced = false;
         if (pos == null) {
             placedPos = null;
+            return;
+        }
+        if (hasBroken = false && await.getValue()) {
             return;
         }
         if (System.currentTimeMillis() - placeTime > placeDelay.getValue()) {
@@ -171,7 +185,8 @@ public void doAwait (BlockPos pos, EntityPlayer entityPlayer ) {
     }
 
     public void breakCrystal(EntityPlayer entityPlayer) {
-        if (!hasPlaced) {
+        hasBroken = false;
+        if (hasPlaced = true && await.getValue()) {
             return;
         }
         final EntityEnderCrystal entityEnderCrystal = crystal(entityPlayer);
@@ -184,10 +199,9 @@ public void doAwait (BlockPos pos, EntityPlayer entityPlayer ) {
             hasBroken = false;
             (mc.getConnection()).sendPacket(new CPacketUseEntity(entityEnderCrystal));
             hasBroken = true;
-
             swingHand();
             handleSetDead(entityEnderCrystal);
-            if (test.getValue()) {
+            if (fastRemove.getValue()) {
                 mc.addScheduledTask(() -> {
                     mc.world.removeEntity(entityEnderCrystal);
                     mc.world.removeEntityDangerously(entityEnderCrystal);
@@ -238,7 +252,7 @@ public void doAwait (BlockPos pos, EntityPlayer entityPlayer ) {
                 CPacketUseEntity packetUseEntity = new CPacketUseEntity();
                 packetUseEntity.entityId = packet.getEntityID();
                 packetUseEntity.action = ATTACK;
-                if (test.getValue()) {
+                if (fastRemove.getValue()) {
                     mc.addScheduledTask(() -> {
                         mc.world.removeEntity(crystal);
                         mc.world.removeEntityDangerously(crystal);
@@ -247,6 +261,10 @@ public void doAwait (BlockPos pos, EntityPlayer entityPlayer ) {
             }
             swingHand();
             handleSetDead(crystal);
+            if (fastRemove.getValue() || setDead.getValue().equals("Both")) {
+                mc.world.removeEntity(crystal);
+                mc.world.removeEntityDangerously(crystal);
+            }
             breakTime = System.currentTimeMillis();
             try {
                 breakMap.put(crystal.getEntityId(), System.currentTimeMillis());
@@ -276,7 +294,7 @@ public void doAwait (BlockPos pos, EntityPlayer entityPlayer ) {
                     for (Entity entity : mc.world.loadedEntityList) {
                         if (entity instanceof EntityEnderCrystal && entity.getDistanceSq(packet.getX(), packet.getY(), packet.getZ()) < 36) {
                             entity.setDead();
-                            if (setDead.getValue().equals("Both")) {
+                            if (setDead.getValue().equals("Both") || fastRemove.getValue()) {
                                 mc.world.removeEntity(entity);
                                 mc.world.removeEntityDangerously(entity);
                             }
@@ -377,7 +395,7 @@ public void doAwait (BlockPos pos, EntityPlayer entityPlayer ) {
                 CPacketUseEntity crystalPacket = new CPacketUseEntity();
                 crystalPacket.entityId = packet.getEntityID();
                 crystalPacket.action = ATTACK;
-            if (test.getValue()) {
+            if (fastRemove.getValue()) {
                 mc.addScheduledTask(() -> {
                     mc.world.removeEntity(crystal);
                     mc.world.removeEntityDangerously(crystal);
@@ -475,6 +493,24 @@ public void doAwait (BlockPos pos, EntityPlayer entityPlayer ) {
             }
         }
     }
+
+        @EventListener
+        public void onBlockBreak(PlayerInteractEvent.LeftClickBlock event) {
+            if(event.getWorld().getBlockState(event.getPos()).getBlock().equals(Blocks.OBSIDIAN)) {
+                BlockPos pos = event.getPos().offset(EnumFacing.UP);
+                if(event.getEntityPlayer().getHeldItemOffhand() != null && event.getEntityPlayer().getHeldItemOffhand().getItem() instanceof ItemEndCrystal) {
+                    return;
+                }
+                (mc.getConnection()).sendPacket(new CPacketPlayerTryUseItemOnBlock(pos,
+                        EnumFacing.UP,
+                        enumHand,
+                        0.5f,
+                        0.5f,
+                        0.5f));
+                event.getEntityPlayer().getHeldItemOffhand();
+            }
+        }
+
 
     private EntityEnderCrystal crystal(final EntityPlayer entityPlayer) {
         final TreeMap<Float, EntityEnderCrystal> map = new TreeMap<>();
