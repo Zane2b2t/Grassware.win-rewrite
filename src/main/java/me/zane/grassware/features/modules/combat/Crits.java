@@ -41,7 +41,7 @@ public class Crits extends Module {
         }
 
     public String getInfo()  {
-        return "[" + ChatFormatting.WHITE + mode.getValue() + ChatFormatting.GRAY + "]";
+        return " [" + ChatFormatting.WHITE + mode.getValue() + ChatFormatting.RESET + ChatFormatting.GRAY + "]";
     }
 
 }

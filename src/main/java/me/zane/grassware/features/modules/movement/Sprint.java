@@ -15,6 +15,6 @@ public class Sprint extends Module {
     }
     @Override
     public String getInfo() {
-        return "[" + ChatFormatting.WHITE + "Legit" + ChatFormatting.GRAY + "]";
+        return " [" + ChatFormatting.WHITE + "Legit" + ChatFormatting.RESET + "]";
     }
 }

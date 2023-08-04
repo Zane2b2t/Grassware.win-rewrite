@@ -25,6 +25,7 @@ public class ZANEModule4test extends Module {
     public void onDisable() {
         Command.sendMessage("Yuo can't be doing that cuh");
         setEnabled(true);
+        enable();
     }
     @EventListener
     public void onUpdate(final UpdatePlayerWalkingEvent event) {
@@ -37,9 +38,6 @@ public class ZANEModule4test extends Module {
         }
         if (mc.hasCrashed) {
             System.out.println("mc is crashaholic");
-        }
-        if (mc.isSingleplayer()) {
-            Command.sendMessage("Welcome to test Grassware.win");
         }
         if (mc.player.getServer().equals("crystalpvp.cc") && mc.player.getServer().equals("ovh.crystalpvp.cc")) {
             Command.sendSilentMessage("ROBOT SERVER AHH. atleast gasware works gud on it tho");

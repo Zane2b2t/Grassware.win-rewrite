@@ -22,9 +22,6 @@ import net.minecraft.item.ItemEndCrystal;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.world.BlockEvent;
-import net.minecraft.world.World;
-import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.player.EntityPlayer;
@@ -434,66 +431,63 @@ public void doAwait (BlockPos pos, EntityPlayer entityPlayer ) {
 
     @EventListener
     public void onRender3DPre(final Render3DPreEvent event) {
-
         final EntityPlayer entityPlayer = EntityUtil.entityPlayer(targetRange.getValue());
-        if (entityPlayer == null || !mc.player.getHeldItemOffhand().getItem().equals(Items.END_CRYSTAL) && this.renderRing.getValue() && !mc.player.getHeldItemMainhand().getItem().equals(Items.END_CRYSTAL)) {
+        if (entityPlayer == null || !mc.player.getHeldItemOffhand().getItem().equals(Items.END_CRYSTAL) && !mc.player.getHeldItemMainhand().getItem().equals(Items.END_CRYSTAL)) {
             return;
         }
+        if (renderRing.getValue()) {
 
-        final Vec3d vec = RenderUtil.interpolateEntity(entityPlayer);
-        final Color color = ClickGui.Instance.getGradient()[1];
-        final Color color2 = ClickGui.Instance.getGradient()[0];
-        final Color top = new Color(color2.getRed(), color2.getGreen(), color2.getBlue(), 0);
-        final float sin = ((float) Math.sin(i / 25.0f) / 2.0f);
-        i++;
-        glPushMatrix();
-        glEnable(GL_BLEND);
-        glDisable(GL_TEXTURE_2D);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glDisable(GL_DEPTH_TEST);
-        glShadeModel(GL_SMOOTH);
-        glDisable(GL_CULL_FACE);
-        glBegin(GL_QUAD_STRIP);
+            final Vec3d vec = RenderUtil.interpolateEntity(entityPlayer);
+            final Color color = ClickGui.Instance.getGradient()[1];
+            final Color color2 = ClickGui.Instance.getGradient()[0];
+            final Color top = new Color(color2.getRed(), color2.getGreen(), color2.getBlue(), 0);
+            final float sin = ((float) Math.sin(i / 25.0f) / 2.0f);
+            i++;
+            glPushMatrix();
+            glEnable(GL_BLEND);
+            glDisable(GL_TEXTURE_2D);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            glDisable(GL_DEPTH_TEST);
+            glShadeModel(GL_SMOOTH);
+            glDisable(GL_CULL_FACE);
+            glBegin(GL_QUAD_STRIP);
 
-        for (int i = 0; i <= 360; i++) {
-            final double x = ((Math.cos(i * Math.PI / 180F) * entityPlayer.width) + vec.x);
-            final double y = (vec.y + (entityPlayer.height / 2.0f));
-            final double z = ((Math.sin(i * Math.PI / 180F) * entityPlayer.width) + vec.z);
-            RenderUtil.glColor(color);
-            glVertex3d(x, y + (sin * entityPlayer.height), z);
-            RenderUtil.glColor(top);
-            glVertex3d(x, y + (sin * entityPlayer.height / 2.0f), z);
+            for (int i = 0; i <= 360; i++) {
+                final double x = ((Math.cos(i * Math.PI / 180F) * entityPlayer.width) + vec.x);
+                final double y = (vec.y + (entityPlayer.height / 2.0f));
+                final double z = ((Math.sin(i * Math.PI / 180F) * entityPlayer.width) + vec.z);
+                RenderUtil.glColor(color);
+                glVertex3d(x, y + (sin * entityPlayer.height), z);
+                RenderUtil.glColor(top);
+                glVertex3d(x, y + (sin * entityPlayer.height / 2.0f), z);
+            }
+            glEnd();
+            glEnable(GL_CULL_FACE);
+            glShadeModel(GL_FLAT);
+            glEnable(GL_DEPTH_TEST);
+            glEnable(GL_TEXTURE_2D);
+            glDisable(GL_BLEND);
+            glPopMatrix();
         }
-
-        glEnd();
-        glEnable(GL_CULL_FACE);
-        glShadeModel(GL_FLAT);
-        glEnable(GL_DEPTH_TEST);
-        glEnable(GL_TEXTURE_2D);
-        glDisable(GL_BLEND);
-        glPopMatrix();
     }
-
 
     @EventListener
     public void onRender3D(final Render3DEvent event) {
-        BlockPos renderPos = (placedPos != null) ? placedPos : lastPos;                                                  // this for some reason makes it not render at all
-        if (renderPos != null && mc.player.getHeldItemOffhand().getItem().equals(Items.END_CRYSTAL)) { //&& mc.player.getHeldItemMainhand().getItem().equals(Items.TOTEM_OF_UNDYING)
-            float newOpacity = (placedPos != null) ? defualtOpacityVal.getValue() : MathUtil.lerp(opacity.getValue(), 0f, 0.05f);
-            opacity.setValue(Math.max(newOpacity, 0));
-
+        BlockPos renderPos = (placedPos != null) ? placedPos : lastPos;
+        if (renderPos != null && mc.player.getHeldItemOffhand().getItem().equals(Items.END_CRYSTAL) || mc.player.getHeldItemMainhand().getItem().equals(Items.END_CRYSTAL)) {
+            float newOpacity = (placedPos != null) ? defualtOpacityVal.getValue() : MathUtil.lerp(opacity.getValue(), 0f, 0.01f);
+            opacity.setValue(Math.max(newOpacity, 0.0f)); // Ensure opacity doesn't go below 0
             GradientShader.setup(opacity.getValue());
             RenderUtil.boxShader(renderPos);
             RenderUtil.outlineShader(renderPos);
-            RenderUtil.outlineShader(renderPos); //idk maybe doubling this makes the outline have 2x the opacity?
+            RenderUtil.outlineShader(renderPos);
             GradientShader.finish();
-
             if (placedPos != null) {
                 lastPos = placedPos;
             }
         }
     }
-
+//this no worky
         @EventListener
         public void onBlockBreak(PlayerInteractEvent.LeftClickBlock event) {
             if(event.getWorld().getBlockState(event.getPos()).getBlock().equals(Blocks.OBSIDIAN)) {
@@ -552,9 +546,11 @@ public void doAwait (BlockPos pos, EntityPlayer entityPlayer ) {
                 if (mc.player.getDistance(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5) > placeWallRange.getValue())
                     return;
             }
-            if (Math.sqrt(mc.player.getDistanceSq(pos)) > placeRange.getValue()) {
+            double eyeY = mc.player.posY + mc.player.getEyeHeight();
+            if (Math.sqrt(mc.player.getDistanceSq(pos.getX(), eyeY, pos.getZ())) > placeRange.getValue()) {
                 return;
             }
+
             if (!mc.world.getEntitiesWithinAABB(EntityPlayer.class, new AxisAlignedBB(new BlockPos(pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5))).isEmpty()) {
                 return;
             }
@@ -601,9 +597,9 @@ public void doAwait (BlockPos pos, EntityPlayer entityPlayer ) {
     @Override
     public String getInfo() {
         if (placedPos != null) {
-            return "[" + ChatFormatting.WHITE + "Active" + ChatFormatting.GRAY + "]";
+            return " [" + ChatFormatting.WHITE + "Active" + ChatFormatting.RESET + "]";
         } else {
-            return "[" + ChatFormatting.WHITE + "Idle" + ChatFormatting.GRAY + "]";
+            return " [" + ChatFormatting.WHITE + "Idle" + ChatFormatting.RESET + "]";
         }
     } //smile ;}
 }

@@ -22,7 +22,7 @@ public class GradientShader implements MC {
         shader.setUniformf("rgb2", color3.getRed() / 255.0f, color3.getGreen() / 255.0f, color3.getBlue() / 255.0f);
         shader.setUniformf("rgb3", color4.getRed() / 255.0f, color4.getGreen() / 255.0f, color4.getBlue() / 255.0f);
         shader.setUniformf("step", 300 * step);
-        shader.setUniformf("offset", 0);
+        shader.setUniformf("offset", (float) ((((double) System.currentTimeMillis() * (double) speed) % (mc.displayWidth * mc.displayHeight)) / 10.0f));
         shader.setUniformf("mix", opacity);
     }
 

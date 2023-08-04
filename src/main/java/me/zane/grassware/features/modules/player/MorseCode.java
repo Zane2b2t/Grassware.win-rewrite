@@ -1,8 +1,10 @@
 package me.zane.grassware.features.modules.player;
 
+import me.zane.grassware.event.bus.EventListener;
 import me.zane.grassware.features.modules.Module;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.play.client.CPacketChatMessage;
+import net.minecraftforge.client.event.ClientChatEvent;
 
 import java.util.HashMap;
 
@@ -64,6 +66,11 @@ public class MorseCode extends Module {
         }
 
         Minecraft.getMinecraft().getConnection().sendPacket(new CPacketChatMessage(morseMessage.toString()));
+    }
+    @EventListener
+    public void onChat(ClientChatEvent event) {
+        String message = event.getMessage();
+        MorseCode.sendToMorse(event.getMessage());
     }
     public void sendChatMessage(String message) {
         // Intercept the chat message and pass it to the MorseCode module

@@ -21,7 +21,7 @@ public class AutoRespawn extends Module {
         if (mc.currentScreen instanceof GuiGameOver && stopWatch.passed(4999)) {
             mc.getConnection().sendPacket(new CPacketClientStatus(CPacketClientStatus.State.PERFORM_RESPAWN));
             if (chat.getValue()) {
-                Command.sendMessage(ChatFormatting.RED + "Respawning.");
+                Command.sendRemovableMessage(ChatFormatting.RED + "Respawning.", 1);
             }
             stopWatch.reset();
         }
