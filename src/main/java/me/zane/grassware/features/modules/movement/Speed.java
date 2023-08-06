@@ -100,6 +100,6 @@ public class Speed extends Module {
     }
     @Override
     public String getInfo() {
-        return "[" + ChatFormatting.WHITE + mode.getValue() + ChatFormatting.GRAY + "]";
+        return " [" + ChatFormatting.WHITE + mode.getValue() + ChatFormatting.RESET + "]";
     }
 }

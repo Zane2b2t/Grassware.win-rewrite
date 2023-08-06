@@ -75,18 +75,16 @@ public class Offhand extends Module {
     }
     @Override
     public String getInfo() {
-        if (mc.player.getHeldItemOffhand().getItem().equals(Items.END_CRYSTAL)) {
-            return "[" + ChatFormatting.AQUA + "Crystal" + ChatFormatting.GRAY + "]";
+        if (health.getValue() >= 36.0) {
+            return " [" + ChatFormatting.WHITE + "Totem" + ChatFormatting.RESET + "]"; //when somebody is mainhanding (white text)
         }
-        if (mc.player.getHeldItemOffhand().getItem().equals((Items.TOTEM_OF_UNDYING))) {
-            return "[" + ChatFormatting.RED + "Totem" + ChatFormatting.GRAY + "]";
+        if (mc.player.getHeldItemOffhand().getItem().equals(Items.END_CRYSTAL)) {
+            return " [" + ChatFormatting.WHITE + "Crystal" + ChatFormatting.RESET + "]";
+        }
+        if (mc.player.getHeldItemOffhand().getItem().equals((Items.TOTEM_OF_UNDYING)) && health.getValue() < 36.0) { //when somebody is offhanding but he's low health (red text)
+            return " [" + ChatFormatting.RED + "Totem" + ChatFormatting.RESET + "]";
         }
         if (mc.player.getHeldItemOffhand().getItem().equals((Items.GOLDEN_APPLE))) {
-            if (mc.player.getHeldItemMainhand().getItem().equals(Items.DIAMOND_SWORD)) {
-                if (mc.gameSettings.keyBindUseItem.isKeyDown()) {
-                        return "[" + ChatFormatting.YELLOW + "Crystal" + ChatFormatting.GRAY + "]";
+                        return " [" + ChatFormatting.YELLOW + "Crystal" + ChatFormatting.RESET + "]";
                 }
-            }
-        }
-        return null;
-    }}
+        return null;}} //i like smile

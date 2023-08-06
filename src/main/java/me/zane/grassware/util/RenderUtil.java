@@ -24,28 +24,6 @@ public class RenderUtil implements MC {
     public static double interpolateLastTickPos(double pos, double lastPos) {
         return lastPos + (pos - lastPos) * mc.timer.renderPartialTicks;
     }
-    public static void setAlphaLimit(float limit) {
-        glEnable(GL_ALPHA_TEST);
-        glAlphaFunc(GL_GREATER, (float) (limit * .01));
-    }
-    public static void invokeScale(float scale) {
-        glPushMatrix();
-        glScalef(scale, scale, scale);
-    }
-
-    public static void resetScale() {
-        glPopMatrix();
-    }
-
-   // public static void rounded(float x, float y, float width, float height, float radius, Color color) {
-     //   setupDefault(color);
-     //   glBegin(GL_TRIANGLE_FAN);
-    //    for (int i = 1; i <= 4; i++) {
-    //        corner(x, y, width, height, radius, i);
-    //    }
-        //releaseDefault();
-  //  }
-
 
     public static Vec3d interpolateEntity(Entity entity) {
         double x;
@@ -417,11 +395,17 @@ public class RenderUtil implements MC {
         }
         return framebuffer;
     }
+    public static void invokeScale(float scale) {
+        glPushMatrix();
+        glScalef(scale, scale, scale);
+    }
 
+    public static void resetScale() {
+        glPopMatrix();
+    }
     public static void boxShader(double placedPos, FloatSetting opacity) {
     }
 
     public static void boxShader(Double aDouble, double v) {
     }
 }
-

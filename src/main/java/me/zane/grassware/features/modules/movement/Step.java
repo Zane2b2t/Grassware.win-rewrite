@@ -21,6 +21,6 @@ public class Step extends Module {
     }
     @Override
     public String getInfo() {
-        return " [" + ChatFormatting.WHITE + "Vanilla, " + height.getValue() + ChatFormatting.RESET + ChatFormatting.GRAY + "]";
+        return " [" + ChatFormatting.WHITE + "Vanilla, " + height.getValue() + ChatFormatting.RESET  + "]";
     }
 }

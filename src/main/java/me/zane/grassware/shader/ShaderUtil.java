@@ -1,9 +1,6 @@
 package me.zane.grassware.shader;
-//WARNING: ALL CONTENT BELONGS TO https://github.com/Zane2b2t , IF ANY OF THE CLASSES CONTAINING THIS WARNING ARENT IN https://github.com/Zane2b2t/Grassware.win-Rewrite INFORM GITHUB TO DMCA
+
 import me.zane.grassware.util.MC;
-
-import net.minecraft.client.gui.ScaledResolution;
-
 import org.apache.commons.io.IOUtils;
 import org.lwjgl.opengl.ARBFragmentShader;
 import org.lwjgl.opengl.ARBShaderObjects;
@@ -15,7 +12,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import static org.lwjgl.opengl.GL20.*;
-import static org.lwjgl.opengl.GL11.*;
 
 public class ShaderUtil implements MC {
     private final int programID;
@@ -44,18 +40,6 @@ public class ShaderUtil implements MC {
         ARBShaderObjects.glLinkProgramARB(program);
         ARBShaderObjects.glValidateProgramARB(program);
         this.programID = program;
-    }
-
-    public void attachShader() {
-        glUseProgram(programID);
-    }
-
-    public void releaseShader() {
-        glUseProgram(0);
-    }
-
-    public int getUniform(String name) {
-        return glGetUniformLocation(programID, name);
     }
 
     public static String readInputStream(final InputStream inputStream) {
@@ -125,20 +109,5 @@ public class ShaderUtil implements MC {
             ARBShaderObjects.glDeleteObjectARB(shader);
             throw e;
         }
-    }
-    public static void screenTex() {
-        ScaledResolution scaledResolution = new ScaledResolution(mc);
-        float width = scaledResolution.getScaledWidth();
-        float height = scaledResolution.getScaledHeight();
-        glBegin(GL_QUADS);
-        glTexCoord2f(0, 1);
-        glVertex2f(0, 0);
-        glTexCoord2f(0, 0);
-        glVertex2f(0, height);
-        glTexCoord2f(1, 0);
-        glVertex2f(width, height);
-        glTexCoord2f(1, 1);
-        glVertex2f(width, 0);
-        glEnd();
     }
 }

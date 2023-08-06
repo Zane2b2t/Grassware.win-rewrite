@@ -75,6 +75,6 @@ public class Aura extends Module {
     }
     @Override
     public String getInfo() {
-        return "[" + ChatFormatting.WHITE + "Closest" + ChatFormatting.GRAY + "]";
+        return " [" + ChatFormatting.WHITE + "Closest" + ChatFormatting.RESET + "]";
     }
 }

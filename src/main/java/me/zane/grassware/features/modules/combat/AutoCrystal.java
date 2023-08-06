@@ -163,9 +163,6 @@ public void doAwait (BlockPos pos, EntityPlayer entityPlayer ) {
             placedPos = null;
             return;
         }
-        if (hasBroken = false && await.getValue()) {
-            return;
-        }
         if (System.currentTimeMillis() - placeTime > placeDelay.getValue()) {
             if (enumHand != null) {
                 (mc.getConnection()).sendPacket(new CPacketPlayerTryUseItemOnBlock(pos, EnumFacing.UP, enumHand, 0.5f, 0.5f, 0.5f));
@@ -183,9 +180,9 @@ public void doAwait (BlockPos pos, EntityPlayer entityPlayer ) {
 
     public void breakCrystal(EntityPlayer entityPlayer) {
         hasBroken = false;
-        if (hasPlaced = true && await.getValue()) {
-            return;
-        }
+       // if (hasPlaced = true && await.getValue()) {
+        //    return;
+     //   }
         final EntityEnderCrystal entityEnderCrystal = crystal(entityPlayer);
         if (entityEnderCrystal == null) {
             return;
@@ -440,6 +437,8 @@ public void doAwait (BlockPos pos, EntityPlayer entityPlayer ) {
             final Vec3d vec = RenderUtil.interpolateEntity(entityPlayer);
             final Color color = ClickGui.Instance.getGradient()[1];
             final Color color2 = ClickGui.Instance.getGradient()[0];
+            final Color color3 = ClickGui.Instance.getGradient()[2];
+            final Color color4 = ClickGui.Instance.getGradient()[3];
             final Color top = new Color(color2.getRed(), color2.getGreen(), color2.getBlue(), 0);
             final float sin = ((float) Math.sin(i / 25.0f) / 2.0f);
             i++;
@@ -452,11 +451,21 @@ public void doAwait (BlockPos pos, EntityPlayer entityPlayer ) {
             glDisable(GL_CULL_FACE);
             glBegin(GL_QUAD_STRIP);
 
-            for (int i = 0; i <= 360; i++) {
+            for (double i = 0; i <= 360; i += 0.5) {
                 final double x = ((Math.cos(i * Math.PI / 180F) * entityPlayer.width) + vec.x);
                 final double y = (vec.y + (entityPlayer.height / 2.0f));
                 final double z = ((Math.sin(i * Math.PI / 180F) * entityPlayer.width) + vec.z);
-                RenderUtil.glColor(color);
+
+                if (i <= 90) {
+                    RenderUtil.glColor(color);
+                } else if (i <= 180) {
+                    RenderUtil.glColor(color3);
+                } else if (i <= 270) {
+                    RenderUtil.glColor(color4);
+                } else {
+                    RenderUtil.glColor(color2);
+                }
+
                 glVertex3d(x, y + (sin * entityPlayer.height), z);
                 RenderUtil.glColor(top);
                 glVertex3d(x, y + (sin * entityPlayer.height / 2.0f), z);
