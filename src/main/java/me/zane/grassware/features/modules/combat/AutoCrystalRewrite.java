@@ -1,7 +1,6 @@
 package me.zane.grassware.features.modules.combat;
 
 import com.mojang.realmsclient.gui.ChatFormatting;
-
 import me.zane.grassware.GrassWare;
 import me.zane.grassware.event.bus.EventListener;
 import me.zane.grassware.event.events.PacketEvent;
@@ -14,7 +13,6 @@ import me.zane.grassware.shader.impl.GradientShader;
 import me.zane.grassware.util.BlockUtil;
 import me.zane.grassware.util.MathUtil;
 import me.zane.grassware.util.RenderUtil;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.player.EntityPlayer;
@@ -44,12 +42,12 @@ public class AutoCrystalRewrite extends Module {
     private final FloatSetting targetRange = register("TargetRange", 10.0f, 1.0f, 12.0f).invokeVisibility(z -> page.getValue().equals("Calculations"));
     private final FloatSetting maximumDamage = register("MaxSelf", 6.0f, 1.0f, 12.0f).invokeVisibility(z -> page.getValue().equals("Calculations"));
     private final FloatSetting minimumDamage = register("MinDamage", 4.0f, 1.0f, 16.0f).invokeVisibility(z -> page.getValue().equals("Calculations"));
-    
+
     //Place Page
     private final FloatSetting placeDelay = register("PlaceDelay", 50.0f, 0.0f, 200.0f).invokeVisibility(z -> page.getValue().equals("Place"));
     private final FloatSetting placeRange = register("PlaceRange", 4.5f, 1.0f, 6.0f).invokeVisibility(z -> page.getValue().equals("Place"));
     private final FloatSetting placeWallRange = register("PlaceWall", 4.5f, 1.0f, 6.0f).invokeVisibility(z -> page.getValue().equals("Place"));
-    
+
     //Break Page
     private final ModeSetting setDead = register("SetDead", "Both", Arrays.asList("SetDead", "Remove", "Both")).invokeVisibility(z -> page.getValue().equals("Break"));
     private final FloatSetting breakRange = register("BreakRange", 4.5f, 1.0f, 6.0f).invokeVisibility(z -> page.getValue().equals("Break"));
@@ -71,7 +69,7 @@ public class AutoCrystalRewrite extends Module {
     private BlockPos lastPos;
     private EnumHand enumHand;
     private boolean hasPlaced = false;
-    private boolean hasBroken = false;
+    private final boolean hasBroken = false;
     private long placeTime;
 
 
@@ -105,12 +103,12 @@ public class AutoCrystalRewrite extends Module {
     private void breakCrystal() {
         if (await.getValue()) {
             if (!hasPlaced) { // If Await is enabled, the method only executes if we placed a crystal
-                return;
             }
         }
         //TODO: Actually code this lol
-        
+
     }
+
     @EventListener
     public void onPredict(PacketEvent.Receive event) {
         if (event.getPacket() instanceof SPacketSpawnObject && this.predict.getValue()) {
@@ -128,10 +126,11 @@ public class AutoCrystalRewrite extends Module {
                 breakMap.put(packet.getEntityID(), breakMap.containsKey(packet.getEntityID()) ? breakMap.get(packet.getEntityID()) + 1 : 1);
             } */
             AutoCrystal.mc.player.connection.sendPacket(crystalPacket);
-           // crystals.add(crystal);
+            // crystals.add(crystal);
         }
 
     }
+
     private void breakPacket(EntityEnderCrystal crystal) {
         (mc.getConnection()).sendPacket(new CPacketUseEntity(crystal));
     }
@@ -141,6 +140,7 @@ public class AutoCrystalRewrite extends Module {
             return breakRange.getValue();
         return breakWallRange.getValue();
     }
+
     private void handleSetDead(EntityEnderCrystal crystal) {
         (mc.getConnection()).sendPacket(new CPacketUseEntity(crystal));
         if (setDead.getValue().equals("Set Dead") || setDead.getValue().equals("Both"))
@@ -148,25 +148,26 @@ public class AutoCrystalRewrite extends Module {
         if (setDead.getValue().equals("Remove") || setDead.getValue().equals("Both"))
             mc.world.removeEntity(crystal);
     }
-   private void handleFastRemove(EntityEnderCrystal crystal) {
+
+    private void handleFastRemove(EntityEnderCrystal crystal) {
         if (fastRemove.getValue()) {
             mc.addScheduledTask(() -> {
                 mc.world.removeEntity(crystal);
                 mc.world.removeEntityDangerously(crystal);
-            } ); // sad );
+            }); // sad );
         }
-   }
+    }
 
-   //Misc Code
-   public void swingHand() {
-       if (mc.player.getHeldItemMainhand().getItem().equals(Items.END_CRYSTAL)) {
-           mc.player.swingArm(EnumHand.MAIN_HAND);
-           enumHand = EnumHand.MAIN_HAND;
-       } else if (mc.player.getHeldItemOffhand().getItem().equals(Items.END_CRYSTAL)) {
-           mc.player.swingArm(EnumHand.OFF_HAND);
-           enumHand = EnumHand.OFF_HAND;
-       }
-   }
+    //Misc Code
+    public void swingHand() {
+        if (mc.player.getHeldItemMainhand().getItem().equals(Items.END_CRYSTAL)) {
+            mc.player.swingArm(EnumHand.MAIN_HAND);
+            enumHand = EnumHand.MAIN_HAND;
+        } else if (mc.player.getHeldItemOffhand().getItem().equals(Items.END_CRYSTAL)) {
+            mc.player.swingArm(EnumHand.OFF_HAND);
+            enumHand = EnumHand.OFF_HAND;
+        }
+    }
 
     @EventListener
     public void onPacketReceive(PacketEvent.Receive event) {
@@ -296,7 +297,8 @@ public class AutoCrystalRewrite extends Module {
             final float minDistance = Collections.min(map.keySet());
             return map.get(minDistance).get(0);
         }
-        return null;} //zane like smile
+        return null;
+    } //zane like smile
 
     //Render Code
     @EventListener
@@ -315,6 +317,7 @@ public class AutoCrystalRewrite extends Module {
             }
         }
     }
+
     //ModuleList Code
     @Override
     public String getInfo() {
