@@ -31,23 +31,26 @@ import java.util.*;
  * @since 8/8/23
  */
 public class AutoCrystalRewrite extends Module {
-    private final ModeSetting page = register("Page", "Calculations", Arrays.asList("Calculations", "Place", "Break", "Render", "Misc"));
+    private final ModeSetting page = register("Page", "Calculations", Arrays.asList("Calculations", "Place", "Break", "Render", "Misc")); //China way of adding pages but idk how to make pages using Enums
 
-    //Calculations
-    private final BooleanSetting updated = register("1.13+", true);
-    private final FloatSetting targetRange = register("TargetRange", 10.0f, 1.0f, 12.0f);
-    private final FloatSetting maximumDamage = register("MaxSelf", 6.0f, 1.0f, 12.0f);
-    private final FloatSetting minimumDamage = register("MinDamage", 4.0f, 1.0f, 16.0f);
-    //Place
-    private final FloatSetting placeRange = register("PlaceRange", 4.5f, 1.0f, 6.0f);
-    private final FloatSetting placeWallRange = register("PlaceWall", 4.5f, 1.0f, 6.0f);
-    //Break
-    private final FloatSetting breakRange = register("BreakRange", 4.5f, 1.0f, 6.0f);
-    private final FloatSetting breakWallRange = register("BreakTrace", 4.5f, 1.0f, 6.0f);
-    private final ModeSetting setDead = register("SetDead", "Both", Arrays.asList("SetDead", "Remove", "Both"));
-    private final BooleanSetting fastRemove = register("FastRemove", false);
+    //Calculations Page
+    private final BooleanSetting updated = register("1.13+", true).invokeVisibility(z -> page.getValue().equals("Calculations"));
+    private final FloatSetting targetRange = register("TargetRange", 10.0f, 1.0f, 12.0f).invokeVisibility(z -> page.getValue().equals("Calculations"));
+    private final FloatSetting maximumDamage = register("MaxSelf", 6.0f, 1.0f, 12.0f).invokeVisibility(z -> page.getValue().equals("Calculations"));
+    private final FloatSetting minimumDamage = register("MinDamage", 4.0f, 1.0f, 16.0f).invokeVisibility(z -> page.getValue().equals("Calculations"));
+    
+    //Place Page
+    private final FloatSetting placeRange = register("PlaceRange", 4.5f, 1.0f, 6.0f).invokeVisibility(z -> page.getValue().equals("Place"));
+    private final FloatSetting placeWallRange = register("PlaceWall", 4.5f, 1.0f, 6.0f).invokeVisibility(z -> page.getValue().equals("Place"));
+    
+    //Break Page
+    private final ModeSetting setDead = register("SetDead", "Both", Arrays.asList("SetDead", "Remove", "Both")).invokeVisibility(z -> page.getValue().equals("Break"));
+    private final FloatSetting breakRange = register("BreakRange", 4.5f, 1.0f, 6.0f).invokeVisibility(z -> page.getValue().equals("Break"));
+    private final FloatSetting breakWallRange = register("BreakTrace", 4.5f, 1.0f, 6.0f).invokeVisibility(z -> page.getValue().equals("Break"));
+    private final BooleanSetting await = register("Await", false).invokeVisibility(z -> page.getValue().equals("Break"));
+    private final BooleanSetting fastRemove = register("FastRemove", false).invokeVisibility(z -> page.getValue().equals("Break"));
 
-    //Render
+    //Render Page
     private final FloatSetting opacity = register("Opacity", 0.5f, 0.0f, 1.0f);
     private final FloatSetting defualtOpacityVal = register("DOV", 0.5f, 0.0f, 1.0f);
 
@@ -55,9 +58,20 @@ public class AutoCrystalRewrite extends Module {
     private BlockPos placedPos;
     private BlockPos lastPos;
     private EnumHand enumHand;
+    private boolean hasPlaced = false;
+    private boolean hasBroken = false;
 
 
     //Break Code
+    private void breakCrystal() {
+        if (await.getValue()) {
+            if (!hasPlaced) { // If Await is enabled, the method only executes if we placed a crystal
+                return;
+            }
+        }
+        //TODO: Actually code this lol
+        
+    }
     private float breakRange(Entity entity) {
         if (mc.player.canEntityBeSeen(entity))
             return breakRange.getValue();
@@ -188,17 +202,15 @@ public class AutoCrystalRewrite extends Module {
     //Render Code
     @EventListener
     public void onRender3D(final Render3DEvent event) {
-        BlockPos renderPos = (placedPos != null) ? placedPos : lastPos;                                                  // this for some reason makes it not render at all
-        if (renderPos != null && mc.player.getHeldItemOffhand().getItem().equals(Items.END_CRYSTAL)) { //&& mc.player.getHeldItemMainhand().getItem().equals(Items.TOTEM_OF_UNDYING)
-            float newOpacity = (placedPos != null) ? defualtOpacityVal.getValue() : MathUtil.lerp(opacity.getValue(), 0f, 0.05f);
-            opacity.setValue(Math.max(newOpacity, 0));
-
+        BlockPos renderPos = (placedPos != null) ? placedPos : lastPos;
+        if (renderPos != null && mc.player.getHeldItemOffhand().getItem().equals(Items.END_CRYSTAL) || mc.player.getHeldItemMainhand().getItem().equals(Items.END_CRYSTAL)) {
+            float newOpacity = (placedPos != null) ? defualtOpacityVal.getValue() : MathUtil.lerp(opacity.getValue(), 0f, 0.01f);
+            opacity.setValue(Math.max(newOpacity, 0.0f)); // Ensure opacity doesn't go below 0
             GradientShader.setup(opacity.getValue());
             RenderUtil.boxShader(renderPos);
             RenderUtil.outlineShader(renderPos);
-            RenderUtil.outlineShader(renderPos); //idk maybe doubling this makes the outline have 2x the opacity?
+            RenderUtil.outlineShader(renderPos);
             GradientShader.finish();
-
             if (placedPos != null) {
                 lastPos = placedPos;
             }

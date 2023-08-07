@@ -457,17 +457,15 @@ public class AutoCrystal extends Module {
 
     @EventListener
     public void onRender3D(final Render3DEvent event) {
-        BlockPos renderPos = (placedPos != null) ? placedPos : lastPos;                                                  // this for some reason makes it not render at all
-        if (renderPos != null && mc.player.getHeldItemOffhand().getItem().equals(Items.END_CRYSTAL)) { //&& mc.player.getHeldItemMainhand().getItem().equals(Items.TOTEM_OF_UNDYING)
-            float newOpacity = (placedPos != null) ? defualtOpacityVal.getValue() : MathUtil.lerp(opacity.getValue(), 0f, 0.05f);
-            opacity.setValue(Math.max(newOpacity, 0));
-
+        BlockPos renderPos = (placedPos != null) ? placedPos : lastPos;
+        if (renderPos != null && mc.player.getHeldItemOffhand().getItem().equals(Items.END_CRYSTAL) || mc.player.getHeldItemMainhand().getItem().equals(Items.END_CRYSTAL)) {
+            float newOpacity = (placedPos != null) ? defualtOpacityVal.getValue() : MathUtil.lerp(opacity.getValue(), 0f, 0.01f);
+            opacity.setValue(Math.max(newOpacity, 0.0f)); // Ensure opacity doesn't go below 0
             GradientShader.setup(opacity.getValue());
             RenderUtil.boxShader(renderPos);
             RenderUtil.outlineShader(renderPos);
-            RenderUtil.outlineShader(renderPos); //idk maybe doubling this makes the outline have 2x the opacity?
+            RenderUtil.outlineShader(renderPos);
             GradientShader.finish();
-
             if (placedPos != null) {
                 lastPos = placedPos;
             }
