@@ -559,16 +559,14 @@ public class AutoCrystal extends Module {
             final float minDistance = Collections.min(map.keySet());
             return map.get(minDistance).get(0);
         }
-        return null;
-    }
-
+        return null;} //zane like smile
 
     @Override
     public String getInfo() {
         if (placedPos != null) {
-            return "[" + ChatFormatting.WHITE + "Active" + ChatFormatting.GRAY + "]";
+            return " [" + ChatFormatting.WHITE + "Active" + ChatFormatting.RESET + "]";
         } else {
-            return "[" + ChatFormatting.WHITE + "Idle" + ChatFormatting.GRAY + "]";
+            return " [" + ChatFormatting.WHITE + "Idle" + ChatFormatting.RESET + "]";
         }
-    } //smile ;}
+    }
 }
