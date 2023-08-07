@@ -17,11 +17,8 @@ import me.zane.grassware.features.setting.impl.ModeSetting;
 import me.zane.grassware.mixin.mixins.ICPacketUseEntity;
 import me.zane.grassware.shader.impl.GradientShader;
 import me.zane.grassware.util.*;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemEndCrystal;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.player.EntityPlayer;
@@ -90,6 +87,7 @@ public class AutoCrystal extends Module {
     public EnumHand enumHand;
     private boolean hasPlaced = false;
     private boolean hasBroken = false;
+    private EntityEnderCrystal crystal;
 
     @Override
     public void onDisable() {
@@ -133,27 +131,17 @@ public class AutoCrystal extends Module {
             enumHand = EnumHand.OFF_HAND;
         }
     }
-public void doAwait (BlockPos pos, EntityPlayer entityPlayer ) {
+public void doAwait (BlockPos pos, EntityEnderCrystal crystal, EntityPlayer entityPlayer) {
         if (await.getValue()) {
             final EntityEnderCrystal entityEnderCrystal = crystal(entityPlayer);
             if (hasBroken = true) {
-                (mc.getConnection()).sendPacket(new CPacketPlayerTryUseItemOnBlock(pos, EnumFacing.UP, enumHand, 0.5f, 0.5f, 0.5f));
+                place(pos);
                 if (doubleTap.getValue()) {
                     (mc.getConnection()).sendPacket(new CPacketUseEntity(entityEnderCrystal));
                 }
             }
             if (hasPlaced = true) {
-                (mc.getConnection()).sendPacket(new CPacketUseEntity(entityEnderCrystal));
-                handleSetDead(entityEnderCrystal);
-                if (fastRemove.getValue() || setDead.getValue().equals("Both")) {
-                    mc.addScheduledTask(() -> {
-                        mc.world.removeEntity(entityEnderCrystal);
-                        mc.world.removeEntityDangerously(entityEnderCrystal);
-                    });
-                }
-                if (doubleTap.getValue()) {
-                    (mc.getConnection()).sendPacket(new CPacketPlayerTryUseItemOnBlock(pos, EnumFacing.UP, enumHand, 0.5f, 0.5f, 0.5f));
-                }
+                hit(crystal);
             }
         }
 }
@@ -417,14 +405,42 @@ public void doAwait (BlockPos pos, EntityPlayer entityPlayer ) {
         }
         return null;
     }
-
+    private void hit(EntityEnderCrystal crystal) {
+        (mc.getConnection()).sendPacket(new CPacketUseEntity(crystal));
+        if (fastRemove.getValue()) {
+            mc.addScheduledTask(() -> {
+                mc.world.removeEntity(crystal);
+                mc.world.removeEntityDangerously(crystal);
+            });
+        }
+        handleSetDead(crystal);
+    }
+    public void place(BlockPos pos) {
+        (mc.getConnection()).sendPacket(new CPacketPlayerTryUseItemOnBlock(pos, EnumFacing.UP, enumHand, 0.5f, 0.5f, 0.5f));
+        if (doubleTap.getValue()) {
+            (mc.getConnection()).sendPacket(new CPacketPlayerTryUseItemOnBlock(placedPos, EnumFacing.UP, enumHand, 0.5f, 0.5f, 0.5f));
+        }
+    }
     private void handleSetDead(EntityEnderCrystal crystal) {
-        Objects.requireNonNull(mc.getConnection()).sendPacket(new CPacketUseEntity(crystal));
+        (mc.getConnection()).sendPacket(new CPacketUseEntity(crystal));
         if (setDead.getValue().equals("Set Dead") || setDead.getValue().equals("Both"))
             crystal.setDead();
         if (setDead.getValue().equals("Remove") || setDead.getValue().equals("Both"))
             mc.world.removeEntity(crystal);
     }
+    public static Color interpolate(Color start, Color end, float progress) {
+        float[] startComponents = new float[4];
+        start.getRGBComponents(startComponents);
+        float[] endComponents = new float[4];
+        end.getRGBComponents(endComponents);
+        return new Color(
+                startComponents[0] + (endComponents[0] - startComponents[0]) * progress,
+                startComponents[1] + (endComponents[1] - startComponents[1]) * progress,
+                startComponents[2] + (endComponents[2] - startComponents[2]) * progress,
+                startComponents[3] + (endComponents[3] - startComponents[3]) * progress
+        );
+    }
+
 
     @EventListener
     public void onRender3DPre(final Render3DPreEvent event) {
@@ -433,10 +449,9 @@ public void doAwait (BlockPos pos, EntityPlayer entityPlayer ) {
             return;
         }
         if (renderRing.getValue()) {
-
             final Vec3d vec = RenderUtil.interpolateEntity(entityPlayer);
-            final Color color = ClickGui.Instance.getGradient()[1];
-            final Color color2 = ClickGui.Instance.getGradient()[0];
+            final Color color = ClickGui.Instance.getGradient()[0];
+            final Color color2 = ClickGui.Instance.getGradient()[1];
             final Color color3 = ClickGui.Instance.getGradient()[2];
             final Color color4 = ClickGui.Instance.getGradient()[3];
             final Color top = new Color(color2.getRed(), color2.getGreen(), color2.getBlue(), 0);
@@ -450,22 +465,19 @@ public void doAwait (BlockPos pos, EntityPlayer entityPlayer ) {
             glShadeModel(GL_SMOOTH);
             glDisable(GL_CULL_FACE);
             glBegin(GL_QUAD_STRIP);
-
             for (double i = 0; i <= 360; i += 0.5) {
                 final double x = ((Math.cos(i * Math.PI / 180F) * entityPlayer.width) + vec.x);
                 final double y = (vec.y + (entityPlayer.height / 2.0f));
                 final double z = ((Math.sin(i * Math.PI / 180F) * entityPlayer.width) + vec.z);
-
                 if (i <= 90) {
-                    RenderUtil.glColor(color);
+                    RenderUtil.glColor(interpolate(color, color2, (float) (i / 90.0)));
                 } else if (i <= 180) {
-                    RenderUtil.glColor(color3);
+                    RenderUtil.glColor(interpolate(color2, color3, (float) ((i - 90) / 90.0)));
                 } else if (i <= 270) {
-                    RenderUtil.glColor(color4);
+                    RenderUtil.glColor(interpolate(color3, color4, (float) ((i - 180) / 90.0)));
                 } else {
-                    RenderUtil.glColor(color2);
+                    RenderUtil.glColor(interpolate(color2, color, (float) ((i - 270) / 90.0)));
                 }
-
                 glVertex3d(x, y + (sin * entityPlayer.height), z);
                 RenderUtil.glColor(top);
                 glVertex3d(x, y + (sin * entityPlayer.height / 2.0f), z);
@@ -497,7 +509,7 @@ public void doAwait (BlockPos pos, EntityPlayer entityPlayer ) {
         }
     }
 //this no worky
-        @EventListener
+     /*   @EventListener
         public void onBlockBreak(PlayerInteractEvent.LeftClickBlock event) {
             if(event.getWorld().getBlockState(event.getPos()).getBlock().equals(Blocks.OBSIDIAN)) {
                 BlockPos pos = event.getPos().offset(EnumFacing.UP);
@@ -512,7 +524,7 @@ public void doAwait (BlockPos pos, EntityPlayer entityPlayer ) {
                         0.5f));
                 event.getEntityPlayer().getHeldItemOffhand();
             }
-        }
+        } */
 
 
     private EntityEnderCrystal crystal(final EntityPlayer entityPlayer) {
@@ -551,12 +563,14 @@ public void doAwait (BlockPos pos, EntityPlayer entityPlayer ) {
         final TreeMap<Float, BlockPos> map = new TreeMap<>();
 
         BlockUtil.getBlocksInRadius(targetRange.getValue()).stream().filter(pos -> BlockUtil.valid(pos, updated.getValue())).forEach(pos -> {
-            if (mc.world.rayTraceBlocks(mc.player.getPositionVector().add(0, mc.player.eyeHeight, 0), new Vec3d(pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5), false, true, false) != null) {
+            AxisAlignedBB bb = mc.player.getEntityBoundingBox();
+            Vec3d center = new Vec3d(bb.minX + (bb.maxX - bb.minX) / 2, bb.minY + (bb.maxY - bb.minY) / 2, bb.minZ + (bb.maxZ - bb.minZ) / 2);
+
+            if (mc.world.rayTraceBlocks(center, new Vec3d(pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5), false, true, false) != null) {
                 if (mc.player.getDistance(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5) > placeWallRange.getValue())
                     return;
             }
-            double eyeY = mc.player.posY + mc.player.getEyeHeight();
-            if (Math.sqrt(mc.player.getDistanceSq(pos.getX(), eyeY, pos.getZ())) > placeRange.getValue()) {
+            if (Math.sqrt(mc.player.getDistanceSq(pos.getX(), center.y, pos.getZ())) > placeRange.getValue()) {
                 return;
             }
 
