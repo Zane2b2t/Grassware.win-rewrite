@@ -19,6 +19,7 @@ import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.network.play.client.CPacketUseEntity;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -27,7 +28,6 @@ import java.util.*;
 
 /**
  * @author zane4417/zaneATAT
- * @version 1.0
  * @since 8/8/23
  */
 public class AutoCrystalRewrite extends Module {
@@ -54,6 +54,7 @@ public class AutoCrystalRewrite extends Module {
     //The stuff
     private BlockPos placedPos;
     private BlockPos lastPos;
+    private EnumHand enumHand;
 
 
     //Break Code
@@ -70,10 +71,23 @@ public class AutoCrystalRewrite extends Module {
             mc.world.removeEntity(crystal);
     }
    private void handleFastRemove(EntityEnderCrystal crystal) {
-       mc.addScheduledTask(() -> {
-           mc.world.removeEntity(crystal);
-           mc.world.removeEntityDangerously(crystal);
-       });
+        if (fastRemove.getValue()) {
+            mc.addScheduledTask(() -> {
+                mc.world.removeEntity(crystal);
+                mc.world.removeEntityDangerously(crystal);
+            } ); // sad );
+        }
+   }
+
+   //Misc Code
+   public void swingHand() {
+       if (mc.player.getHeldItemMainhand().getItem().equals(Items.END_CRYSTAL)) {
+           mc.player.swingArm(EnumHand.MAIN_HAND);
+           enumHand = EnumHand.MAIN_HAND;
+       } else if (mc.player.getHeldItemOffhand().getItem().equals(Items.END_CRYSTAL)) {
+           mc.player.swingArm(EnumHand.OFF_HAND);
+           enumHand = EnumHand.OFF_HAND;
+       }
    }
 
     //Calc Code
