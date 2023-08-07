@@ -1,10 +1,12 @@
 package me.zane.grassware.features.modules.combat;
 
 import com.mojang.realmsclient.gui.ChatFormatting;
+
 import me.zane.grassware.GrassWare;
 import me.zane.grassware.event.bus.EventListener;
 import me.zane.grassware.event.events.PacketEvent;
 import me.zane.grassware.event.events.Render3DEvent;
+import me.zane.grassware.event.events.UpdatePlayerWalkingEvent;
 import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.features.setting.impl.BooleanSetting;
 import me.zane.grassware.features.setting.impl.FloatSetting;
@@ -13,6 +15,7 @@ import me.zane.grassware.shader.impl.GradientShader;
 import me.zane.grassware.util.BlockUtil;
 import me.zane.grassware.util.MathUtil;
 import me.zane.grassware.util.RenderUtil;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.player.EntityPlayer;
@@ -62,15 +65,40 @@ public class AutoCrystalRewrite extends Module {
 
     //Misc Page
     private final ModeSetting mode = register("Mode", "Sequential", Arrays.asList("Sequential", "Adaptive")).invokeVisibility(z -> page.getValue().equals("Misc"));
+    private final ModeSetting logic = register("Logic", "BreakPlace", Arrays.asList("BreakPlace", "PlaceBreak")).invokeVisibility(z -> page.getValue().equals("Misc"));
     private final BooleanSetting bongo = register("Bongo", false).invokeVisibility(z -> page.getValue().equals("Misc"));
 
     //The stuff
     private BlockPos placedPos;
     private BlockPos lastPos;
+    private BlockPos currentPos;
+    private EntityPlayer targetPlayer;
     private EnumHand enumHand;
     private boolean hasPlaced = false;
     private final boolean hasBroken = false;
     private long placeTime;
+
+    @EventListener
+    public void onUpdate(final UpdatePlayerWalkingEvent event) {
+        final EntityPlayer entityPlayer = target(targetRange.getValue());
+        if (entityPlayer == null) {
+            placedPos = null;
+        } else {
+            final BlockPos pos = pos(entityPlayer);
+            currentPos = pos;
+            targetPlayer = entityPlayer;
+            switch (logic.getValue()) {
+                case "PlaceBreak":
+                    placeCrystal(pos);
+                   // breakCrystal(entityPlayer);
+                    break;
+                case "BreakPlace":
+                   // breakCrystal(entityPlayer);       we dont have break yet lol
+                    placeCrystal(pos);
+                    break;
+            }
+        }
+    }
 
 
     //Place Code
@@ -102,7 +130,8 @@ public class AutoCrystalRewrite extends Module {
     //Break Code
     private void breakCrystal() {
         if (await.getValue()) {
-            if (!hasPlaced) { // If Await is enabled, the method only executes if we placed a crystal
+            if (!hasPlaced) {// If Await is enabled, the method only executes if we placed a crystal
+
             }
         }
         //TODO: Actually code this lol
