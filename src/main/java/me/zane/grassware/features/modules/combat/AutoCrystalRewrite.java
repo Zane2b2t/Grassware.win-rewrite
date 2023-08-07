@@ -18,7 +18,9 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
+import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock;
 import net.minecraft.network.play.client.CPacketUseEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -40,6 +42,7 @@ public class AutoCrystalRewrite extends Module {
     private final FloatSetting minimumDamage = register("MinDamage", 4.0f, 1.0f, 16.0f).invokeVisibility(z -> page.getValue().equals("Calculations"));
     
     //Place Page
+    private final FloatSetting placeDelay = register("PlaceDelay", 50.0f, 0.0f, 200.0f).invokeVisibility(z -> page.getValue().equals("Place"));
     private final FloatSetting placeRange = register("PlaceRange", 4.5f, 1.0f, 6.0f).invokeVisibility(z -> page.getValue().equals("Place"));
     private final FloatSetting placeWallRange = register("PlaceWall", 4.5f, 1.0f, 6.0f).invokeVisibility(z -> page.getValue().equals("Place"));
     
@@ -51,8 +54,11 @@ public class AutoCrystalRewrite extends Module {
     private final BooleanSetting fastRemove = register("FastRemove", false).invokeVisibility(z -> page.getValue().equals("Break"));
 
     //Render Page
-    private final FloatSetting opacity = register("Opacity", 0.5f, 0.0f, 1.0f);
-    private final FloatSetting defualtOpacityVal = register("DOV", 0.5f, 0.0f, 1.0f);
+    private final FloatSetting opacity = register("Opacity", 0.5f, 0.0f, 1.0f).invokeVisibility(z -> page.getValue().equals("Render"));
+    private final FloatSetting defualtOpacityVal = register("DOV", 0.5f, 0.0f, 1.0f).invokeVisibility(z -> page.getValue().equals("Render"));
+
+    //Misc Page
+    private final BooleanSetting bongo = register("Bongo", false).invokeVisibility(z -> page.getValue().equals("Misc"));
 
     //The stuff
     private BlockPos placedPos;
@@ -60,7 +66,34 @@ public class AutoCrystalRewrite extends Module {
     private EnumHand enumHand;
     private boolean hasPlaced = false;
     private boolean hasBroken = false;
+    private long placeTime;
 
+
+    //Place Code
+    public void placeCrystal(BlockPos pos) {
+        hasPlaced = false;
+        if (pos == null) {
+            placedPos = null;
+            return;
+        }
+        if (System.currentTimeMillis() - placeTime > placeDelay.getValue()) {
+            if (enumHand != null) {
+                placePacket(pos);
+                swingHand();
+            }
+            hasPlaced = true;
+            placedPos = pos;
+            placeTime = System.currentTimeMillis();
+        }
+    }
+
+    private void placePacket(BlockPos pos) {
+        (mc.getConnection()).sendPacket(new CPacketPlayerTryUseItemOnBlock(pos, EnumFacing.UP, enumHand, 0.5f, 0.5f, 0.5f));
+        if (placedPos != null && bongo.getValue()) {
+            (mc.getConnection()).sendPacket(new CPacketPlayerTryUseItemOnBlock(placedPos, EnumFacing.UP, enumHand, 0.5f, 0.5f, 0.5f));
+
+        }
+    }
 
     //Break Code
     private void breakCrystal() {
@@ -72,6 +105,10 @@ public class AutoCrystalRewrite extends Module {
         //TODO: Actually code this lol
         
     }
+    private void breakPacket(EntityEnderCrystal crystal) {
+        (mc.getConnection()).sendPacket(new CPacketUseEntity(crystal));
+    }
+
     private float breakRange(Entity entity) {
         if (mc.player.canEntityBeSeen(entity))
             return breakRange.getValue();
