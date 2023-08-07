@@ -1,5 +1,6 @@
 package me.zane.grassware.features.modules.combat;
 //WARNING: ALL CONTENT BELONGS TO https://github.com/Zane2b2t , IF ANY OF THE CLASSES CONTAINING THIS WARNING ARENT IN https://github.com/Zane2b2t/Grassware.win-Rewrite INFORM GITHUB TO DMCA
+
 import com.mojang.realmsclient.gui.ChatFormatting;
 import me.zane.grassware.GrassWare;
 import me.zane.grassware.event.bus.EventListener;
@@ -9,7 +10,6 @@ import me.zane.grassware.event.events.Render3DPreEvent;
 import me.zane.grassware.event.events.UpdatePlayerWalkingEvent;
 import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.features.modules.client.ClickGui;
-import me.zane.grassware.features.setting.Setting;
 import me.zane.grassware.features.setting.impl.BooleanSetting;
 import me.zane.grassware.features.setting.impl.FloatSetting;
 import me.zane.grassware.features.setting.impl.IntSetting;
@@ -17,10 +17,6 @@ import me.zane.grassware.features.setting.impl.ModeSetting;
 import me.zane.grassware.mixin.mixins.ICPacketUseEntity;
 import me.zane.grassware.shader.impl.GradientShader;
 import me.zane.grassware.util.*;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemEndCrystal;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.player.EntityPlayer;
@@ -31,11 +27,12 @@ import net.minecraft.network.play.client.CPacketUseEntity;
 import net.minecraft.network.play.server.SPacketDestroyEntities;
 import net.minecraft.network.play.server.SPacketSoundEffect;
 import net.minecraft.network.play.server.SPacketSpawnObject;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import java.awt.*;
 import java.util.*;
@@ -67,9 +64,6 @@ public class AutoCrystal extends Module {
     private final BooleanSetting brr = register("BRR", false); //dev setting
     private final BooleanSetting instantExplode = register("InstantBreak", false); //dev setting
     private final BooleanSetting breakMop = register("breakMap", false); //dev setting
-    private final BooleanSetting boost = register("Boost", false);
-    private final BooleanSetting attack = register("Attack", false);
-    private final BooleanSetting doubleTap = register("DoubleTap", false);
     private final BooleanSetting bongo = register("bongo", false);
     private final BooleanSetting predict = register("Predict", false);
     private final BooleanSetting inhibit = register("Inhibit", false);
@@ -87,10 +81,9 @@ public class AutoCrystal extends Module {
     private long placeTime;
     private long breakTime;
     private float i = 0.0f;
-    public EnumHand enumHand;
+    private EnumHand enumHand;
     private boolean hasPlaced = false;
     private boolean hasBroken = false;
-    private EntityEnderCrystal crystal;
 
     @Override
     public void onDisable() {
@@ -134,31 +127,17 @@ public class AutoCrystal extends Module {
             enumHand = EnumHand.OFF_HAND;
         }
     }
-    public void doAwait(BlockPos pos, EntityPlayer entityPlayer) {
+    public void doAwait (BlockPos pos, EntityPlayer entityPlayer ) {
         if (await.getValue()) {
             final EntityEnderCrystal entityEnderCrystal = crystal(entityPlayer);
-            if (hasBroken) {
-                mc.getConnection().sendPacket(new CPacketPlayerTryUseItemOnBlock(pos, EnumFacing.UP, enumHand, 0.5f, 0.5f, 0.5f));
-                if (doubleTap.getValue()) {
-                    mc.getConnection().sendPacket(new CPacketUseEntity(entityEnderCrystal));
-                }
+            if (hasBroken = true) {
+                (mc.getConnection()).sendPacket(new CPacketPlayerTryUseItemOnBlock(pos, EnumFacing.UP, enumHand, 0.5f, 0.5f, 0.5f));
             }
-            if (hasPlaced) {
-                mc.getConnection().sendPacket(new CPacketUseEntity(entityEnderCrystal));
-                handleSetDead(entityEnderCrystal);
-                if (fastRemove.getValue() || setDead.getValue().equals("Both")) {
-                    mc.addScheduledTask(() -> {
-                        mc.world.removeEntity(entityEnderCrystal);
-                        mc.world.removeEntityDangerously(entityEnderCrystal);
-                    });
-                }
-                if (doubleTap.getValue()) {
-                    mc.getConnection().sendPacket(new CPacketPlayerTryUseItemOnBlock(pos, EnumFacing.UP, enumHand, 0.5f, 0.5f, 0.5f));
-                }
+            if (hasPlaced = true) {
+                (mc.getConnection()).sendPacket(new CPacketUseEntity(entityEnderCrystal));
             }
         }
     }
-
     public void placeCrystal(BlockPos pos) {
         hasPlaced = false;
         if (pos == null) {
@@ -174,16 +153,16 @@ public class AutoCrystal extends Module {
             placeTime = System.currentTimeMillis();
             hasPlaced = true;
             if (placedPos != null && bongo.getValue()) {
-                (mc.getConnection()).sendPacket(new CPacketPlayerTryUseItemOnBlock(pos, EnumFacing.UP, enumHand, 0.5f, 0.5f, 0.5f));
+                (mc.getConnection()).sendPacket(new CPacketPlayerTryUseItemOnBlock(placedPos, EnumFacing.UP, enumHand, 0.5f, 0.5f, 0.5f));
             }
             hasPlaced = true;
         }
     }
+
     public void breakCrystal(EntityPlayer entityPlayer) {
-        hasBroken = false;
-         if (!hasPlaced && await.getValue()) {
+        if (!hasPlaced) {
             return;
-           }
+        }
         final EntityEnderCrystal entityEnderCrystal = crystal(entityPlayer);
         if (entityEnderCrystal == null) {
             return;
@@ -201,16 +180,6 @@ public class AutoCrystal extends Module {
                     mc.world.removeEntity(entityEnderCrystal);
                     mc.world.removeEntityDangerously(entityEnderCrystal);
                 });
-            }
-            if (boost.getValue()) {
-                if (attack.getValue()) {
-                    CPacketUseEntity packetUseEntity = new CPacketUseEntity();
-                    packetUseEntity.action = ATTACK;
-                }
-                if (interact.getValue()) {
-                    CPacketUseEntity packetUseEntity = new CPacketUseEntity();
-                    packetUseEntity.action = CPacketUseEntity.Action.INTERACT;
-                }
             }
         }
         breakTime = System.currentTimeMillis();
@@ -256,10 +225,6 @@ public class AutoCrystal extends Module {
             }
             swingHand();
             handleSetDead(crystal);
-            if (fastRemove.getValue() || setDead.getValue().equals("Both")) {
-                mc.world.removeEntity(crystal);
-                mc.world.removeEntityDangerously(crystal);
-            }
             breakTime = System.currentTimeMillis();
             try {
                 breakMap.put(crystal.getEntityId(), System.currentTimeMillis());
@@ -277,7 +242,6 @@ public class AutoCrystal extends Module {
                     if (!fastRemove.getValue()) continue;
                     if (!breakMap.containsKey(id)) continue;
                     mc.world.removeEntityFromWorld(id);
-
                 } catch (Exception ignored) {
                 }
             }
@@ -290,7 +254,7 @@ public class AutoCrystal extends Module {
                     for (Entity entity : mc.world.loadedEntityList) {
                         if (entity instanceof EntityEnderCrystal && entity.getDistanceSq(packet.getX(), packet.getY(), packet.getZ()) < 36) {
                             entity.setDead();
-                            if (setDead.getValue().equals("Both") || fastRemove.getValue()) {
+                            if (setDead.getValue().equals("Both")) {
                                 mc.world.removeEntity(entity);
                                 mc.world.removeEntityDangerously(entity);
                             }
@@ -311,6 +275,7 @@ public class AutoCrystal extends Module {
         }
         if (brr.getValue() && event.getPacket() instanceof CPacketPlayerTryUseItemOnBlock) {
             CPacketPlayerTryUseItemOnBlock packet = (CPacketPlayerTryUseItemOnBlock) event.getPacket();
+
             Entity highestEntity = null;
             int entityId = 0;
             for (Entity entity : mc.world.loadedEntityList) {
@@ -341,6 +306,8 @@ public class AutoCrystal extends Module {
             }
         }
     }
+
+
 
     @EventListener
     public void onPacketSend(PacketEvent.Send event) {
@@ -377,6 +344,7 @@ public class AutoCrystal extends Module {
         }
     }
 
+
     @EventListener
     public void onPredict(PacketEvent.Receive event) {
         if (event.getPacket() instanceof SPacketSpawnObject && this.predict.getValue()) {
@@ -384,25 +352,25 @@ public class AutoCrystal extends Module {
             if (packet.getType() != 51) {
                 return;
             }
-                EntityEnderCrystal crystal = new EntityEnderCrystal(AutoCrystal.mc.world, packet.getX(), packet.getY(), packet.getZ());
-                CPacketUseEntity crystalPacket = new CPacketUseEntity();
-                crystalPacket.entityId = packet.getEntityID();
-                crystalPacket.action = ATTACK;
-                handleSetDead(crystal);
+            EntityEnderCrystal crystal = new EntityEnderCrystal(AutoCrystal.mc.world, packet.getX(), packet.getY(), packet.getZ());
+            CPacketUseEntity crystalPacket = new CPacketUseEntity();
+            crystalPacket.entityId = packet.getEntityID();
+            crystalPacket.action = ATTACK;
             if (fastRemove.getValue()) {
                 mc.addScheduledTask(() -> {
                     mc.world.removeEntity(crystal);
                     mc.world.removeEntityDangerously(crystal);
                 });
             }
-                if (breakMop.getValue()) {
-                    breakMap.put(packet.getEntityID(), breakMap.containsKey(packet.getEntityID()) ? breakMap.get(packet.getEntityID()) + 1 : 1);
-                }
-                AutoCrystal.mc.player.connection.sendPacket(crystalPacket);
-                crystals.add(crystal);
+            if (breakMop.getValue()) {
+                breakMap.put(packet.getEntityID(), breakMap.containsKey(packet.getEntityID()) ? breakMap.get(packet.getEntityID()) + 1 : 1);
             }
+            AutoCrystal.mc.player.connection.sendPacket(crystalPacket);
+            crystals.add(crystal);
+        }
 
     }
+
 
     public EntityEnderCrystal getCrystal(BlockPos pos) {
         if (mc.player == null || mc.world == null) {
@@ -416,13 +384,15 @@ public class AutoCrystal extends Module {
         }
         return null;
     }
+
     private void handleSetDead(EntityEnderCrystal crystal) {
-        (mc.getConnection()).sendPacket(new CPacketUseEntity(crystal));
+        Objects.requireNonNull(mc.getConnection()).sendPacket(new CPacketUseEntity(crystal));
         if (setDead.getValue().equals("Set Dead") || setDead.getValue().equals("Both"))
             crystal.setDead();
         if (setDead.getValue().equals("Remove") || setDead.getValue().equals("Both"))
             mc.world.removeEntity(crystal);
     }
+
     public static Color interpolate(Color start, Color end, float progress) {
         float[] startComponents = new float[4];
         start.getRGBComponents(startComponents);
@@ -487,15 +457,17 @@ public class AutoCrystal extends Module {
 
     @EventListener
     public void onRender3D(final Render3DEvent event) {
-        BlockPos renderPos = (placedPos != null) ? placedPos : lastPos;
-        if (renderPos != null && mc.player.getHeldItemOffhand().getItem().equals(Items.END_CRYSTAL) || mc.player.getHeldItemMainhand().getItem().equals(Items.END_CRYSTAL)) {
-            float newOpacity = (placedPos != null) ? defualtOpacityVal.getValue() : MathUtil.lerp(opacity.getValue(), 0.0f, 0.05f);
-            opacity.setValue(Math.max(newOpacity, 0.0f)); // Ensure opacity doesn't go below 0
+        BlockPos renderPos = (placedPos != null) ? placedPos : lastPos;                                                  // this for some reason makes it not render at all
+        if (renderPos != null && mc.player.getHeldItemOffhand().getItem().equals(Items.END_CRYSTAL)) { //&& mc.player.getHeldItemMainhand().getItem().equals(Items.TOTEM_OF_UNDYING)
+            float newOpacity = (placedPos != null) ? defualtOpacityVal.getValue() : MathUtil.lerp(opacity.getValue(), 0f, 0.05f);
+            opacity.setValue(Math.max(newOpacity, 0));
+
             GradientShader.setup(opacity.getValue());
             RenderUtil.boxShader(renderPos);
             RenderUtil.outlineShader(renderPos);
-            RenderUtil.outlineShader(renderPos);
+            RenderUtil.outlineShader(renderPos); //idk maybe doubling this makes the outline have 2x the opacity?
             GradientShader.finish();
+
             if (placedPos != null) {
                 lastPos = placedPos;
             }
@@ -545,10 +517,9 @@ public class AutoCrystal extends Module {
                 if (mc.player.getDistance(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5) > placeWallRange.getValue())
                     return;
             }
-            if (Math.sqrt(mc.player.getDistanceSq(pos.getX(), center.y, pos.getZ())) > placeRange.getValue()) {
+            if (Math.sqrt(mc.player.getDistanceSq(pos)) > placeRange.getValue()) {
                 return;
             }
-
             if (!mc.world.getEntitiesWithinAABB(EntityPlayer.class, new AxisAlignedBB(new BlockPos(pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5))).isEmpty()) {
                 return;
             }
@@ -595,9 +566,9 @@ public class AutoCrystal extends Module {
     @Override
     public String getInfo() {
         if (placedPos != null) {
-            return " [" + ChatFormatting.WHITE + "Active" + ChatFormatting.RESET + "]";
+            return "[" + ChatFormatting.WHITE + "Active" + ChatFormatting.GRAY + "]";
         } else {
-            return " [" + ChatFormatting.WHITE + "Idle" + ChatFormatting.RESET + "]";
+            return "[" + ChatFormatting.WHITE + "Idle" + ChatFormatting.GRAY + "]";
         }
     } //smile ;}
 }
