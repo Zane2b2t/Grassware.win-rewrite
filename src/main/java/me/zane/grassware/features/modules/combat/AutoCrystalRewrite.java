@@ -4,6 +4,7 @@ import com.mojang.realmsclient.gui.ChatFormatting;
 
 import me.zane.grassware.GrassWare;
 import me.zane.grassware.event.bus.EventListener;
+import me.zane.grassware.event.events.PacketEvent;
 import me.zane.grassware.event.events.Render3DEvent;
 import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.features.setting.impl.BooleanSetting;
@@ -20,6 +21,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock;
 import net.minecraft.network.play.client.CPacketUseEntity;
+import net.minecraft.network.play.server.SPacketSpawnObject;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -27,6 +29,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
 import java.util.*;
+
+import static net.minecraft.network.play.client.CPacketUseEntity.Action.ATTACK;
 
 /**
  * @author zane4417/zaneATAT
@@ -50,6 +54,7 @@ public class AutoCrystalRewrite extends Module {
     private final ModeSetting setDead = register("SetDead", "Both", Arrays.asList("SetDead", "Remove", "Both")).invokeVisibility(z -> page.getValue().equals("Break"));
     private final FloatSetting breakRange = register("BreakRange", 4.5f, 1.0f, 6.0f).invokeVisibility(z -> page.getValue().equals("Break"));
     private final FloatSetting breakWallRange = register("BreakTrace", 4.5f, 1.0f, 6.0f).invokeVisibility(z -> page.getValue().equals("Break"));
+    private final BooleanSetting predict = register("Predict", false).invokeVisibility(z -> page.getValue().equals("Misc"));
     private final BooleanSetting await = register("Await", false).invokeVisibility(z -> page.getValue().equals("Break"));
     private final BooleanSetting fastRemove = register("FastRemove", false).invokeVisibility(z -> page.getValue().equals("Break"));
 
@@ -58,6 +63,7 @@ public class AutoCrystalRewrite extends Module {
     private final FloatSetting defualtOpacityVal = register("DOV", 0.5f, 0.0f, 1.0f).invokeVisibility(z -> page.getValue().equals("Render"));
 
     //Misc Page
+    private final ModeSetting mode = register("Mode", "Sequential", Arrays.asList("Sequential", "Adaptive")).invokeVisibility(z -> page.getValue().equals("Misc"));
     private final BooleanSetting bongo = register("Bongo", false).invokeVisibility(z -> page.getValue().equals("Misc"));
 
     //The stuff
@@ -105,6 +111,27 @@ public class AutoCrystalRewrite extends Module {
         //TODO: Actually code this lol
         
     }
+    @EventListener
+    public void onPredict(PacketEvent.Receive event) {
+        if (event.getPacket() instanceof SPacketSpawnObject && this.predict.getValue()) {
+            SPacketSpawnObject packet = event.getPacket();
+            if (packet.getType() != 51) {
+                return;
+            }
+            EntityEnderCrystal crystal = new EntityEnderCrystal(AutoCrystal.mc.world, packet.getX(), packet.getY(), packet.getZ());
+            CPacketUseEntity crystalPacket = new CPacketUseEntity();
+            crystalPacket.entityId = packet.getEntityID();
+            crystalPacket.action = ATTACK;
+            handleSetDead(crystal); //should those be moved to 131?
+            handleFastRemove(crystal);
+          /*  if (breakMop.getValue()) {
+                breakMap.put(packet.getEntityID(), breakMap.containsKey(packet.getEntityID()) ? breakMap.get(packet.getEntityID()) + 1 : 1);
+            } */
+            AutoCrystal.mc.player.connection.sendPacket(crystalPacket);
+           // crystals.add(crystal);
+        }
+
+    }
     private void breakPacket(EntityEnderCrystal crystal) {
         (mc.getConnection()).sendPacket(new CPacketUseEntity(crystal));
     }
@@ -140,6 +167,41 @@ public class AutoCrystalRewrite extends Module {
            enumHand = EnumHand.OFF_HAND;
        }
    }
+
+    @EventListener
+    public void onPacketReceive(PacketEvent.Receive event) {
+        if (event.getPacket() instanceof SPacketSpawnObject && mode.getValue().equals("Adaptive")) {
+            SPacketSpawnObject packet = event.getPacket();
+            if (packet.getType() != 51 || !(mc.world.getEntityByID(packet.getEntityID()) instanceof EntityEnderCrystal))
+                return;
+            EntityEnderCrystal crystal = (EntityEnderCrystal) mc.world.getEntityByID(packet.getEntityID());
+            if (crystal == null)
+                return;
+            final EntityPlayer entityPlayer = target(targetRange.getValue());
+            if (entityPlayer == null)
+                return;
+            final float selfDamage = BlockUtil.calculateEntityDamage(crystal, mc.player);
+            if (selfDamage > maximumDamage.getValue()) {
+                return;
+            }
+            final float enemyDamage = BlockUtil.calculateEntityDamage(crystal, entityPlayer);
+            if (enemyDamage < minimumDamage.getValue()) {
+                return;
+            }
+            if (selfDamage > mc.player.getHealth() + mc.player.getAbsorptionAmount()) {
+                return;
+            }
+            (mc.getConnection()).sendPacket(new CPacketUseEntity(crystal));
+            if (predict.getValue()) {
+                CPacketUseEntity packetUseEntity = new CPacketUseEntity();
+                packetUseEntity.entityId = packet.getEntityID();
+                packetUseEntity.action = ATTACK;
+            }
+            swingHand();
+            handleSetDead(crystal);
+            handleFastRemove(crystal);
+        }
+    } //TODO: Expand this when we make breakCrystal
 
     //Calc Code
     public EntityEnderCrystal getCrystal(BlockPos pos) {
