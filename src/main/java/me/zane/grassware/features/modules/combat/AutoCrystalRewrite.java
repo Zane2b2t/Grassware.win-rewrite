@@ -20,11 +20,14 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock;
 import net.minecraft.network.play.client.CPacketUseEntity;
+import net.minecraft.network.play.server.SPacketSoundEffect;
 import net.minecraft.network.play.server.SPacketSpawnObject;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -55,8 +58,9 @@ public class AutoCrystalRewrite extends Module {
     private final ModeSetting setDead = register("SetDead", "Both", Arrays.asList("SetDead", "Remove", "Both")).invokeVisibility(z -> page.getValue().equals("Break"));
     private final FloatSetting breakRange = register("BreakRange", 4.5f, 1.0f, 6.0f).invokeVisibility(z -> page.getValue().equals("Break"));
     private final FloatSetting breakWallRange = register("BreakTrace", 4.5f, 1.0f, 6.0f).invokeVisibility(z -> page.getValue().equals("Break"));
-    private final BooleanSetting predict = register("Predict", false).invokeVisibility(z -> page.getValue().equals("Misc"));
+    private final BooleanSetting predict = register("Predict", false).invokeVisibility(z -> page.getValue().equals("Break"));
     private final BooleanSetting await = register("Await", false).invokeVisibility(z -> page.getValue().equals("Break"));
+    private final BooleanSetting soundRemove = register("SoundRemove", false).invokeVisibility(z -> page.getValue().equals("Break"));
     private final BooleanSetting fastRemove = register("FastRemove", false).invokeVisibility(z -> page.getValue().equals("Break"));
 
     //Render Page
@@ -231,7 +235,24 @@ public class AutoCrystalRewrite extends Module {
             handleSetDead(crystal);
             handleFastRemove(crystal);
         }
-    } //TODO: Expand this when we make breakCrystal
+            if (event.getPacket() instanceof SPacketSoundEffect && soundRemove.getValue()) {
+                final SPacketSoundEffect packet = (SPacketSoundEffect) event.getPacket();
+                if (packet.getCategory() == SoundCategory.BLOCKS && packet.getSound() == SoundEvents.ENTITY_GENERIC_EXPLODE) {
+                    mc.addScheduledTask(() -> {
+                        for (Entity entity : mc.world.loadedEntityList) {
+                            if (entity instanceof EntityEnderCrystal && entity.getDistanceSq(packet.getX(), packet.getY(), packet.getZ()) < 36) {
+                                entity.setDead();
+                                if (setDead.getValue().equals("Both")) {
+                                    mc.world.removeEntity(entity);
+                                    mc.world.removeEntityDangerously(entity);
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+        }
+     //TODO: Expand this when we make breakCrystal
 
     //Calc Code
     public EntityEnderCrystal getCrystal(BlockPos pos) {
