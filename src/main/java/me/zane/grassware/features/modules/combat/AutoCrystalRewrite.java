@@ -137,7 +137,7 @@ public class AutoCrystalRewrite extends Module {
         //TODO: Actually code this lol
 
     }
-
+//Basically gets the entityId of the SpawnedObject from the Packet and attacks that ID so we attack instanly
     @EventListener
     public void onPredict(PacketEvent.Receive event) {
         if (event.getPacket() instanceof SPacketSpawnObject && this.predict.getValue()) {
@@ -159,17 +159,17 @@ public class AutoCrystalRewrite extends Module {
         }
 
     }
-
+    //no explaination needed
     private void breakPacket(EntityEnderCrystal crystal) {
         (mc.getConnection()).sendPacket(new CPacketUseEntity(crystal));
     }
-
+    //no explaination needed
     private float breakRange(Entity entity) {
         if (mc.player.canEntityBeSeen(entity))
             return breakRange.getValue();
         return breakWallRange.getValue();
     }
-
+//no explaination needed
     private void handleSetDead(EntityEnderCrystal crystal) {
         (mc.getConnection()).sendPacket(new CPacketUseEntity(crystal));
         if (setDead.getValue().equals("Set Dead") || setDead.getValue().equals("Both"))
@@ -177,7 +177,7 @@ public class AutoCrystalRewrite extends Module {
         if (setDead.getValue().equals("Remove") || setDead.getValue().equals("Both"))
             mc.world.removeEntity(crystal);
     }
-
+    //no explaination needed
     private void handleFastRemove(EntityEnderCrystal crystal) {
         if (fastRemove.getValue()) {
             mc.addScheduledTask(() -> {
@@ -197,7 +197,7 @@ public class AutoCrystalRewrite extends Module {
             enumHand = EnumHand.OFF_HAND;
         }
     }
-
+//this too much
     @EventListener
     public void onPacketReceive(PacketEvent.Receive event) {
         if (event.getPacket() instanceof SPacketSpawnObject && mode.getValue().equals("Adaptive")) {
@@ -238,18 +238,18 @@ public class AutoCrystalRewrite extends Module {
         if (mc.player == null || mc.world == null) {
             return null;
         }
-        java.util.List<Entity> entities = mc.world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(pos));
-        for (Entity entity : entities) {
-            if (entity instanceof EntityEnderCrystal) {
+        java.util.List<Entity> entities = mc.world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(pos)); // Get all entities within the specified block position
+        for (Entity entity : entities) { // Iterate through the list of entities
+            if (entity instanceof EntityEnderCrystal) { // Check if the entity is an instance of EntityEnderCrysta
                 return (EntityEnderCrystal) entity;
             }
         }
         return null;
     }
-
+// istg im not spending all that time commenting again. this time its much more simple
     private EntityEnderCrystal crystal(final EntityPlayer entityPlayer) {
-        final TreeMap<Float, EntityEnderCrystal> map = new TreeMap<>();
-
+        final TreeMap<Float, EntityEnderCrystal> map = new TreeMap<>(); // Create a TreeMap to store the damage and crystal entity
+// Filter all loaded entities to get only Ender Crystals within the BreakRange
         mc.world.loadedEntityList.stream().filter(entity -> entity instanceof EntityEnderCrystal && !(mc.player.getDistance(entity) > breakRange(entity))).map(entity -> (EntityEnderCrystal) entity).forEach(entityEnderCrystal -> {
             final float selfDamage = BlockUtil.calculateEntityDamage(entityEnderCrystal, mc.player);
             if (selfDamage > maximumDamage.getValue()) {
@@ -264,53 +264,57 @@ public class AutoCrystalRewrite extends Module {
                 return;
             }
             map.put(damage, entityEnderCrystal);
-        });
+        }  ); //NOO SAD FACE IS BAD!!!!!11! );
 
         if (!map.isEmpty()) {
             return map.lastEntry().getValue();
         }
 
-        return null;
-    }
+        return null;} //omg smile so good!!!
 
     private BlockPos pos(final EntityPlayer entityPlayer) {
-        final TreeMap<Float, BlockPos> map = new TreeMap<>();
+        final TreeMap<Float, BlockPos> map = new TreeMap<>(); // Create a TreeMap to store the damage and position of blocks
 
+        // Get all blocks within a certain radius and filter out invalid blocks
         BlockUtil.getBlocksInRadius(targetRange.getValue()).stream().filter(pos -> BlockUtil.valid(pos, updated.getValue())).forEach(pos -> {
-            AxisAlignedBB bb = mc.player.getEntityBoundingBox();
-            Vec3d center = new Vec3d(bb.minX + (bb.maxX - bb.minX) / 2, bb.minY + (bb.maxY - bb.minY) / 2, bb.minZ + (bb.maxZ - bb.minZ) / 2);
+            AxisAlignedBB bb = mc.player.getEntityBoundingBox(); // Calculate the player's bounding box
+            Vec3d center = new Vec3d(bb.minX + (bb.maxX - bb.minX) / 2, bb.minY + (bb.maxY - bb.minY) / 2, bb.minZ + (bb.maxZ - bb.minZ) / 2); // Calculate the center of the player's bounding box
 
+            // Check if the enemy is behind a wall
             if (mc.world.rayTraceBlocks(center, new Vec3d(pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5), false, true, false) != null) {
+                // If the distance between the player and the block is greater than the PlaceWallRange (If the check above is not fulfilled) , return
                 if (mc.player.getDistance(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5) > placeWallRange.getValue())
                     return;
             }
-            if (Math.sqrt(mc.player.getDistanceSq(pos)) > placeRange.getValue()) {
+            if (Math.sqrt(mc.player.getDistanceSq(pos)) > placeRange.getValue()) { // If the distance between the player and the block is greater than the PlaceRange, return
                 return;
             }
-            if (!mc.world.getEntitiesWithinAABB(EntityPlayer.class, new AxisAlignedBB(new BlockPos(pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5))).isEmpty()) {
+            if (!mc.world.getEntitiesWithinAABB(EntityPlayer.class, new AxisAlignedBB(new BlockPos(pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5))).isEmpty()) {              // If there are any players within a certain distance of the block, return
+
                 return;
             }
-            final float selfDamage = BlockUtil.calculatePosDamage(pos, mc.player);
+            final float selfDamage = BlockUtil.calculatePosDamage(pos, mc.player); // Calculate the damage that would be inflicted on the player if the block were placed
             if (selfDamage > maximumDamage.getValue()) {
                 return;
             }
-            final float enemyDamage = BlockUtil.calculatePosDamage(pos, entityPlayer);
+            final float enemyDamage = BlockUtil.calculatePosDamage(pos, entityPlayer); // Calculate the damage that would be inflicted on the enemy player if the block were placed
             if (enemyDamage < minimumDamage.getValue()) {
                 return;
             }
-            final float damage = enemyDamage - selfDamage;
-            if (selfDamage > mc.player.getHealth() + mc.player.getAbsorptionAmount()) {
+            final float damage = enemyDamage - selfDamage; // Calculate the net damage (enemy damage - self damage)
+            if (selfDamage > mc.player.getHealth() + mc.player.getAbsorptionAmount()) { // If the self damage is greater than the player's health plus absorption amount, return
                 return;
             }
-            map.put(damage, pos);
+            map.put(damage, pos); // Add the net damage and position to the map
         });
 
-        if (!map.isEmpty()) {
+        if (!map.isEmpty()) { // If the map is not empty, return the position with the highest net damage
             return map.lastEntry().getValue();
         }
 
-        return null;
+        return null; // Otherwise, return null
     }
+
 
     private EntityPlayer target(final float range) {
         final HashMap<Float, List<EntityPlayer>> map = new HashMap<>();
@@ -326,15 +330,14 @@ public class AutoCrystalRewrite extends Module {
             final float minDistance = Collections.min(map.keySet());
             return map.get(minDistance).get(0);
         }
-        return null;
-    } //zane like smile
+        return null;} //zane like smile ;}
 
     //Render Code
     @EventListener
     public void onRender3D(final Render3DEvent event) {
         BlockPos renderPos = (placedPos != null) ? placedPos : lastPos;
         if (renderPos != null && mc.player.getHeldItemOffhand().getItem().equals(Items.END_CRYSTAL) || mc.player.getHeldItemMainhand().getItem().equals(Items.END_CRYSTAL)) {
-            float newOpacity = (placedPos != null) ? defualtOpacityVal.getValue() : MathUtil.lerp(opacity.getValue(), 0f, 0.01f);
+            float newOpacity = (placedPos != null) ? defualtOpacityVal.getValue() : MathUtil.lerp(opacity.getValue(), 0f, 0.01f); //This code is too cramped in for me to comment out thanks to MrBubbleGum. thanks for improving tho
             opacity.setValue(Math.max(newOpacity, 0.0f)); // Ensure opacity doesn't go below 0
             GradientShader.setup(opacity.getValue());
             RenderUtil.boxShader(renderPos);
@@ -342,7 +345,7 @@ public class AutoCrystalRewrite extends Module {
             RenderUtil.outlineShader(renderPos);
             GradientShader.finish();
             if (placedPos != null) {
-                lastPos = placedPos;
+                lastPos = placedPos; // Saves the lastPos (The block where fading happens)
             }
         }
     }
