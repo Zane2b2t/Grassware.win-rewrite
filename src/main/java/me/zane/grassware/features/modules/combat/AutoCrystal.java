@@ -418,6 +418,7 @@ public class AutoCrystal extends Module {
             final Color color = ClickGui.Instance.getGradient()[0];
             final Color color2 = ClickGui.Instance.getGradient()[1];
             final Color color3 = ClickGui.Instance.getGradient()[2];
+            final Color color4 = ClickGui.Instance.getGradient()[3];
             final Color top = new Color(color2.getRed(), color2.getGreen(), color2.getBlue(), 0);
             final float sin = ((float) Math.sin(i / 25.0f) / 2.0f);
             i++;
