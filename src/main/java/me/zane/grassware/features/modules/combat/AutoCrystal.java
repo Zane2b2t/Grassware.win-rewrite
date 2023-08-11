@@ -438,7 +438,7 @@ public class AutoCrystal extends Module {
                 } else if (i <= 240) {
                     RenderUtil.glColor(interpolate(color2, color3, (float) ((i - 120) / 120.0)));
                 } else {
-                    RenderUtil.glColor(interpolate(color3, color, (float) ((i - 240) / 120.0)));
+                    RenderUtil.glColor(interpolate(color3, color4, (float) ((i - 240) / 120.0)));
                 }
                 glVertex3d(x, y + (sin * entityPlayer.height), z);
                 RenderUtil.glColor(top);
