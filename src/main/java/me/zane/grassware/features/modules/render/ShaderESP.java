@@ -8,21 +8,17 @@ import me.zane.grassware.event.events.Render3DEvent;
 import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.features.modules.client.ClickGui;
 import me.zane.grassware.features.setting.impl.FloatSetting;
-import me.zane.grassware.features.setting.impl.ModeSetting;
 import me.zane.grassware.shader.impl.GradientShader;
+//WARNING: ALL CONTENT BELONGS TO https://github.com/Zane2b2t , IF ANY OF THE CLASSES CONTAINING THIS WARNING ARENT IN https://github.com/Zane2b2t/Grassware.win-Rewrite INFORM GITHUB TO DMCA
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.player.EntityPlayer;
 
-import java.util.Arrays;
-
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL11.glPopMatrix;
 
 public class ShaderESP extends Module {
-    private final ModeSetting mode = register("Mode", "Both", Arrays.asList("Player", "Crystal", "Both"));
     private final FloatSetting opacity = register("Opacity", 0.5f, 0.1f, 1.0f);
-    private final FloatSetting lineWidth = register("Line Width", 1.0f, 0.0f, 5.0f);
+    private final FloatSetting lineWidth = register("Line Width", 1.0f, 0f, 5.0f);
 
     @EventListener
     public void onRender3D(final Render3DEvent event) {
@@ -35,11 +31,10 @@ public class ShaderESP extends Module {
                 ClickGui.Instance.getGradient()[0],
                 ClickGui.Instance.getGradient()[1],
                 ClickGui.Instance.getGradient()[2],
-                ClickGui.Instance.getGradient()[3],
                 opacity.getValue()
         );
         for (final Entity entity : mc.world.loadedEntityList) {
-            if (!entity.equals(mc.player) && entity instanceof EntityPlayer || entity instanceof EntityEnderCrystal && mode.getValue().equals("Both")) {
+            if (!entity.equals(mc.player) && entity instanceof EntityPlayer || entity instanceof EntityEnderCrystal) {
                 glPushMatrix();
                 glEnable(GL_BLEND);
                 glDisable(GL_TEXTURE_2D);
@@ -66,65 +61,8 @@ public class ShaderESP extends Module {
                 glDisable(GL_BLEND);
                 glPopMatrix();
             }
-            GradientShader.finish();
-            if (!entity.equals(mc.player) &&  entity instanceof EntityEnderCrystal && mode.getValue().equals("Crystal")) {
-                glPushMatrix();
-                glEnable(GL_BLEND);
-                glDisable(GL_TEXTURE_2D);
-                glDisable(GL_DEPTH_TEST);
-                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-                mc.getRenderManager().renderEntityStatic(entity, mc.getRenderPartialTicks(), false);
-                glEnable(GL_DEPTH_TEST);
-                glEnable(GL_TEXTURE_2D);
-                glDisable(GL_BLEND);
-                glPopMatrix();
-
-                glPushMatrix();
-                glEnable(GL_BLEND);
-                glDisable(GL_TEXTURE_2D);
-                glDisable(GL_DEPTH_TEST);
-                glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-                glEnable(GL_LINE_SMOOTH);
-                glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-                glLineWidth(lineWidth.getValue());
-                mc.getRenderManager().renderEntityStatic(entity, mc.getRenderPartialTicks(), false);
-                glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-                glEnable(GL_DEPTH_TEST);
-                glEnable(GL_TEXTURE_2D);
-                glDisable(GL_BLEND);
-                glPopMatrix();
-            }
-            GradientShader.finish();
-            if (!entity.equals(mc.player) && entity instanceof EntityPlayer && mode.getValue().equals("Player")) {
-                glPushMatrix();
-                glEnable(GL_BLEND);
-                glDisable(GL_TEXTURE_2D);
-                glDisable(GL_DEPTH_TEST);
-                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-                mc.getRenderManager().renderEntityStatic(entity, mc.getRenderPartialTicks(), false);
-                glEnable(GL_DEPTH_TEST);
-                glEnable(GL_TEXTURE_2D);
-                glDisable(GL_BLEND);
-                glPopMatrix();
-
-                glPushMatrix();
-                glEnable(GL_BLEND);
-                glDisable(GL_TEXTURE_2D);
-                glDisable(GL_DEPTH_TEST);
-                glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-                glEnable(GL_LINE_SMOOTH);
-                glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-                glLineWidth(lineWidth.getValue());
-                mc.getRenderManager().renderEntityStatic(entity, mc.getRenderPartialTicks(), false);
-                glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-                glEnable(GL_DEPTH_TEST);
-                glEnable(GL_TEXTURE_2D);
-                glDisable(GL_BLEND);
-                glPopMatrix();
-            }
-                GradientShader.finish();
         }
-
+        GradientShader.finish();
     }
 
     @EventListener
