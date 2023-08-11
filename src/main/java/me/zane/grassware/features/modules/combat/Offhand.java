@@ -84,7 +84,7 @@ public class Offhand extends Module {
         if (mc.player.getHeldItemOffhand().getItem().equals((Items.TOTEM_OF_UNDYING)) && health.getValue() < 36.0) { //when somebody is offhanding but he's low health (red text)
             return " [" + ChatFormatting.RED + "Totem" + ChatFormatting.RESET + "]";
         }
-        if (mc.player.getHeldItemOffhand().getItem().equals((Items.GOLDEN_APPLE))) {
-                        return " [" + ChatFormatting.YELLOW + "Crystal" + ChatFormatting.RESET + "]";
+        if (mc.player.getHeldItemOffhand().getItem().equals((Items.GOLDEN_APPLE))) { //if we're gappling it shows crystal but in gold
+                        return " [" + ChatFormatting.GOLD + "Crystal" + ChatFormatting.RESET + "]";
                 }
         return null;}} //i like smile

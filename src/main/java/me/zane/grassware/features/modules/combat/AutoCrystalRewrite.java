@@ -13,6 +13,7 @@ import me.zane.grassware.features.setting.impl.FloatSetting;
 import me.zane.grassware.features.setting.impl.ModeSetting;
 import me.zane.grassware.shader.impl.GradientShader;
 import me.zane.grassware.util.BlockUtil;
+import me.zane.grassware.util.EntityUtil;
 import me.zane.grassware.util.MathUtil;
 import me.zane.grassware.util.RenderUtil;
 
@@ -33,6 +34,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static net.minecraft.network.play.client.CPacketUseEntity.Action.ATTACK;
 
@@ -58,6 +60,7 @@ public class AutoCrystalRewrite extends Module {
     private final ModeSetting setDead = register("SetDead", "Both", Arrays.asList("SetDead", "Remove", "Both")).invokeVisibility(z -> page.getValue().equals("Break"));
     private final FloatSetting breakRange = register("BreakRange", 4.5f, 1.0f, 6.0f).invokeVisibility(z -> page.getValue().equals("Break"));
     private final FloatSetting breakWallRange = register("BreakTrace", 4.5f, 1.0f, 6.0f).invokeVisibility(z -> page.getValue().equals("Break"));
+    private final BooleanSetting inhibit = register("Inhibit", false).invokeVisibility(z -> page.getValue().equals("Break"));
     private final BooleanSetting predict = register("Predict", false).invokeVisibility(z -> page.getValue().equals("Break"));
     private final BooleanSetting await = register("Await", false).invokeVisibility(z -> page.getValue().equals("Break"));
     private final BooleanSetting soundRemove = register("SoundRemove", false).invokeVisibility(z -> page.getValue().equals("Break"));
@@ -77,9 +80,10 @@ public class AutoCrystalRewrite extends Module {
     private BlockPos lastPos;
     private BlockPos currentPos;
     private EntityPlayer targetPlayer;
+    ArrayList<EntityEnderCrystal> crystals = new ArrayList<>();
+    private final Map<Integer, Long> breakMap = new ConcurrentHashMap<>();
     private EnumHand enumHand;
     private boolean hasPlaced = false;
-    private final boolean hasBroken = false;
     private long placeTime;
 
     @EventListener
@@ -132,10 +136,14 @@ public class AutoCrystalRewrite extends Module {
     }
 
     //Break Code
-    private void breakCrystal() {
+    private void breakCrystal(EntityPlayer entityPlayer) {
+        final EntityEnderCrystal entityEnderCrystal = crystal(entityPlayer);
+        if (entityEnderCrystal == null) {
+            return;
+        }
         if (await.getValue()) {
-            if (!hasPlaced) {// If Await is enabled, the method only executes if we placed a crystal
-
+            if (!hasPlaced) {// If Await is enabled, the method only executes if we placed a crysta
+                return;
             }
         }
         //TODO: Actually code this lol

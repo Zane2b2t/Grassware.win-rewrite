@@ -12,10 +12,10 @@ import net.minecraft.network.play.client.CPacketUseEntity;
 import com.mojang.realmsclient.gui.ChatFormatting;
 
 import java.util.Arrays;
-
+//this no work bruv
 public class Crits extends Module {
 
-    private final ModeSetting mode = register("Mode", "PACKET", Arrays.asList("JUMP", "PACKET", "NCP"));
+    private final ModeSetting mode = register("Mode", "PACKET", Arrays.asList("JUMP", "MINIJUMP", "PACKET", "NCP"));
 
     @EventListener
     public void onPacketSend(PacketEvent.Send event) {
@@ -23,17 +23,30 @@ public class Crits extends Module {
         if (event.getPacket() instanceof CPacketUseEntity) {
             CPacketUseEntity packet = (CPacketUseEntity) event.getPacket();
             if (packet.getAction() == CPacketUseEntity.Action.ATTACK) {
-                if (mc.player.onGround && !mc.gameSettings.keyBindJump.isKeyDown() && packet.getEntityFromWorld(mc.world) instanceof EntityLivingBase) {
-                    if (mode.getValue().equals("JUMP")) {
-                        mc.player.jump();
-                    } else if (mode.getValue().equals("NCP")) {
-                        mc.player.connection.sendPacket(new CPacketPlayer.Position(mc.player.posX, mc.player.posY + 0.11, mc.player.posZ, false));
-                        mc.player.connection.sendPacket(new CPacketPlayer.Position(mc.player.posX, mc.player.posY + 0.1100013579, mc.player.posZ, false));
-                        mc.player.connection.sendPacket(new CPacketPlayer.Position(mc.player.posX, mc.player.posY + 0.1100013579, mc.player.posZ, false));
+                if (mc.player.onGround  && packet.getEntityFromWorld(mc.world) instanceof EntityLivingBase) {
+                    switch (mode.getValue()) {
+                        case "JUMP":
+                            mc.player.jump(); //this is useless lol
+                            break;
+                        case "PACKET":
+                            mc.getConnection().sendPacket(new CPacketPlayer.Position(mc.player.posX, mc.player.posY + 0.0625101, mc.player.posZ, false));
+                            mc.getConnection().sendPacket(new CPacketPlayer.Position(mc.player.posX, mc.player.posY, mc.player.posZ, false));
+                            mc.getConnection().sendPacket(new CPacketPlayer.Position(mc.player.posX, mc.player.posY, mc.player.posZ, false));
+                            mc.getConnection().sendPacket(new CPacketPlayer.Position(mc.player.posX, mc.player.posY + 1.1E-5, mc.player.posZ, false));
+                            mc.getConnection().sendPacket(new CPacketPlayer.Position(mc.player.posX, mc.player.posY, mc.player.posZ, false));
+                        break;
+                        case "NCP":
+                            mc.getConnection().sendPacket(new CPacketPlayer.Position(mc.player.posX, mc.player.posY + 0.062600301692775, mc.player.posZ, false));
+                            mc.getConnection().sendPacket(new CPacketPlayer.Position(mc.player.posX, mc.player.posY + 0.07260029960661, mc.player.posZ, false));
+                            mc.getConnection().sendPacket(new CPacketPlayer.Position(mc.player.posX, mc.player.posY, mc.player.posZ, false));
+                            mc.getConnection().sendPacket(new CPacketPlayer.Position(mc.player.posX, mc.player.posY + 0.07260029960661, mc.player.posZ, false));
+                        break;
+                        case "MINIJUMP":
+                            mc.player.jump();
+                            mc.player.motionY /= 2.0;
+                            break;
                     }
-                    else {
-                        mc.getConnection().sendPacket(new CPacketPlayer.Position(mc.player.posX, mc.player.posY + 0.1F, mc.player.posZ, false));
-                    }
+
                 }
 
                 }
@@ -41,7 +54,7 @@ public class Crits extends Module {
         }
 
     public String getInfo()  {
-        return " [" + ChatFormatting.WHITE + mode.getValue() + ChatFormatting.RESET + ChatFormatting.GRAY + "]";
+        return " [" + ChatFormatting.WHITE + mode.getValue() + ChatFormatting.RESET + "]";
     }
 
 }

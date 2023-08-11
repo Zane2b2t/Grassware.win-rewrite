@@ -24,6 +24,8 @@ public class ClickGui extends Module {
 
     private final Random random = new Random();
     public final ModeSetting mode = register("Mode", "Gradient", Arrays.asList("Static", "Gradient"));
+    private final ModeSetting theme = register("Theme:", "zBlue", Arrays.asList("zBlue", "Space", "CaseHardened", "None"));
+    private final BooleanSetting themes = register("Themes", false);
     public final IntSetting red = register("Red", 20, 0, 255).invokeVisibility(z -> mode.getValue().equals("Static"));
     public final IntSetting green = register("Green", 250, 0, 255).invokeVisibility(z -> mode.getValue().equals("Static"));
     public final IntSetting blue = register("Blue", 20, 0, 255).invokeVisibility(z -> mode.getValue().equals("Static"));
@@ -56,7 +58,6 @@ public class ClickGui extends Module {
         Instance = this;
     }
 
-
     @EventListener
     public void onUpdate(final UpdatePlayerWalkingEvent event) {
         if (randoms.getValue()) {
@@ -78,6 +79,22 @@ public class ClickGui extends Module {
         }
         if (!(mc.currentScreen instanceof GrassWareGui)) {
             disable();
+        }
+        if (themes.getValue()) {
+            if (theme.getValue().equals("zBlue")) {
+                gradientRed1.setValue(139);
+                gradientGreen1.setValue(0);
+                gradientBlue1.setValue(255);
+                gradientRed2.setValue(77);
+                gradientGreen2.setValue(0);
+                gradientBlue2.setValue(160);
+                gradientRed3.setValue(6);     //this takes a long time lmao. no way i have to do that for all themes
+                gradientGreen3.setValue(0);
+                gradientBlue3.setValue(95);
+                gradientRed4.setValue(3);
+                gradientGreen4.setValue(123);
+                gradientBlue4.setValue(194);
+            }
         }
     }
 

@@ -2,6 +2,7 @@ package me.zane.grassware.features.modules.combat;
 
 import me.zane.grassware.event.bus.EventListener;
 import me.zane.grassware.event.events.PacketEvent;
+import me.zane.grassware.event.events.UpdatePlayerWalkingEvent;
 import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.features.setting.impl.BooleanSetting;
 import me.zane.grassware.features.setting.impl.FloatSetting;
@@ -89,8 +90,8 @@ public class Surround extends Module {
         MinecraftForge.EVENT_BUS.unregister(this);
     }
 
-    @SubscribeEvent
-    public void onTick(TickEvent event) {
+    @EventListener
+    public void onUpdate(final UpdatePlayerWalkingEvent event) {
         if (nullCheck()) {
             return;
         }

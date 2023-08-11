@@ -66,7 +66,7 @@ public class Aura extends Module {
         glDisable(GL_BLEND);
         glPopMatrix();
 
-        if (!timer.passedMs(620)) {
+        if (!timer.passedMs(600)) {
             return;
         }
         mc.player.connection.sendPacket(new CPacketUseEntity(entityPlayer));

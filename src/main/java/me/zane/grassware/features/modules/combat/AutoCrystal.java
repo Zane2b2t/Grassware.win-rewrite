@@ -160,8 +160,10 @@ public class AutoCrystal extends Module {
     }
 
     public void breakCrystal(EntityPlayer entityPlayer) {
-        if (!hasPlaced) {
-            return;
+        if (await.getValue()) {
+            if (!hasPlaced) {
+                return;
+            }
         }
         final EntityEnderCrystal entityEnderCrystal = crystal(entityPlayer);
         if (entityEnderCrystal == null) {
@@ -416,7 +418,6 @@ public class AutoCrystal extends Module {
             final Color color = ClickGui.Instance.getGradient()[0];
             final Color color2 = ClickGui.Instance.getGradient()[1];
             final Color color3 = ClickGui.Instance.getGradient()[2];
-            final Color color4 = ClickGui.Instance.getGradient()[3];
             final Color top = new Color(color2.getRed(), color2.getGreen(), color2.getBlue(), 0);
             final float sin = ((float) Math.sin(i / 25.0f) / 2.0f);
             i++;
@@ -432,14 +433,12 @@ public class AutoCrystal extends Module {
                 final double x = ((Math.cos(i * Math.PI / 180F) * entityPlayer.width) + vec.x);
                 final double y = (vec.y + (entityPlayer.height / 2.0f));
                 final double z = ((Math.sin(i * Math.PI / 180F) * entityPlayer.width) + vec.z);
-                if (i <= 90) {
-                    RenderUtil.glColor(interpolate(color, color2, (float) (i / 90.0)));
-                } else if (i <= 180) {
-                    RenderUtil.glColor(interpolate(color2, color3, (float) ((i - 90) / 90.0)));
-                } else if (i <= 270) {
-                    RenderUtil.glColor(interpolate(color3, color4, (float) ((i - 180) / 90.0)));
+                if (i <= 120) {
+                    RenderUtil.glColor(interpolate(color, color2, (float) (i / 120.0)));
+                } else if (i <= 240) {
+                    RenderUtil.glColor(interpolate(color2, color3, (float) ((i - 120) / 120.0)));
                 } else {
-                    RenderUtil.glColor(interpolate(color, color2, (float) ((i - 270) / 90.0)));
+                    RenderUtil.glColor(interpolate(color3, color, (float) ((i - 240) / 120.0)));
                 }
                 glVertex3d(x, y + (sin * entityPlayer.height), z);
                 RenderUtil.glColor(top);
@@ -453,13 +452,14 @@ public class AutoCrystal extends Module {
             glDisable(GL_BLEND);
             glPopMatrix();
         }
+
     }
 
     @EventListener
     public void onRender3D(final Render3DEvent event) {
         BlockPos renderPos = (placedPos != null) ? placedPos : lastPos;
         if (renderPos != null && mc.player.getHeldItemOffhand().getItem().equals(Items.END_CRYSTAL) || mc.player.getHeldItemMainhand().getItem().equals(Items.END_CRYSTAL)) {
-            float newOpacity = (placedPos != null) ? defualtOpacityVal.getValue() : MathUtil.lerp(opacity.getValue(), 0f, 0.01f);
+            float newOpacity = (placedPos != null) ? defualtOpacityVal.getValue() : MathUtil.lerp(opacity.getValue(), 0f, 0.05f);
             opacity.setValue(Math.max(newOpacity, 0.0f)); // Ensure opacity doesn't go below 0
             GradientShader.setup(opacity.getValue());
             RenderUtil.boxShader(renderPos);
