@@ -55,8 +55,10 @@ public class AutoCrystalRewrite extends Module {
     private final FloatSetting placeDelay = register("PlaceDelay", 50.0f, 0.0f, 200.0f).invokeVisibility(z -> page.getValue().equals("Place"));
     private final FloatSetting placeRange = register("PlaceRange", 4.5f, 1.0f, 6.0f).invokeVisibility(z -> page.getValue().equals("Place"));
     private final FloatSetting placeWallRange = register("PlaceWall", 4.5f, 1.0f, 6.0f).invokeVisibility(z -> page.getValue().equals("Place"));
+    private final BooleanSetting placeEfficient = register("PlaceEfficient", true).invokeVisibility(z -> page.getValue().equals("Place"));
 
     //Break Page
+    private final FloatSetting breakDelay = register("BreakDelay", 50f, 0f, 200f).invokeVisibility(z -> page.getValue().equals("Break"));
     private final ModeSetting setDead = register("SetDead", "Both", Arrays.asList("SetDead", "Remove", "Both")).invokeVisibility(z -> page.getValue().equals("Break"));
     private final FloatSetting breakRange = register("BreakRange", 4.5f, 1.0f, 6.0f).invokeVisibility(z -> page.getValue().equals("Break"));
     private final FloatSetting breakWallRange = register("BreakTrace", 4.5f, 1.0f, 6.0f).invokeVisibility(z -> page.getValue().equals("Break"));
@@ -65,6 +67,7 @@ public class AutoCrystalRewrite extends Module {
     private final BooleanSetting await = register("Await", false).invokeVisibility(z -> page.getValue().equals("Break"));
     private final BooleanSetting soundRemove = register("SoundRemove", false).invokeVisibility(z -> page.getValue().equals("Break"));
     private final BooleanSetting fastRemove = register("FastRemove", false).invokeVisibility(z -> page.getValue().equals("Break"));
+    private final BooleanSetting breakEfficient = register("BreakEfficient", true).invokeVisibility(z -> page.getValue().equals("Break"));
 
     //Render Page
     private final FloatSetting opacity = register("Opacity", 0.5f, 0.0f, 1.0f).invokeVisibility(z -> page.getValue().equals("Render"));
@@ -85,6 +88,7 @@ public class AutoCrystalRewrite extends Module {
     private EnumHand enumHand;
     private boolean hasPlaced = false;
     private long placeTime;
+    private long breakTime = 0;
 
     @EventListener
     public void onUpdate(final UpdatePlayerWalkingEvent event) {
@@ -98,10 +102,10 @@ public class AutoCrystalRewrite extends Module {
             switch (logic.getValue()) {
                 case "PlaceBreak":
                     placeCrystal(pos);
-                   // breakCrystal(entityPlayer);
+                   breakCrystal(entityPlayer);
                     break;
                 case "BreakPlace":
-                   // breakCrystal(entityPlayer);       we dont have break yet lol
+                    breakCrystal(entityPlayer);
                     placeCrystal(pos);
                     break;
             }
@@ -146,7 +150,19 @@ public class AutoCrystalRewrite extends Module {
                 return;
             }
         }
-        //TODO: Actually code this lol
+
+        if (System.currentTimeMillis() - breakTime > breakDelay.getValue()) {
+
+            CPacketUseEntity crystal = new CPacketUseEntity();
+            crystal.entityId = entityEnderCrystal.entityId;
+            crystal.action = ATTACK;
+            mc.player.connection.sendPacket(crystal);
+
+            handleSetDead(entityEnderCrystal);
+            handleFastRemove(entityEnderCrystal);
+
+            breakTime = System.currentTimeMillis();
+        }
 
     }
 //Basically gets the entityId of the SpawnedObject from the Packet and attacks that ID so we attack instanly
@@ -169,6 +185,7 @@ public class AutoCrystalRewrite extends Module {
             AutoCrystal.mc.player.connection.sendPacket(crystalPacket);
             // crystals.add(crystal);
         }
+
 
     }
     //no explaination needed
@@ -288,7 +305,12 @@ public class AutoCrystalRewrite extends Module {
             if (enemyDamage < minimumDamage.getValue()) {
                 return;
             }
-            final float damage = enemyDamage - selfDamage;
+
+            if (breakEfficient.getValue() && selfDamage > enemyDamage) {
+                return;
+            }
+
+            final float damage = enemyDamage - (selfDamage * 0.5f); // more efficient to value self damage less - cubic
             if (selfDamage > mc.player.getHealth() + mc.player.getAbsorptionAmount()) {
                 return;
             }
@@ -330,7 +352,12 @@ public class AutoCrystalRewrite extends Module {
             if (enemyDamage < minimumDamage.getValue()) {
                 return;
             }
-            final float damage = enemyDamage - selfDamage; // Calculate the net damage (enemy damage - self damage)
+
+            if (placeEfficient.getValue() && selfDamage > enemyDamage) {
+                return;
+            }
+
+            final float damage = enemyDamage - (selfDamage * 0.5f); // more efficient to value self damage less - cubic
             if (selfDamage > mc.player.getHealth() + mc.player.getAbsorptionAmount()) { // If the self damage is greater than the player's health plus absorption amount, return
                 return;
             }
