@@ -21,7 +21,7 @@ This project was made for the popular group, Grassers. Hence the name Grassware.
 * [zpisstige](https://github.com/RealzPrestige) (client basev2)
 * [Zane2b2t](https://github.com/Zane2b2t) (head developer, pro paster, maintainer)
 * [Hockeyl8](https://github.com/hockeyl8) (Stuff and error fixes)
-* [Cuubicc](https://github.com/Cuubicc) (Helping with BlockHighlight and AutoCrystal)
+* [Cuubicc](https://github.com/Cuubicc) (Lots of help)
 * [\_kisman_](https://github.com/kisman2000) (Improved shader stuff)
 * [MrBubblegum](https://github.com/MrBubblegum) (Assistment on lots of stuff)
 * [Rat2b2t](https://github.com/Rat2b2t) (that one guy that always starts off with the readme)
