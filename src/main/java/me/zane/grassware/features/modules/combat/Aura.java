@@ -5,6 +5,7 @@ import me.zane.grassware.event.bus.EventListener;
 import me.zane.grassware.event.events.Render3DPreEvent;
 import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.features.modules.client.ClickGui;
+import me.zane.grassware.features.setting.impl.BooleanSetting;
 import me.zane.grassware.features.setting.impl.IntSetting;
 import me.zane.grassware.util.EntityUtil;
 import me.zane.grassware.util.RenderUtil;
@@ -21,7 +22,8 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class Aura extends Module {
 
-    private final IntSetting Range = register("Range", 5, 1, 5);
+    private final BooleanSetting render = register("Render", true);
+    private final IntSetting Range = register("Range", 6, 1, 6);
 
     private final Timer timer = new Timer();
     private float i = 0.0f;
@@ -32,12 +34,13 @@ public class Aura extends Module {
         if (entityPlayer == null || !mc.player.getHeldItemMainhand().getItem().equals(Items.DIAMOND_SWORD)) {
             return;
         }
-
+    if (render.getValue()) {
         final Vec3d vec = RenderUtil.interpolateEntity(entityPlayer);
         final Color color = ClickGui.Instance.getGradient()[0];
         final Color color2 = ClickGui.Instance.getGradient()[1];
         final Color top = new Color(color2.getRed(), color2.getGreen(), color2.getBlue(), 0);
         final float sin = ((float) Math.sin(i / 25.0f) / 2.0f);
+        final float sin2 = ((float) Math.sin(i / 25.0f + 0.5f) / 2.0f);
         i++;
         glPushMatrix();
         glEnable(GL_BLEND);
@@ -49,13 +52,13 @@ public class Aura extends Module {
         glBegin(GL_QUAD_STRIP);
 
         for (int i = 0; i <= 360; i++) {
-            final double x = ((Math.cos(i * Math.PI / 180F) * entityPlayer.width) + vec.x);
-            final double y = (vec.y + (entityPlayer.height / 2.0f));
-            final double z = ((Math.sin(i * Math.PI / 180F) * entityPlayer.width) + vec.z);
+            double x = ((Math.cos(i * Math.PI / 180F) * entityPlayer.width) + vec.x);
+            double y = (vec.y + (entityPlayer.height / 2.0f)) + 0.1f;
+            double z = ((Math.sin(i * Math.PI / 180F) * entityPlayer.width) + vec.z);
             RenderUtil.glColor(color);
-            glVertex3d(x, y + (sin * entityPlayer.height), z);
+            glVertex3d(x, y + (sin2 * entityPlayer.height), z);
             RenderUtil.glColor(top);
-            glVertex3d(x, y + (sin * entityPlayer.height / 2.0f), z);
+            glVertex3d(x, y + (sin * entityPlayer.height), z);
         }
 
         glEnd();
@@ -65,7 +68,7 @@ public class Aura extends Module {
         glEnable(GL_TEXTURE_2D);
         glDisable(GL_BLEND);
         glPopMatrix();
-
+    }
         if (!timer.passedMs(600)) {
             return;
         }

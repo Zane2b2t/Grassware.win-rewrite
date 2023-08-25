@@ -43,8 +43,8 @@ public class NameTags extends Module {
             glRotatef(-mc.getRenderManager().playerViewY, 0.0f, 1.0f, 0.0f);
             glRotatef((mc.getRenderManager().options.thirdPersonView == 2 ? -1 : 1) * mc.getRenderManager().playerViewX, 1.0f, 0.0f, 0.0f);
 
-            double distance = ((mc.getRenderViewEntity() == null) ? mc.player : mc.getRenderViewEntity()).getDistance(vec.x + mc.getRenderManager().viewerPosX, vec.y + mc.getRenderManager().viewerPosY, vec.z + mc.getRenderManager().viewerPosZ);
-            double scale = 0.0018 + scaleVal * 6; //fix dumb scaling by replacing * distance with * 6 so it's static
+           // double distance = ((mc.getRenderViewEntity() == null) ? mc.player : mc.getRenderViewEntity()).getDistance(vec.x + mc.getRenderManager().viewerPosX, vec.y + mc.getRenderManager().viewerPosY, vec.z + mc.getRenderManager().viewerPosZ);
+            double scale = 0.0018 + scaleVal * 6; //fix dumb scaling by replacing * distance with * 6, so it's static
 
             glScaled(-scale, -scale, scale);
             glDisable(GL_DEPTH_TEST);

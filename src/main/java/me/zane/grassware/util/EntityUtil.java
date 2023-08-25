@@ -12,7 +12,7 @@ import java.util.TreeMap;
 
 public class EntityUtil implements MC {
 
-    public static EntityOtherPlayerMP setupEntity(EntityPlayer entityPlayer, Vec3d vec) {
+    public static EntityOtherPlayerMP setupEntity(EntityPlayer entityPlayer, Vec3d vec) { //maybe for PopESP?
         EntityOtherPlayerMP entityOtherPlayerMP1 = new EntityOtherPlayerMP(mc.world, entityPlayer.getGameProfile());
         entityOtherPlayerMP1.copyLocationAndAnglesFrom(entityPlayer);
         entityOtherPlayerMP1.rotationYawHead = entityPlayer.rotationYawHead;

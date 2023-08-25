@@ -44,6 +44,14 @@ public class Feature implements MC {
         return setting;
     }
 
+    public DoubleSetting register(final String name, final double value, final double min, final double max) {
+        final DoubleSetting setting = new DoubleSetting(name, value);
+        setting.min = (int) min;
+        setting.max = (int) max;
+        settings.add(setting);
+        return setting;
+    }
+
     public ModeSetting register(final String name, final String value, final List<String> values) {
         final ModeSetting setting = new ModeSetting(name, value, values);
         settings.add(setting);

@@ -16,7 +16,7 @@ import java.util.Arrays;
 import java.util.Objects;
 
 public class Speed extends Module {
-    private final ModeSetting mode = register("Mode", "Strafe", Arrays.asList("Strafe", "OnGround"));
+    private final ModeSetting mode = register("Mode", "Strafe", Arrays.asList("Strafe", "Instant"));
     private final BindSetting switchBind = register("Switch Bind", -1);
     private double previousDistance, motionSpeed;
     private int currentState = 1;
@@ -24,7 +24,7 @@ public class Speed extends Module {
     @EventListener
     public void onKey(final KeyEvent event) {
         if (event.key == switchBind.getValue()) {
-            mode.invokeValue(mode.getValue().equals("Strafe") ? "OnGround" : "Strafe");
+            mode.invokeValue(mode.getValue().equals("Strafe") ? "Instant" : "Strafe");
             Command.sendRemovableMessage(ChatFormatting.WHITE + "Speed mode switched to " + ChatFormatting.BOLD + mode.getValue(), 1);
         }
     }

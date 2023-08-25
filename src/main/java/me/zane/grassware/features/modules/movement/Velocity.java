@@ -25,6 +25,6 @@ public class Velocity extends Module {
 
     @Override
     public String getInfo() {
-        return " [" + ChatFormatting.WHITE + "%0, %0" +ChatFormatting.RESET + ChatFormatting.GRAY + "]";
+        return " [" + ChatFormatting.WHITE + "%0, %0" +ChatFormatting.RESET + "]";
     }
 }

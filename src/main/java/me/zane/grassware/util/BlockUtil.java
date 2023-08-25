@@ -33,12 +33,7 @@ public class BlockUtil implements MC {
             new Vec3i(0, -1, 0),
     };
 
-    public static boolean valid(final BlockPos pos) {
-        return mc.world.getBlockState(pos.up()).getBlock().equals(Blocks.AIR)
-                && mc.world.getBlockState(pos.up().up()).getBlock().equals(Blocks.AIR)
-                && (mc.world.getBlockState(pos).getBlock().equals(Blocks.OBSIDIAN)
-                || mc.world.getBlockState(pos).getBlock().equals(Blocks.BEDROCK));
-    }
+
     public static boolean valid(BlockPos pos, boolean updated) {
         return mc.world.getBlockState(pos.up()).getBlock().equals(Blocks.AIR)
                 && (mc.world.getBlockState(pos.up().up()).getBlock().equals(Blocks.AIR) || updated)
@@ -46,12 +41,7 @@ public class BlockUtil implements MC {
                 || mc.world.getBlockState(pos).getBlock().equals(Blocks.BEDROCK));
     }
 
-    public static double[] calculateAngle(Vec3d to) {
-        final Vec3d eye = mc.player.getPositionEyes(mc.getRenderPartialTicks());
-        double yaw = Math.toDegrees(Math.atan2(to.subtract(eye).z, to.subtract(eye).x)) - 90;
-        double pitch = Math.toDegrees(-Math.atan2(to.subtract(eye).y, Math.hypot(to.subtract(eye).x, to.subtract(eye).z)));
-        return new double[]{MathHelper.wrapDegrees(yaw), MathHelper.wrapDegrees(pitch)};
-    }
+
 
     public static BlockPos center() {
         return new BlockPos(Math.floor(mc.player.posX), Math.floor(mc.player.posY), Math.floor(mc.player.posZ));
@@ -69,9 +59,9 @@ public class BlockUtil implements MC {
     public static BlockPos getPosition(EntityPlayer entityPlayer) {
         return new BlockPos(Math.floor(entityPlayer.posX), Math.floor(entityPlayer.posY), Math.floor(entityPlayer.posZ));
     }
-    public static boolean isSelfSafe() {
-        BlockPos pos = getPosition();
-        return mc.player.onGround && Arrays.stream(hole).allMatch(vec3i -> isBedrockOrObsidianOrEchest(pos.add(vec3i)));
+
+    public static boolean hasCrystal(BlockPos pos) {
+        return !mc.world.getEntitiesWithinAABB(EntityEnderCrystal.class, new AxisAlignedBB(new BlockPos(pos.getX() + 0.5f, pos.getY() + 1.5f, pos.getZ() + 0.5f))).isEmpty();
     }
 
     public static float distance(BlockPos pos) {

@@ -20,7 +20,9 @@ public class FastUse extends Module { //rename to fastuse bcs we add more stuff
     private final BooleanSetting exp = register("EXP", false);
     private final BooleanSetting crystal = register("Crystal", false);
     private final BooleanSetting dotGodRender = register("DotGodRender", true);
-    public final IntSetting opacity = register("Opacity", 90, 0, 255).invokeVisibility(z -> dotGodRender.getValue());
+    private final BooleanSetting outline = register("Outline", false).invokeVisibility(z -> dotGodRender.getValue());
+    private final BooleanSetting box = register("Box", true).invokeVisibility(z -> dotGodRender.getValue());
+    private final FloatSetting opacity = register("Opacity", 0.5f, 0.1f, 1.0f).invokeVisibility(z -> dotGodRender.getValue());
 
     public boolean condition = false;
 
@@ -40,13 +42,18 @@ public class FastUse extends Module { //rename to fastuse bcs we add more stuff
     }
     @EventListener
     public void onRender3D(Render3DEvent event) {
-        if (crystal.getValue() && condition == true && dotGodRender.getValue() && mc.gameSettings.keyBindUseItem.isKeyDown()) {
+        if (crystal.getValue() && condition && dotGodRender.getValue() && mc.gameSettings.keyBindUseItem.isKeyDown() && mc.player.inventory.getStackInSlot(mc.player.inventory.currentItem).getItem() == Items.END_CRYSTAL || mc.player.inventory.getStackInSlot(mc.player.inventory.currentItem).getItem() == Items.EXPERIENCE_BOTTLE) {
             RayTraceResult ray = BlockHighlight.mc.objectMouseOver;
             if (ray == null || ray.typeOfHit != RayTraceResult.Type.BLOCK)
                 return;
             BlockPos pos = ray.getBlockPos();
             GradientShader.setup(opacity.getValue());
-            RenderUtil.boxShader(pos);
+            if (box.getValue()) {
+                RenderUtil.boxShader(pos);
+            }
+            if (outline.getValue()) {
+                RenderUtil.outlineShader(pos);
+            }
         }
     }
 }

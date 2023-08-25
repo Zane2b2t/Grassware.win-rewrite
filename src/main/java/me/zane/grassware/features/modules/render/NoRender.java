@@ -11,7 +11,6 @@ import me.zane.grassware.features.setting.impl.BooleanSetting;
 public class NoRender extends Module {
     private final BooleanSetting hurtCam = register("HurtCam", false);
     private final BooleanSetting overlays = register("Overlays", false);
-    private final BooleanSetting interp = register("Interpolation", false);
     private final BooleanSetting strictLimbs = register("StrictLimbs", false);
 
     @EventListener

@@ -78,6 +78,7 @@ public class Surround extends Module {
         originalY = Math.floor(mc.player.posY);
 
         if (center.getValue()) {
+           // BlockUtil.center();
             double x = Math.floor(mc.player.posX) + 0.5;
             double z = Math.floor(mc.player.posZ) + 0.5;
             mc.player.connection.sendPacket(new CPacketPlayer.Position(x, mc.player.posY, z, mc.player.onGround));

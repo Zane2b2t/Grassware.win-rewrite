@@ -16,11 +16,9 @@ public class GrassWare {
     public static Minecraft mc;
     public static EventBus eventBus;
     public static ThreadManager threadManager;
-    public static FontManager fontManager;
     public static HoleManager holeManager;
     public static CommandManager commandManager;
     public static  FriendManager friendManager;
-    public static LastDamageManager lastDamageManager;
     public static ModuleManager moduleManager;
     public static MotionPredictionManager motionPredictManager;
     public static InventoryManager inventoryManager;
@@ -29,12 +27,10 @@ public class GrassWare {
     public static ConfigManager configManager;
     public static EventManager eventManager;
     public static TextManager textManager;
-    public static RotationManager rotationManager;
 
     public static void load() {
         mc = Minecraft.getMinecraft();
         threadManager = new ThreadManager();
-        fontManager = new FontManager();
         holeManager = new HoleManager();
         eventBus = new EventBus();
         textManager = new TextManager();
@@ -42,13 +38,11 @@ public class GrassWare {
         friendManager = new FriendManager();
         inventoryManager = new InventoryManager();
         moduleManager = new ModuleManager();
-        lastDamageManager = new LastDamageManager();
         motionPredictManager = new MotionPredictionManager();
         eventManager = new EventManager();
         fileManager = new FileManager();
         colorManager = new ColorManager();
         configManager = new ConfigManager();
-        rotationManager = new RotationManager();
         moduleManager.init();
         configManager.init();
         AltGui.loadAlts();

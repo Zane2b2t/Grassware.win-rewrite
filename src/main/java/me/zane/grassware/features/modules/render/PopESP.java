@@ -5,10 +5,8 @@ import me.zane.grassware.event.bus.EventListener;
 import me.zane.grassware.event.events.*;
 import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.features.modules.client.ClickGui;
-import me.zane.grassware.features.modules.player.FakePlayer;
 import me.zane.grassware.features.setting.impl.FloatSetting;
 import me.zane.grassware.shader.impl.GradientShader;
-import me.zane.grassware.util.MC;
 
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.entity.Entity;

@@ -16,4 +16,3 @@ public class BindSetting extends Setting<Integer> {
         return this;
     }
 }
-

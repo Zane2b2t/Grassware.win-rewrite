@@ -21,13 +21,4 @@ public class PacketUtil implements MC {
         InventoryUtil.switchBack(currentItem);
     }
 
-    public static void invokeNoEvent(Packet<?> packet) {
-        if (mc.getConnection() != null) {
-            noEvent = true;
-            mc.getConnection().getNetworkManager().channel().writeAndFlush(packet);
-            noEvent = false;
-        }
-    }
-
-
 }

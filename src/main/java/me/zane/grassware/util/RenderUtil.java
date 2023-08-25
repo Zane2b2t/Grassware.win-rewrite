@@ -1,9 +1,7 @@
 package me.zane.grassware.util;
 
 import me.zane.grassware.features.modules.client.ClickGui;
-import me.zane.grassware.features.setting.impl.FloatSetting;
 import me.zane.grassware.shader.impl.GradientShader;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
@@ -382,9 +380,7 @@ public class RenderUtil implements MC {
         glColor4f(color.getRed() / 255.0f, color.getGreen() / 255.0f, color.getBlue() / 255.0f, color.getAlpha() / 255.0f);
     }
 
-    public static void colorState(final Color color) {
-        GlStateManager.color(color.getRed() / 255.0f, color.getGreen() / 255.0f, color.getBlue() / 255.0f, color.getAlpha() / 255.0f);
-    }
+
 
     public static Framebuffer createFrameBuffer(final Framebuffer framebuffer) {
         if (framebuffer == null || framebuffer.framebufferWidth != mc.displayWidth || framebuffer.framebufferHeight != mc.displayHeight) {
@@ -395,17 +391,5 @@ public class RenderUtil implements MC {
         }
         return framebuffer;
     }
-    public static void invokeScale(float scale) {
-        glPushMatrix();
-        glScalef(scale, scale, scale);
-    }
 
-    public static void resetScale() {
-        glPopMatrix();
-    }
-    public static void boxShader(double placedPos, FloatSetting opacity) {
-    }
-
-    public static void boxShader(Double aDouble, double v) {
-    }
 }

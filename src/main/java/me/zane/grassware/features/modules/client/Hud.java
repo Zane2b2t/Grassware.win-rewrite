@@ -4,20 +4,18 @@ import me.zane.grassware.GrassWare;
 import me.zane.grassware.event.bus.EventListener;
 import me.zane.grassware.event.events.Render2DEvent;
 import me.zane.grassware.event.events.RenderHotbarEvent;
-import me.zane.grassware.event.events.RenderHungerEvent;
 import me.zane.grassware.event.events.RenderPotionEffectsEvent;
 import me.zane.grassware.features.modules.Module;
-import me.zane.grassware.features.setting.impl.BooleanSetting;
 import me.zane.grassware.manager.EventManager;
-import me.zane.grassware.shader.impl.BlackShader;
 import me.zane.grassware.shader.impl.GradientShader;
+import me.zane.grassware.shader.impl.BlackShader;
+import me.zane.grassware.features.setting.impl.BooleanSetting;
 import me.zane.grassware.util.MathUtil;
 import me.zane.grassware.util.RenderUtil;
+
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -31,13 +29,14 @@ public class Hud extends Module {
     private final BooleanSetting welcomer = register("Welcomer", false);
     private final BooleanSetting moduleList = register("Module List", false);
     private final BooleanSetting customHotbar = register("Custom Hotbar", false);
-    private final BooleanSetting fixer = register("Fix", false);
+
 
     @EventListener
     public void onRender2D(final Render2DEvent event) {
         if (watermark.getValue()) {
             registerHudText(GrassWare.MODNAME + " " + GrassWare.MODVER, 0.0f, 0.0f, false);
         }
+
 
         if (welcomer.getValue()) {
             final String text = "Welcome to " + GrassWare.MODNAME + ", " + mc.player.getName() + "!";
@@ -84,18 +83,7 @@ public class Hud extends Module {
         GrassWare.textManager.renderStringNoShadow(text, x, y, ClickGui.Instance.getColor());
         GradientShader.finish();
     }
-    //hud fix. well. yea.
-    @SubscribeEvent
-    public void hideHungerBar(RenderGameOverlayEvent event) {//shoutout Siku on mcreator.net for providing this
-        if (fixer.getValue()) {
-            if (event.getType() == RenderGameOverlayEvent.ElementType.FOOD) {
-                event.setCanceled(true);
-            }
-            if (event.getType() == RenderGameOverlayEvent.ElementType.ARMOR) {
-                event.setCanceled(true);
-            }
-        }
-    }
+
     @EventListener
     public void onRenderHotbar(final RenderHotbarEvent event) {
         if (!customHotbar.getValue()) {
@@ -136,13 +124,10 @@ public class Hud extends Module {
                   event.setCancelled(true);
              }
 
-         @EventListener
-         public void onRenderHunger(final RenderHungerEvent event) { //idk if there's an event called that i just made this up lmao
-             event.setCancelled(true);
-         }
             @EventListener
             public void onRenderPotionEffects(final RenderPotionEffectsEvent event) {
-                event.setCancelled(true);
+                if (moduleList.getValue()) {
+                    event.setCancelled(true);
+                }
             }
  }
-

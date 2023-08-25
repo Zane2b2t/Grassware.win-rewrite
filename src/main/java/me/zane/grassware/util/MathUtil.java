@@ -2,10 +2,6 @@ package me.zane.grassware.util;
 //WARNING: ALL CONTENT BELONGS TO https://github.com/Zane2b2t , IF ANY OF THE CLASSES CONTAINING THIS WARNING ARENT IN https://github.com/Zane2b2t/Grassware.win-Rewrite INFORM GITHUB TO DMCA
 public class MathUtil implements MC {
 
-    public static float gaussian(float x, float s) {
-        double output = 1.0 / Math.sqrt(2.0 * Math.PI * (s * s));
-        return (float) (output * Math.exp(-(x * x) / (2.0 * (s * s))));
-    }
 
     public static double round(final double value, final int places) {
         double scale = Math.pow(10, places);

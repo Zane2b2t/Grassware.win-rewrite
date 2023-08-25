@@ -51,7 +51,6 @@ public class ClickGui extends Module {
     private int tickDelay = 0;
     private final int maxTickDelay = 20;
 
-    // private final BooleanSetting snowing = register("Snowing", true);
 
     public ClickGui() {
         bind.invokeValue(Keyboard.KEY_O);
@@ -113,9 +112,6 @@ public class ClickGui extends Module {
                 new Color(gradientRed3.getValue(), gradientGreen3.getValue(), gradientBlue3.getValue()),
                 new Color(gradientRed4.getValue(), gradientGreen4.getValue(), gradientBlue4.getValue())
         };
-    }
-    @EventListener
-    public void onRender3D(final Render3DEvent event) {
     }
 
     @Override

@@ -5,6 +5,7 @@ import me.zane.grassware.features.setting.impl.ModeSetting;
 import me.zane.grassware.event.events.PacketEvent;
 import me.zane.grassware.features.modules.Module;
 
+import me.zane.grassware.util.Timer;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.network.play.client.CPacketPlayer;
 import net.minecraft.network.play.client.CPacketUseEntity;
@@ -15,7 +16,7 @@ import java.util.Arrays;
 //this no work bruv
 public class Crits extends Module {
 
-    private final ModeSetting mode = register("Mode", "PACKET", Arrays.asList("JUMP", "MINIJUMP", "PACKET", "NCP"));
+    private final ModeSetting mode = register("Mode", "Packet", Arrays.asList("Jump", "MiniJump", "Packet", "NCP"));
 
     @EventListener
     public void onPacketSend(PacketEvent.Send event) {
@@ -25,23 +26,23 @@ public class Crits extends Module {
             if (packet.getAction() == CPacketUseEntity.Action.ATTACK) {
                 if (mc.player.onGround  && packet.getEntityFromWorld(mc.world) instanceof EntityLivingBase) {
                     switch (mode.getValue()) {
-                        case "JUMP":
+                        case "Jump":
                             mc.player.jump(); //this is useless lol
                             break;
-                        case "PACKET":
+                        case "Packet":
                             mc.getConnection().sendPacket(new CPacketPlayer.Position(mc.player.posX, mc.player.posY + 0.0625101, mc.player.posZ, false));
                             mc.getConnection().sendPacket(new CPacketPlayer.Position(mc.player.posX, mc.player.posY, mc.player.posZ, false));
                             mc.getConnection().sendPacket(new CPacketPlayer.Position(mc.player.posX, mc.player.posY, mc.player.posZ, false));
                             mc.getConnection().sendPacket(new CPacketPlayer.Position(mc.player.posX, mc.player.posY + 1.1E-5, mc.player.posZ, false));
                             mc.getConnection().sendPacket(new CPacketPlayer.Position(mc.player.posX, mc.player.posY, mc.player.posZ, false));
-                        break;
+                            break;
                         case "NCP":
                             mc.getConnection().sendPacket(new CPacketPlayer.Position(mc.player.posX, mc.player.posY + 0.062600301692775, mc.player.posZ, false));
                             mc.getConnection().sendPacket(new CPacketPlayer.Position(mc.player.posX, mc.player.posY + 0.07260029960661, mc.player.posZ, false));
                             mc.getConnection().sendPacket(new CPacketPlayer.Position(mc.player.posX, mc.player.posY, mc.player.posZ, false));
                             mc.getConnection().sendPacket(new CPacketPlayer.Position(mc.player.posX, mc.player.posY + 0.07260029960661, mc.player.posZ, false));
-                        break;
-                        case "MINIJUMP":
+                            break;
+                        case "MiniJump":
                             mc.player.jump();
                             mc.player.motionY /= 2.0;
                             break;
@@ -49,9 +50,10 @@ public class Crits extends Module {
 
                 }
 
-                }
             }
         }
+    }
+
 
     public String getInfo()  {
         return " [" + ChatFormatting.WHITE + mode.getValue() + ChatFormatting.RESET + "]";

@@ -24,7 +24,11 @@ public class Offhand extends Module {
             swapItem(slot);
         }
     }
-
+private void idk() {
+        if (mc.player.getHeldItemOffhand().isEmpty) { //idfk i want it so when we have no totems it doesnt remove crystals from offhand
+            inventorySlot(Items.END_CRYSTAL);
+        }
+}
     private int slot() {
         if (mc.currentScreen != null) {
             return -1;
