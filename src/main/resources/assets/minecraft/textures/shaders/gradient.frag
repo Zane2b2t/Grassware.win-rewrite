@@ -15,8 +15,7 @@ void main() {
     if (alpha != 0f) {
         float distance = sqrt(gl_FragCoord.x * gl_FragCoord.x + gl_FragCoord.y * gl_FragCoord.y) + offset;
         float distance2 = sqrt((gl_FragCoord.x - 800.0) * (gl_FragCoord.x - 800.0) + gl_FragCoord.y * gl_FragCoord.y) + offset;
-        float distance3 = sqrt((gl_FragCoord.x - 400.0) * (gl_FragCoord.x - 400.0) + (gl_FragCoord.y - 400.0)) + offset;
-
+        float distance3 = sqrt((gl_FragCoord.x - 400.0) * (gl_FragCoord.x - 400.0) + (gl_FragCoord.y - 400.0) * (gl_FragCoord.y - 400.0)) + offset;
         distance = distance / step;
         distance2 = distance2 / step;
         distance3 = distance3 / step;
