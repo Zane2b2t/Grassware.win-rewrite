@@ -52,8 +52,12 @@ public class AutoCrystal extends Module {
     private final FloatSetting targetRange = register("Target Range", 5.0f, 0.1f, 15.0f);
     private final FloatSetting minimumDamage = register("Minimum Damage", 6.0f, 0.1f, 12.0f);
     private final FloatSetting maximumDamage = register("Maximum Damage", 8.0f, 0.1f, 12.0f);
+    private final BooleanSetting waitForBreak = register("WaitForBreak", false);
     private final FloatSetting placeDelay = register("Place Delay", 0.0f, 0f, 500.0f);
+    private final BooleanSetting placeEfficient = register("PlaceEfficient", true);
     private final FloatSetting breakDelay = register("Break Delay", 50.0f, 0f, 500.0f);
+    private final BooleanSetting breakEfficient = register("BreakEfficient", true);
+
     private final BooleanSetting updated = register("1.13+", false);
     private final BooleanSetting await = register("Await", false);
     private final ModeSetting setDead = register("Set Dead", "Set Dead", Arrays.asList("None", "Set Dead", "Remove", "Both"));
@@ -62,10 +66,12 @@ public class AutoCrystal extends Module {
     private final BooleanSetting ping = register("PingCalc", false);
     private final BooleanSetting interact = register("Interact", false); //dev setting
     private final BooleanSetting brr = register("BRR", false); //dev setting
+    private final IntSetting latencyd = register("Latency", 50, 10, 100);
     private final BooleanSetting instantExplode = register("InstantBreak", false); //dev setting
     private final BooleanSetting breakMop = register("breakMap", false); //dev setting
     private final BooleanSetting bongo = register("bongo", false);
     private final BooleanSetting predict = register("Predict", false);
+
     private final BooleanSetting inhibit = register("Inhibit", false);
     private final IntSetting packetAmount = register("PacketAmount", 1, 1, 20);
     private final FloatSetting opacity = register("Opacity", 0.5f, 0.1f, 1.0f);
@@ -131,7 +137,8 @@ public class AutoCrystal extends Module {
         if (await.getValue()) {
             final EntityEnderCrystal entityEnderCrystal = crystal(entityPlayer);
             if (hasBroken) {
-                (mc.getConnection()).sendPacket(new CPacketPlayerTryUseItemOnBlock(pos, EnumFacing.UP, enumHand, 0.5f, 0.5f, 0.5f));
+                placeCrystal(pos);
+          //      (mc.getConnection()).sendPacket(new CPacketPlayerTryUseItemOnBlock(pos, EnumFacing.UP, enumHand, 0.5f, 0.5f, 0.5f));
             }
             if (hasPlaced) {
                 (mc.getConnection()).sendPacket(new CPacketUseEntity(entityEnderCrystal));
@@ -143,6 +150,9 @@ public class AutoCrystal extends Module {
         if (pos == null) {
             placedPos = null;
             return;
+        }
+        if (waitForBreak.getValue() && !hasBroken) {
+           return;
         }
         if (System.currentTimeMillis() - placeTime > placeDelay.getValue()) {
             if (enumHand != null) {
@@ -160,10 +170,8 @@ public class AutoCrystal extends Module {
     }
 
     public void breakCrystal(EntityPlayer entityPlayer) {
-        if (await.getValue()) {
-            if (!hasPlaced) {
-                return;
-            }
+        if (await.getValue() && !hasPlaced) {
+            return;
         }
         final EntityEnderCrystal entityEnderCrystal = crystal(entityPlayer);
         if (entityEnderCrystal == null) {
@@ -174,6 +182,7 @@ public class AutoCrystal extends Module {
             crystals.add(entityEnderCrystal);
             hasBroken = false;
             (mc.getConnection()).sendPacket(new CPacketUseEntity(entityEnderCrystal));
+            crystals.add(entityEnderCrystal);
             hasBroken = true;
             swingHand();
             handleSetDead(entityEnderCrystal);
@@ -190,6 +199,7 @@ public class AutoCrystal extends Module {
         } catch (Exception ignored) {
         }
     }
+
     @EventListener
     public void onPacketReceive(PacketEvent.Receive event) {
         if (event.getPacket() instanceof SPacketSpawnObject && mode.getValue().equals("Adaptive")) {
@@ -215,15 +225,13 @@ public class AutoCrystal extends Module {
             }
             (mc.getConnection()).sendPacket(new CPacketUseEntity(crystal));
             if (predict.getValue()) {
+                if (await.getValue() && !hasPlaced) {
+                    return;
+                }
                 CPacketUseEntity packetUseEntity = new CPacketUseEntity();
                 packetUseEntity.entityId = packet.getEntityID();
                 packetUseEntity.action = ATTACK;
-                if (fastRemove.getValue()) {
-                    mc.addScheduledTask(() -> {
-                        mc.world.removeEntity(crystal);
-                        mc.world.removeEntityDangerously(crystal);
-                    });
-                }
+                handleFastRemove(crystal);
             }
             swingHand();
             handleSetDead(crystal);
@@ -241,7 +249,7 @@ public class AutoCrystal extends Module {
                         breakMap.remove(id);
                         continue;
                     }
-                    if (!fastRemove.getValue()) continue;
+                    if (!fastRemove.getValue()) continue; //!?
                     if (!breakMap.containsKey(id)) continue;
                     mc.world.removeEntityFromWorld(id);
                 } catch (Exception ignored) {
@@ -281,32 +289,29 @@ public class AutoCrystal extends Module {
             Entity highestEntity = null;
             int entityId = 0;
             for (Entity entity : mc.world.loadedEntityList) {
-                if (entity instanceof EntityEnderCrystal) {
-                    if (entity.getEntityId() > entityId) {
-                        entityId = entity.getEntityId();
-                    }
+                if (entity instanceof EntityEnderCrystal && entity.getEntityId() > entityId && (!inhibit.getValue() || !crystals.contains(entity))) {
+                    entityId = entity.getEntityId();
                     highestEntity = entity;
                 }
             }
-            if (highestEntity != null) {//this makes the AutoCrystal require internet to use. even when disabled. using without internet in singleplayer will result in minecraft crashing
-                int latency = Objects.requireNonNull(mc.getConnection()).getPlayerInfo(mc.getConnection().getGameProfile().getId()).getResponseTime() / 50; //this
+            if (highestEntity != null) {
+                int latency = (mc.getConnection()).getPlayerInfo(mc.getConnection().getGameProfile().getId()).getResponseTime() / latencyd.getValue();
                 for (int i = latency; i < latency + 10; i++) {
                     try {
                         CPacketUseEntity cPacketUseEntity = new CPacketUseEntity();
-
-                        if (ping.getValue()) {
-                            ((ICPacketUseEntity) cPacketUseEntity).setEntityId(highestEntity.getEntityId() + i);
-                        }
-                        else {
-                            ((ICPacketUseEntity) cPacketUseEntity).setEntityId(highestEntity.getEntityId());
-                        }
+                        ((ICPacketUseEntity) cPacketUseEntity).setEntityId(ping.getValue() ? highestEntity.getEntityId() + i : highestEntity.getEntityId());
                         ((ICPacketUseEntity) cPacketUseEntity).setAction(ATTACK);
                         PacketUtil.invoke(cPacketUseEntity);
+                        if (fastRemove.getValue()) {
+                            mc.world.removeEntityFromWorld(entityId);
+                        }
+                        crystals.add((EntityEnderCrystal) highestEntity);
                     } catch (Exception ignored) {
                     }
                 }
             }
         }
+
     }
 
 
@@ -388,11 +393,19 @@ public class AutoCrystal extends Module {
     }
 
     private void handleSetDead(EntityEnderCrystal crystal) {
-        Objects.requireNonNull(mc.getConnection()).sendPacket(new CPacketUseEntity(crystal));
+        mc.getConnection().sendPacket(new CPacketUseEntity(crystal));
         if (setDead.getValue().equals("Set Dead") || setDead.getValue().equals("Both"))
             crystal.setDead();
         if (setDead.getValue().equals("Remove") || setDead.getValue().equals("Both"))
             mc.world.removeEntity(crystal);
+    }
+    private void handleFastRemove(EntityEnderCrystal crystal) {
+        if (fastRemove.getValue()) {
+            mc.addScheduledTask(() -> {
+                mc.world.removeEntity(crystal);
+                mc.world.removeEntityDangerously(crystal);
+            }); // sad );
+        }
     }
 
     public static Color interpolate(Color start, Color end, float progress) {
@@ -485,6 +498,9 @@ public class AutoCrystal extends Module {
             if (enemyDamage < minimumDamage.getValue()) {
                 return;
             }
+            if (breakEfficient.getValue() && selfDamage > enemyDamage) {
+                return;
+            }
             final float damage = enemyDamage - selfDamage;
             if (selfDamage > mc.player.getHealth() + mc.player.getAbsorptionAmount()) {
                 return;
@@ -525,6 +541,9 @@ public class AutoCrystal extends Module {
             }
             final float enemyDamage = BlockUtil.calculatePosDamage(pos, entityPlayer);
             if (enemyDamage < minimumDamage.getValue()) {
+                return;
+            }
+            if (placeEfficient.getValue() && selfDamage > enemyDamage) {
                 return;
             }
             final float damage = enemyDamage - selfDamage;
