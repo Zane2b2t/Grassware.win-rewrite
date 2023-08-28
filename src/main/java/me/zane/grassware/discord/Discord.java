@@ -16,9 +16,9 @@ public class Discord {
         discordRPC.Discord_Initialize(discordID, eventHandlers, true, null);
 
         discordRichPresence.startTimestamp = System.currentTimeMillis() / 1000L;
-        discordRichPresence.details = "v0.9";
+        discordRichPresence.details = "v1.0";
         discordRichPresence.largeImageKey = "large";
-        discordRichPresence.largeImageText = "Grassware v0.9";
+        discordRichPresence.largeImageText = "Grassware v1.0";
         discordRichPresence.smallImageKey = "small";
         // discordRichPresence.smallImageText = "AtAt HQ";
         discordRichPresence.state = null;
