@@ -4,6 +4,7 @@ import me.zane.grassware.event.bus.EventListener;
 import me.zane.grassware.event.events.Render3DEvent;
 import me.zane.grassware.event.events.TickEvent;
 import me.zane.grassware.event.events.UpdatePlayerWalkingEvent;
+import me.zane.grassware.features.command.Command;
 import me.zane.grassware.features.gui.GrassWareGui;
 import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.features.setting.impl.BooleanSetting;
@@ -24,8 +25,9 @@ public class ClickGui extends Module {
 
     private final Random random = new Random();
     public final ModeSetting mode = register("Mode", "Gradient", Arrays.asList("Static", "Gradient"));
-    private final ModeSetting theme = register("Theme:", "zBlue", Arrays.asList("zBlue", "Space", "CaseHardened", "None"));
+    private final ModeSetting theme = register("Theme:", "zBlue", Arrays.asList("zBlue", "Black", "Space", "CaseHardened", "None"));
     private final BooleanSetting themes = register("Themes", false);
+    public final BooleanSetting background = register("BackGround", false);
     public final IntSetting red = register("Red", 20, 0, 255).invokeVisibility(z -> mode.getValue().equals("Static"));
     public final IntSetting green = register("Green", 250, 0, 255).invokeVisibility(z -> mode.getValue().equals("Static"));
     public final IntSetting blue = register("Blue", 20, 0, 255).invokeVisibility(z -> mode.getValue().equals("Static"));
@@ -81,6 +83,7 @@ public class ClickGui extends Module {
         }
         if (themes.getValue()) {
             if (theme.getValue().equals("zBlue")) {
+                Command.sendMessage("Increase Green1 for brighter");
                 gradientRed1.setValue(139);
                 gradientGreen1.setValue(0);
                 gradientBlue1.setValue(255);
@@ -93,6 +96,23 @@ public class ClickGui extends Module {
                 gradientRed4.setValue(3);
                 gradientGreen4.setValue(123);
                 gradientBlue4.setValue(194);
+            }
+            else if (theme.getValue().equals("Black")) {
+                gradientRed1.setValue(0);
+                gradientGreen1.setValue(0);
+                gradientBlue1.setValue(0);
+                gradientRed2.setValue(0);
+                gradientGreen2.setValue(0);
+                gradientBlue2.setValue(0);
+                gradientRed3.setValue(0);
+                gradientGreen3.setValue(0);
+                gradientBlue3.setValue(0);
+                gradientRed4.setValue(0);
+                gradientGreen4.setValue(0);
+                gradientBlue4.setValue(0);
+            }
+            else if (themes.getValue().equals("Space")) {
+
             }
         }
     }

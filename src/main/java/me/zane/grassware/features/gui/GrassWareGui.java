@@ -5,6 +5,7 @@ import me.zane.grassware.features.Feature;
 import me.zane.grassware.features.gui.components.Component;
 import me.zane.grassware.features.gui.components.items.buttons.ModuleButton;
 import me.zane.grassware.features.modules.Module;
+import me.zane.grassware.features.modules.client.ClickGui;
 import net.minecraft.client.gui.GuiScreen;
 import org.lwjgl.input.Mouse;
 
@@ -52,6 +53,9 @@ public class GrassWareGui extends GuiScreen {
     }
 
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        if (ClickGui.Instance.background.getValue()) {
+            this.drawDefaultBackground();
+        }
         checkMouseWheel();
         components.forEach(components -> components.drawScreen(mouseX, mouseY, partialTicks));
     }
