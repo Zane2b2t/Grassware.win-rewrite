@@ -19,6 +19,7 @@ import me.zane.grassware.shader.impl.GradientShader;
 import me.zane.grassware.util.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityEnderCrystal;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
@@ -53,6 +54,7 @@ public class AutoCrystal extends Module {
     private final FloatSetting minimumDamage = register("Minimum Damage", 6.0f, 0.1f, 12.0f);
     private final FloatSetting maximumDamage = register("Maximum Damage", 8.0f, 0.1f, 12.0f);
     private final BooleanSetting waitForBreak = register("WaitForBreak", false);
+    private final BooleanSetting antiStuck = register("AntiStuck", false);
     private final FloatSetting placeDelay = register("Place Delay", 0.0f, 0f, 500.0f);
     private final BooleanSetting placeEfficient = register("PlaceEfficient", true);
     private final FloatSetting breakDelay = register("Break Delay", 50.0f, 0f, 500.0f);
@@ -385,6 +387,19 @@ public class AutoCrystal extends Module {
         }
         java.util.List<Entity> entities = mc.world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(pos));
         for (Entity entity : entities) {
+            if(antiStuck.getValue()){
+                AxisAlignedBB aabb = new AxisAlignedBB(
+                        pos.getX() -1,
+                        pos.getY() - 0.5,
+                        pos.getZ() - 1,
+                        pos.getX() + 2,
+                        pos.getY() + 1,
+                        pos.getZ() + 2
+                );
+
+                if(!mc.world.getEntitiesWithinAABB(EntityEnderCrystal.class, aabb).isEmpty())
+                    continue;
+            }
             if (entity instanceof EntityEnderCrystal) {
                 return (EntityEnderCrystal) entity;
             }
@@ -401,6 +416,7 @@ public class AutoCrystal extends Module {
     }
     private void handleFastRemove(EntityEnderCrystal crystal) {
         if (fastRemove.getValue()) {
+            crystal.setDead();
             mc.addScheduledTask(() -> {
                 mc.world.removeEntity(crystal);
                 mc.world.removeEntityDangerously(crystal);
@@ -490,6 +506,7 @@ public class AutoCrystal extends Module {
         final TreeMap<Float, EntityEnderCrystal> map = new TreeMap<>();
 
         mc.world.loadedEntityList.stream().filter(entity -> entity instanceof EntityEnderCrystal && !(mc.player.getDistance(entity) > breakRange(entity))).map(entity -> (EntityEnderCrystal) entity).forEach(entityEnderCrystal -> {
+
             final float selfDamage = BlockUtil.calculateEntityDamage(entityEnderCrystal, mc.player);
             if (selfDamage > maximumDamage.getValue()) {
                 return;
@@ -535,6 +552,10 @@ public class AutoCrystal extends Module {
             if (!mc.world.getEntitiesWithinAABB(EntityPlayer.class, new AxisAlignedBB(new BlockPos(pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5))).isEmpty()) {
                 return;
             }
+            // Check for dropped items on the pos
+            if (!mc.world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(new BlockPos(pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5))).isEmpty()) {
+                return;
+            }
             final float selfDamage = BlockUtil.calculatePosDamage(pos, mc.player);
             if (selfDamage > maximumDamage.getValue()) {
                 return;
@@ -559,6 +580,7 @@ public class AutoCrystal extends Module {
 
         return null;
     }
+
 
     private EntityPlayer target(final float range) {
         final TreeMap<Float, EntityPlayer> map = new TreeMap<>();
