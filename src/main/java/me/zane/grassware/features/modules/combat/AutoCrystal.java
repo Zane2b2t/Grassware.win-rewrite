@@ -17,6 +17,7 @@ import me.zane.grassware.features.setting.impl.ModeSetting;
 import me.zane.grassware.mixin.mixins.ICPacketUseEntity;
 import me.zane.grassware.shader.impl.GradientShader;
 import me.zane.grassware.util.*;
+import net.minecraft.block.BlockFire;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.item.EntityItem;
@@ -85,6 +86,7 @@ public class AutoCrystal extends Module {
     private BlockPos currentPos;
     private BlockPos placedPos;
     private BlockPos lastPos;
+    private BlockPos firePos;
     private EntityPlayer targetPlayer;
     private long placeTime;
     private long breakTime;
@@ -92,6 +94,9 @@ public class AutoCrystal extends Module {
     private EnumHand enumHand;
     private boolean hasPlaced = false;
     private boolean hasBroken = false;
+    private long startTime = 0;
+    private int crystalCount = 0;
+    private double cps = 0;
 
     @Override
     public void onDisable() {
@@ -102,6 +107,8 @@ public class AutoCrystal extends Module {
     @Override
     public void onEnable() {
         swingHand();
+        startTime = System.currentTimeMillis();
+        crystalCount = 0;
     }
 
     @EventListener
@@ -122,6 +129,7 @@ public class AutoCrystal extends Module {
                     breakCrystal(entityPlayer);
                     placeCrystal(pos);
                     break;
+
             }
         }
     }
@@ -147,7 +155,15 @@ public class AutoCrystal extends Module {
             }
         }
     }
+    private void attackFire(BlockPos pos) {
+         firePos = pos.up();
+        if (mc.world.getBlockState(firePos).getBlock() instanceof BlockFire) {
+            mc.playerController.clickBlock(firePos, EnumFacing.UP);
+        }
+    }
+
     public void placeCrystal(BlockPos pos) {
+       // attackFire(firePos);
         hasPlaced = false;
         if (pos == null) {
             placedPos = null;
@@ -162,6 +178,9 @@ public class AutoCrystal extends Module {
                 swingHand();
             }
             placedPos = pos;
+            crystalCount++;
+            double elapsedTime = (System.currentTimeMillis() - startTime) / 1000.0;
+            double cps = crystalCount / elapsedTime;
             placeTime = System.currentTimeMillis();
             hasPlaced = true;
             if (placedPos != null && bongo.getValue()) {
@@ -541,7 +560,12 @@ public class AutoCrystal extends Module {
     private BlockPos pos(final EntityPlayer entityPlayer) {
         final TreeMap<Float, BlockPos> map = new TreeMap<>();
 
-        BlockUtil.getBlocksInRadius(targetRange.getValue()).stream().filter(pos -> BlockUtil.valid(pos, updated.getValue())).forEach(pos -> {
+        BlockUtil.getBlocksInRadius(targetRange.getValue()).stream().filter(pos -> {
+            if (mc.world.getBlockState(pos.up()).getBlock() instanceof BlockFire) {
+                attackFire(pos);
+            }
+            return BlockUtil.valid(pos, updated.getValue());
+        }).forEach(pos -> {
             if (mc.world.rayTraceBlocks(mc.player.getPositionVector().add(0, mc.player.eyeHeight, 0), new Vec3d(pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5), false, true, false) != null) {
                 if (mc.player.getDistance(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5) > placeWallRange.getValue())
                     return;
@@ -556,6 +580,7 @@ public class AutoCrystal extends Module {
             if (!mc.world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(new BlockPos(pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5))).isEmpty()) {
                 return;
             }
+
             final float selfDamage = BlockUtil.calculatePosDamage(pos, mc.player);
             if (selfDamage > maximumDamage.getValue()) {
                 return;
@@ -582,6 +607,7 @@ public class AutoCrystal extends Module {
     }
 
 
+
     private EntityPlayer target(final float range) {
         final TreeMap<Float, EntityPlayer> map = new TreeMap<>();
         mc.world.playerEntities.stream().filter(e -> !e.equals(mc.player) && !e.isDead).forEach(entityPlayer -> {
@@ -589,11 +615,15 @@ public class AutoCrystal extends Module {
                 return;
             final float distance = entityPlayer.getDistance(mc.player);
             if (distance < range && !GrassWare.friendManager.isFriend(entityPlayer.getName())) {
-                map.put(distance, entityPlayer);
+                // Calculate the damage dealt to the enemy at their current position
+                float enemyDamage = BlockUtil.calculatePosDamage(entityPlayer.getPosition(), entityPlayer);
+                // Store the damage in the map
+                map.put(enemyDamage, entityPlayer);
             }
         });
         if (!map.isEmpty()) {
-            return map.firstEntry().getValue();
+            // Return the enemy with the highest damage
+            return map.lastEntry().getValue();
         }
         return null;
     }
@@ -601,7 +631,7 @@ public class AutoCrystal extends Module {
     @Override
     public String getInfo() {
         if (placedPos != null) {
-            return " [" + ChatFormatting.WHITE + "Active" + ChatFormatting.RESET + "]";
+            return " [" + ChatFormatting.WHITE + cps + ChatFormatting.RESET + "]";
         } else {
             return " [" + ChatFormatting.WHITE + "Idle" + ChatFormatting.RESET + "]";
         }
