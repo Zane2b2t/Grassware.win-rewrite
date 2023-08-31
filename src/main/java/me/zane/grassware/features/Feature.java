@@ -85,5 +85,9 @@ public class Feature implements MC {
         settings.add(setting);
         return setting;
     }
+
+    public void reset() {
+
+    }
 }
 

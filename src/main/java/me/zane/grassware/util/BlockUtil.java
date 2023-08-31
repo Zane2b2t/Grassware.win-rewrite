@@ -61,7 +61,7 @@ public class BlockUtil implements MC {
     }
 
     public static boolean hasCrystal(BlockPos pos) {
-        return !mc.world.getEntitiesWithinAABB(EntityEnderCrystal.class, new AxisAlignedBB(new BlockPos(pos.getX() + 0.5f, pos.getY() + 1.5f, pos.getZ() + 0.5f))).isEmpty();
+        return !mc.world.getEntitiesWithinAABB(EntityEnderCrystal.class, new AxisAlignedBB(new BlockPos(pos.getX() + 0.0f, pos.getY() + 1.5f, pos.getZ() + 0.0f))).isEmpty();
     }
 
     public static float distance(BlockPos pos) {

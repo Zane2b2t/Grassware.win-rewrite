@@ -27,6 +27,7 @@ public class GrassWare {
     public static ConfigManager configManager;
     public static EventManager eventManager;
     public static TextManager textManager;
+    public static ServerManager serverManager;
 
     public static void load() {
         mc = Minecraft.getMinecraft();
@@ -43,6 +44,7 @@ public class GrassWare {
         fileManager = new FileManager();
         colorManager = new ColorManager();
         configManager = new ConfigManager();
+        serverManager = new ServerManager();
         moduleManager.init();
         configManager.init();
         AltGui.loadAlts();
