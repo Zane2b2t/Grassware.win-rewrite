@@ -7,6 +7,7 @@ import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.features.modules.client.ClickGui;
 import me.zane.grassware.features.setting.impl.BooleanSetting;
 import me.zane.grassware.features.setting.impl.IntSetting;
+import me.zane.grassware.features.setting.impl.ModeSetting;
 import me.zane.grassware.util.EntityUtil;
 import me.zane.grassware.util.RenderUtil;
 import me.zane.grassware.util.Timer;
@@ -17,11 +18,14 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.Vec3d;
 
 import java.awt.*;
+import java.util.Arrays;
 
 import static org.lwjgl.opengl.GL11.*;
 
 public class Aura extends Module {
 
+    private final ModeSetting delayMode = register("Default", "Default", Arrays.asList("Default", "Custom"));
+    private final IntSetting delay = register("Delay", 650, 1,800);
     private final BooleanSetting render = register("Render", true);
     private final IntSetting Range = register("Range", 6, 1, 6);
 
@@ -69,9 +73,16 @@ public class Aura extends Module {
         glDisable(GL_BLEND);
         glPopMatrix();
     }
+    if (delayMode.getValue().equals("Default")) {
         if (!timer.passedMs(600)) {
             return;
         }
+    }
+    else if (delayMode.getValue().equals("Custom")) {
+        if (!timer.passedMs(delay.getValue())) {
+            return;
+        }
+    }
         mc.player.connection.sendPacket(new CPacketUseEntity(entityPlayer));
         mc.player.swingArm(EnumHand.MAIN_HAND);
         timer.sync();
