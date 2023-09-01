@@ -23,6 +23,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.network.play.client.CPacketPlayerDigging;
@@ -72,7 +73,7 @@ public class AutoCrystal extends Module {
     private final BooleanSetting ping = register("PingCalc", false);
     private final BooleanSetting interact = register("Interact", false); //dev setting
     private final BooleanSetting brr = register("BRR", false); //dev setting
-    private final IntSetting latencyd = register("Latency", 50, 10, 100);
+    private final IntSetting latencyd = register("Latency", 50, 1, 100);
     private final BooleanSetting instantExplode = register("InstantBreak", false); //dev setting
     private final BooleanSetting breakMop = register("breakMap", false); //dev setting
     private final BooleanSetting bongo = register("bongo", false);
@@ -84,7 +85,6 @@ public class AutoCrystal extends Module {
     private final FloatSetting defualtOpacityVal = register("DOV", 0.5f, 0.1f, 1.0f);
     private final BooleanSetting renderRing = register("Ring", false); //for some reason this is banga langa. when disabled it renders ring. when enabled it doesn't?
     private final Map<Integer, Long> breakMap = new ConcurrentHashMap<>();
-    private final Set<BlockPos> placeSet = new HashSet<>();
     ArrayList<EntityEnderCrystal> crystals = new ArrayList<>();
     private BlockPos currentPos;
     private BlockPos placedPos;
@@ -101,7 +101,6 @@ public class AutoCrystal extends Module {
     @Override
     public void onDisable() {
         crystals.clear();
-        placeSet.clear();
     }
 
     @Override
@@ -141,6 +140,7 @@ public class AutoCrystal extends Module {
             enumHand = EnumHand.OFF_HAND;
         }
     }
+
     public void doAwait (BlockPos pos, EntityPlayer entityPlayer ) {
         if (await.getValue()) {
             final EntityEnderCrystal entityEnderCrystal = crystal(entityPlayer);
@@ -177,14 +177,13 @@ public class AutoCrystal extends Module {
             if (enumHand != null) {
                 (mc.getConnection()).sendPacket(new CPacketPlayerTryUseItemOnBlock(pos, EnumFacing.UP, enumHand, 0.5f, 0.5f, 0.5f));
                 swingHand();
+                hasPlaced = true;
             }
             placedPos = pos;
             placeTime = System.currentTimeMillis();
-            hasPlaced = true;
             if (placedPos != null && bongo.getValue()) {
                 (mc.getConnection()).sendPacket(new CPacketPlayerTryUseItemOnBlock(placedPos, EnumFacing.UP, enumHand, 0.5f, 0.5f, 0.5f));
             }
-            hasPlaced = true;
         }
     }
 
@@ -196,10 +195,10 @@ public class AutoCrystal extends Module {
         if (entityEnderCrystal == null) {
             return;
         }
+        hasBroken = false;
         final boolean isCrystalNotListed = !inhibit.getValue() || !crystals.contains(entityEnderCrystal);
         if (System.currentTimeMillis() - breakTime > breakDelay.getValue() && isCrystalNotListed) {
             crystals.add(entityEnderCrystal);
-            hasBroken = false;
             (mc.getConnection()).sendPacket(new CPacketUseEntity(entityEnderCrystal));
             crystals.add(entityEnderCrystal);
             hasBroken = true;
@@ -247,12 +246,14 @@ public class AutoCrystal extends Module {
                 if (await.getValue() && !hasPlaced) {
                     return;
                 }
+                hasBroken = false;
                 CPacketUseEntity packetUseEntity = new CPacketUseEntity();
                 packetUseEntity.entityId = packet.getEntityID();
                 packetUseEntity.action = ATTACK;
                 handleFastRemove(crystal);
             }
             swingHand();
+            hasBroken = true;
             handleSetDead(crystal);
             breakTime = System.currentTimeMillis();
             try {
@@ -575,9 +576,12 @@ public class AutoCrystal extends Module {
             if (!mc.world.getEntitiesWithinAABB(EntityPlayer.class, new AxisAlignedBB(new BlockPos(pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5))).isEmpty()) {
                 return;
             }
-
             // Check for dropped items on the pos
             if (!mc.world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(new BlockPos(pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5))).isEmpty()) {
+                return;
+            }
+            // Check for arrows on the pos
+            if (!mc.world.getEntitiesWithinAABB(EntityArrow.class, new AxisAlignedBB(new BlockPos(pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5))).isEmpty()) {
                 return;
             }
             final float selfDamage = BlockUtil.calculatePosDamage(pos, mc.player);
@@ -605,9 +609,6 @@ public class AutoCrystal extends Module {
         return null;
     }
 
-
-
-
     private EntityPlayer target(final float range) {
         final TreeMap<Float, EntityPlayer> map = new TreeMap<>();
         mc.world.playerEntities.stream().filter(e -> !e.equals(mc.player) && !e.isDead).forEach(entityPlayer -> {
@@ -627,7 +628,6 @@ public class AutoCrystal extends Module {
         }
         return null;
     }
-
 
     @Override
     public String getInfo() {
