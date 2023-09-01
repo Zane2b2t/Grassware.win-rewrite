@@ -16,6 +16,7 @@ import java.util.Arrays;
 
 public class Offhand extends Module {
     private final FloatSetting health = register("Health", 14.0f, 0.0f, 36.0f);
+    private final FloatSetting defualtHealthVal = register("DHV", 14.0f, 0.0f, 36.0f);
 
     @EventListener
     public void onUpdate(final UpdatePlayerWalkingEvent event) {
@@ -24,16 +25,22 @@ public class Offhand extends Module {
             swapItem(slot);
         }
     }
-private void idk() {
+    private void idk() {
         if (mc.player.getHeldItemOffhand().isEmpty) { //idfk i want it so when we have no totems it doesnt remove crystals from offhand
             inventorySlot(Items.END_CRYSTAL);
         }
-}
+    }
+
     private int slot() {
         if (mc.currentScreen != null) {
             return -1;
         }
         final int totem = inventorySlot(Items.TOTEM_OF_UNDYING);
+        if (totem == -1) {
+            health.setValue(0.1f);
+        } else {
+            health.setValue(defualtHealthVal.getValue());
+        }
         if (mc.player.getHealth() + mc.player.getAbsorptionAmount() <= health.getValue()) {
             return totem;
         }
@@ -77,6 +84,8 @@ private void idk() {
         }
         return itemSlot;
     }
+
+
     @Override
     public String getInfo() {
         if (health.getValue() >= 36.0) {

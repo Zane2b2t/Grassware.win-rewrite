@@ -7,7 +7,8 @@
 * [Information](#Information)
 * [About](#About)
 * [Grassware.win Contributors](#Grassware.winContributors)
-* [Features]([#Features](https://github.com/Zane2b2t/Grassware.win-rewrite#features))
+* [Features]([#Features])
+* [Showcase]([#Showcase])
 * [Installation](#Installing)
 
 #### About
@@ -34,9 +35,14 @@ This project was made for the popular group, Grassers. Hence the name Grassware.
 * Combat <br>Aura (KillAura), AutoCrystal, AutoSand, Offhand, AA (AutoArmour), Crits (Criticals), Surround
 * Misc <br>CoordLeaker, SpawnHomeBipass (8b8t), AutoAuth, CustomJD, PlaceConfirm
 * Movement <br>NoSlow, ReverseStep, Speed, Sprint, Step, Velocity, HoleAssist, CounterStrafe
-* Player <br>WallPhase, FakePlayer, EXP, AutoRespawn
+* Player <br>WallPhase, FakePlayer, EXP, AutoRespawn, TpsSync
 * Render <br>BlockHighlight, HoleESP, NameTags, NoRender, PopESP, ShaderESP, World, Hand
 * Client <br>ClickGUI, Hud.
+
+## Showcase
+
+* Gui:![2023-08-28_02.31.39.png](..%2F..%2F..%2FAppData%2FRoaming%2F.minecraft%2Fscreenshots%2F2023-08-28_02.31.39.png) 
+* ShaderESP + Nametags ![2023-07-28_01.06.11.png](..%2F..%2F..%2FAppData%2FRoaming%2F.minecraft%2Fscreenshots%2F2023-07-28_01.06.11.png)
 
 ## Installing
 
