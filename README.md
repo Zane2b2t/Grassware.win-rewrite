@@ -41,8 +41,8 @@ This project was made for the popular group, Grassers. Hence the name Grassware.
 
 ## Showcase
 
-* Gui:![2023-08-28_02.31.39.png](..%2F..%2F..%2FAppData%2FRoaming%2F.minecraft%2Fscreenshots%2F2023-08-28_02.31.39.png) 
-* ShaderESP + Nametags ![2023-07-28_01.06.11.png](..%2F..%2F..%2FAppData%2FRoaming%2F.minecraft%2Fscreenshots%2F2023-07-28_01.06.11.png)
+* Gui: ![2023-08-07_02 07 32](https://github.com/Zane2b2t/Grassware.win-rewrite/assets/88916121/2fe319a0-9866-402b-925f-caaccf16304f)
+* ShaderESP + Nametags: ![2023-07-28_01 06 11](https://github.com/Zane2b2t/Grassware.win-rewrite/assets/88916121/e4966846-84aa-4c84-aa73-dec900d216f5)
 
 ## Installing
 
