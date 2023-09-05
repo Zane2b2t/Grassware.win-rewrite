@@ -61,5 +61,8 @@ This project was made for the popular group, Grassers. Hence the name Grassware.
 4. Launch Minecraft using the Forge profile. GrassWare.win should now be loaded.
 5. Bind the clickgui using the "!" prefix
 
+## NOTE: I was originally releasing the src on dec 19 (grassers 2 years anniversary) but retarded alekz rebranded and kicked everyone out of grassers discord
+ * now its time to work on 1.19
+
 <p align="center">
 </p>
