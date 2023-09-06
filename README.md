@@ -26,6 +26,7 @@ This project was made for the popular group, Grassers. Hence the name Grassware.
 * [\_kisman_](https://github.com/kisman2000) (Improved shader stuff)
 * [MrBubblegum](https://github.com/MrBubblegum) (Assistment on lots of stuff)
 * [Rat2b2t](https://github.com/Rat2b2t) (that one guy that always starts off with the readme)
+* [Catuquei](https://github.com/Catuquei) (moral support and fixed a few bugs)
 * [SirHilarious](https://github.com/SirHilarious) (literally just the Discord RPC)
 * ghostlead (removed the backdoors tos the clients)
 * [Paoo2](https://github.com/Paoo2) (Tester)
