@@ -148,9 +148,9 @@ public class AutoCrystal extends Module {
                 placeCrystal(pos);
           //      (mc.getConnection()).sendPacket(new CPacketPlayerTryUseItemOnBlock(pos, EnumFacing.UP, enumHand, 0.5f, 0.5f, 0.5f));
             }
-            if (hasPlaced) {
-                (mc.getConnection()).sendPacket(new CPacketUseEntity(entityEnderCrystal));
-            }
+        //    if (hasPlaced) {
+            //    (mc.getConnection()).sendPacket(new CPacketUseEntity(entityEnderCrystal));
+          //  }
         }
     }
     private void attackFire(BlockPos pos) {
@@ -343,11 +343,11 @@ public class AutoCrystal extends Module {
             (packet.getEntityFromWorld(AutoCrystal.mc.world)).setDead();
             AutoCrystal.mc.world.removeEntityFromWorld(packet.entityId);
         }
-        if (event.getPacket() instanceof CPacketPlayerTryUseItemOnBlock) {
-            handleCPacketPlayerTryUseItemOnBlock(event);
-        } else if (event.getPacket() instanceof CPacketUseEntity) {
-            handleCPacketUseEntity(event);
-        }
+      //  if (event.getPacket() instanceof CPacketPlayerTryUseItemOnBlock) {
+      //      handleCPacketPlayerTryUseItemOnBlock(event);
+     //   } else if (event.getPacket() instanceof CPacketUseEntity) {
+      //      handleCPacketUseEntity(event);
+      //  }
     }
 
     private void handleCPacketPlayerTryUseItemOnBlock(PacketEvent.Send event) {
