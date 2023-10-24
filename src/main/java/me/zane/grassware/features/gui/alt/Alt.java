@@ -3,7 +3,6 @@ package me.zane.grassware.features.gui.alt;
 import fr.litarvan.openauth.microsoft.MicrosoftAuthResult;
 import fr.litarvan.openauth.microsoft.MicrosoftAuthenticationException;
 import fr.litarvan.openauth.microsoft.MicrosoftAuthenticator;
-import me.zane.grassware.mixin.mixins.IMinecraft;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Session;
 
@@ -41,7 +40,7 @@ public class Alt {
         }
 
         if (altSession != null) {
-            ((IMinecraft) Minecraft.getMinecraft()).setSession(altSession);
+          //  ((IMinecraft) Minecraft.getMinecraft()).setSession(altSession);
         }
     }
 

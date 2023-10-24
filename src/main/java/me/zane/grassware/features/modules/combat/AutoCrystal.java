@@ -14,7 +14,6 @@ import me.zane.grassware.features.setting.impl.BooleanSetting;
 import me.zane.grassware.features.setting.impl.FloatSetting;
 import me.zane.grassware.features.setting.impl.IntSetting;
 import me.zane.grassware.features.setting.impl.ModeSetting;
-import me.zane.grassware.mixin.mixins.ICPacketUseEntity;
 import me.zane.grassware.shader.impl.GradientShader;
 import me.zane.grassware.util.*;
 
@@ -296,8 +295,8 @@ public class AutoCrystal extends Module {
         SPacketSpawnObject spawnedCrystal = new SPacketSpawnObject();
         if (event.getPacket() instanceof SPacketSpawnObject && (spawnedCrystal = event.getPacket()).getType() == 51 && this.instantExplode.getValue()) {
             CPacketUseEntity attackPacket = new CPacketUseEntity();
-            ((ICPacketUseEntity) attackPacket).setEntityId(spawnedCrystal.getEntityID());
-            ((ICPacketUseEntity) attackPacket).setAction(ATTACK);
+        //    ((ICPacketUseEntity) attackPacket).setEntityId(spawnedCrystal.getEntityID());
+         //   ((ICPacketUseEntity) attackPacket).setAction(ATTACK);
 
             for (int i = 1; i <= packetAmount.getValue(); i++) {
                 mc.player.connection.sendPacket(attackPacket);
@@ -319,8 +318,8 @@ public class AutoCrystal extends Module {
                 for (int i = latency; i < latency + 10; i++) {
                     try {
                         CPacketUseEntity cPacketUseEntity = new CPacketUseEntity();
-                        ((ICPacketUseEntity) cPacketUseEntity).setEntityId(ping.getValue() ? highestEntity.getEntityId() + i : highestEntity.getEntityId());
-                        ((ICPacketUseEntity) cPacketUseEntity).setAction(ATTACK);
+                      //  ((ICPacketUseEntity) cPacketUseEntity).setEntityId(ping.getValue() ? highestEntity.getEntityId() + i : highestEntity.getEntityId());
+                       // ((ICPacketUseEntity) cPacketUseEntity).setAction(ATTACK);
                         PacketUtil.invoke(cPacketUseEntity);
                         if (fastRemove.getValue()) {
                             mc.world.removeEntityFromWorld(entityId);
