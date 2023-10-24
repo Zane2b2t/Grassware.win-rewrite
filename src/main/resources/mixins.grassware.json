@@ -4,5 +4,20 @@
   "package": "me.zane.grassware.mixin.mixins",
   "refmap": "mixins.grassware.refmap.json",
   "mixins": [
+    "IMinecraft",
+    "MixinEntityPlayerSP",
+    "MixinEntityRenderer",
+    "MixinGuiIngame",
+    "MixinGuiMainMenu",
+    "MixinGuiNewChat",
+    "MixinMinecraft",
+    "MixinNetworkManager",
+    "MixinParticleManager",
+    "MixinRender",
+    "MixinRenderArmor",
+    "ICPacketUseEntity",
+    "IEntityRenderer",
+    "MixinLayerHeldItem",
+    "MixinRenderItem"
   ]
 }

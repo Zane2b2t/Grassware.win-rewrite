@@ -1,5 +1,6 @@
 package me.zane.grassware.manager;
 //WARNING: ALL CONTENT BELONGS TO https://github.com/Zane2b2t , IF ANY OF THE CLASSES CONTAINING THIS WARNING ARENT IN https://github.com/Zane2b2t/Grassware.win-Rewrite INFORM GITHUB TO DMCA
+import me.zane.grassware.mixin.mixins.IMinecraft;
 import me.zane.grassware.util.MC;
 import me.zane.grassware.util.InventoryUtil;
 import me.zane.grassware.util.PacketUtil;
@@ -93,7 +94,7 @@ public class InteractionManager implements MC {
             }
             if (packet || clickBlock != EnumActionResult.FAIL) {
                 mc.player.swingArm(EnumHand.MAIN_HAND);
-                //  ((IMinecraft) mc).setRightClickDelayTimer(4);
+                ((IMinecraft) mc).setRightClickDelayTimer(4);
                 return;
             }
             if (sneak) {
