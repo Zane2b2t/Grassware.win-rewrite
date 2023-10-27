@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class BlockUtil implements MC {
+   // EntityOtherPlayerMP futurePlayer = new EntityOtherPlayerMP(mc.world, entityPlayer.getGameProfile());
     private static final Vec3i[] hole = new Vec3i[]{
             new Vec3i(-1, 0, 0),
             new Vec3i(1, 0, 0),
@@ -128,6 +129,14 @@ public class BlockUtil implements MC {
     public static float calculatePosDamage(final BlockPos position, final EntityPlayer entityPlayer) {
         return calculatePosDamage(position.getX() + 0.5, position.getY() + 1.0, position.getZ() + 0.5, entityPlayer);
     }
+    public static float calculatePosDamageEx(final BlockPos position, final Vec3d futurePos) {
+        // Calculate the damage based on the position
+        // This is just a placeholder, replace with your actual damage calculation
+        float damage = (float) (position.distanceSqToCenter(futurePos.x, futurePos.y, futurePos.z) / 100.0);
+
+        return damage;
+    }
+
 
     public static void rightClickBlock(BlockPos pos, Vec3d vec, EnumHand hand, EnumFacing direction, boolean packet) {
         if (packet) {

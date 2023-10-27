@@ -41,6 +41,7 @@ import net.minecraft.util.math.Vec3d;
 
 import java.awt.*;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static net.minecraft.network.play.client.CPacketUseEntity.Action.ATTACK;
@@ -81,6 +82,7 @@ public class AutoCrystal extends Module {
 
     private final BooleanSetting inhibit = register("Inhibit", false);
     private final IntSetting packetAmount = register("PacketAmount", 1, 1, 20);
+    private final IntSetting extraTicks = register("ExtraPolationTicks", 4, 0, 20);
     private final FloatSetting opacity = register("Opacity", 0.5f, 0.1f, 1.0f);
     private final FloatSetting defualtOpacityVal = register("DOV", 0.5f, 0.1f, 1.0f);
     private final BooleanSetting renderRing = register("Ring", false); //for some reason this is banga langa. when disabled it renders ring. when enabled it doesn't?
@@ -97,6 +99,8 @@ public class AutoCrystal extends Module {
     private EnumHand enumHand;
     private boolean hasPlaced = false;
     private boolean hasBroken = false;
+    private static final float OFFSET = 0.5f;
+
 
     @Override
     public void onDisable() {
@@ -126,7 +130,6 @@ public class AutoCrystal extends Module {
                     breakCrystal(entityPlayer);
                     placeCrystal(pos);
                     break;
-
             }
         }
     }
@@ -157,32 +160,28 @@ public class AutoCrystal extends Module {
         firePos = pos.up();
         if (mc.world.getBlockState(firePos).getBlock() instanceof BlockFire) {
             mc.playerController.clickBlock(firePos, EnumFacing.UP);
-            if (setDead.getValue().equals("Both") || fastRemove.getValue()) {
-                //  mc.world.setBlockToAir(firePos);
-            }
         }
     }
 
     public void placeCrystal(BlockPos pos) {
-       // attackFire(firePos);
         hasPlaced = false;
         if (pos == null) {
             placedPos = null;
             return;
         }
         if (waitForBreak.getValue() && !hasBroken) {
-           return;
+            return;
         }
         if (System.currentTimeMillis() - placeTime > placeDelay.getValue()) {
             if (enumHand != null) {
-                (mc.getConnection()).sendPacket(new CPacketPlayerTryUseItemOnBlock(pos, EnumFacing.UP, enumHand, 0.5f, 0.5f, 0.5f));
+                (mc.getConnection()).sendPacket(new CPacketPlayerTryUseItemOnBlock(pos, EnumFacing.UP, enumHand, OFFSET, OFFSET, OFFSET));
                 swingHand();
                 hasPlaced = true;
             }
             placedPos = pos;
             placeTime = System.currentTimeMillis();
             if (placedPos != null && bongo.getValue()) {
-                (mc.getConnection()).sendPacket(new CPacketPlayerTryUseItemOnBlock(placedPos, EnumFacing.UP, enumHand, 0.5f, 0.5f, 0.5f));
+                (mc.getConnection()).sendPacket(new CPacketPlayerTryUseItemOnBlock(placedPos, EnumFacing.UP, enumHand, OFFSET, OFFSET, OFFSET));
             }
         }
     }
@@ -200,7 +199,6 @@ public class AutoCrystal extends Module {
         if (System.currentTimeMillis() - breakTime > breakDelay.getValue() && isCrystalNotListed) {
             crystals.add(entityEnderCrystal);
             (mc.getConnection()).sendPacket(new CPacketUseEntity(entityEnderCrystal));
-            crystals.add(entityEnderCrystal);
             hasBroken = true;
             swingHand();
             handleSetDead(entityEnderCrystal);
@@ -214,7 +212,8 @@ public class AutoCrystal extends Module {
         breakTime = System.currentTimeMillis();
         try {
             breakMap.put(entityEnderCrystal.getEntityId(), System.currentTimeMillis());
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -234,7 +233,7 @@ public class AutoCrystal extends Module {
             if (selfDamage > maximumDamage.getValue()) {
                 return;
             }
-            final float enemyDamage = BlockUtil.calculateEntityDamage(crystal, entityPlayer);
+            final float enemyDamage = BlockUtil.calculateEntityDamage(crystal, entityPlayer); //cba to make it extrapolate
             if (enemyDamage < minimumDamage.getValue()) {
                 return;
             }
@@ -303,6 +302,8 @@ public class AutoCrystal extends Module {
                 mc.player.connection.sendPacket(attackPacket);
             }
         }
+                                 //dueto the delay between the recieving and sending of the cclient and server. this only works if you have low ping.
+                                //if you have high ping the highestEntity on your client may not be the highestentity on the server Anymore.
         if (brr.getValue() && event.getPacket() instanceof CPacketPlayerTryUseItemOnBlock) {
             CPacketPlayerTryUseItemOnBlock packet = (CPacketPlayerTryUseItemOnBlock) event.getPacket();
 
@@ -349,28 +350,6 @@ public class AutoCrystal extends Module {
       //      handleCPacketUseEntity(event);
       //  }
     }
-
-    private void handleCPacketPlayerTryUseItemOnBlock(PacketEvent.Send event) {
-        if (mode.getValue().equals("Adaptive")) {
-            CPacketPlayerTryUseItemOnBlock placePacket = event.getPacket();
-            if (placePacket.position.equals(currentPos) && getCrystal(currentPos) != null) {
-                breakCrystal(targetPlayer);
-            }
-        }
-    }
-
-    private void handleCPacketUseEntity(PacketEvent.Send event) {
-        if (mode.getValue().equals("Adaptive")) {
-            CPacketUseEntity breakPacket = event.getPacket();
-            if (breakPacket.getEntityFromWorld(mc.world) instanceof EntityEnderCrystal && breakPacket.action.equals(ATTACK)) {
-                placeCrystal(currentPos);
-            }
-            if (breakPacket.getEntityFromWorld(mc.world) instanceof EntityEnderCrystal && (interact.getValue()) && breakPacket.action.equals(CPacketUseEntity.Action.INTERACT)) {
-                placeCrystal(currentPos);
-            }
-        }
-    }
-
 
     @EventListener
     public void onPredict(PacketEvent.Receive event) {
@@ -628,6 +607,7 @@ public class AutoCrystal extends Module {
         }
         return null;
     }
+
 
     @Override
     public String getInfo() {
