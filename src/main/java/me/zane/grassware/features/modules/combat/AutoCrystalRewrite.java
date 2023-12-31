@@ -107,7 +107,6 @@ public class AutoCrystalRewrite extends Module {
             switch (logic.getValue()) {
                 case "PlaceBreak":
                     placeCrystal(pos);
-                   breakCrystal(entityPlayer);
                     breakCrystal(entityPlayer);
                     break;
                 case "BreakPlace":
