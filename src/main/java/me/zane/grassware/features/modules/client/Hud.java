@@ -1,5 +1,5 @@
 package me.zane.grassware.features.modules.client;
-//WARNING: ALL CONTENT BELONGS TO https://github.com/Zane2b2t , IF ANY OF THE CLASSES CONTAINING THIS WARNING ARENT IN https://github.com/Zane2b2t/Grassware.win-Rewrite INFORM GITHUB TO DMCA
+
 import me.zane.grassware.GrassWare;
 import me.zane.grassware.event.bus.EventListener;
 import me.zane.grassware.event.events.Render2DEvent;
@@ -79,9 +79,9 @@ public class Hud extends Module {
             GrassWare.textManager.renderStringShadowOnly(text, x, y);
         }
 
-        GradientShader.setup();
-        GrassWare.textManager.renderStringNoShadow(text, x, y, ClickGui.Instance.getColor());
-        GradientShader.finish();
+            GradientShader.setup();
+            GrassWare.textManager.renderStringNoShadow(text, x, y, ClickGui.Instance.getColor());
+            GradientShader.finish();
     }
 
     @EventListener
@@ -106,20 +106,20 @@ public class Hud extends Module {
                            RenderUtil.rect(centerX + x + 1, height - 17.0f, centerX + x + 17.0f, height - 1, new Color(0, 0, 0, 150));
                        }
                       final ItemStack itemStack = mc.player.inventory.getStackInSlot(i);
-                       glPushMatrix();
+                      glPushMatrix();
                       glClear(256);
                       RenderHelper.enableStandardItemLighting();
-                   glEnable(GL_DEPTH_TEST);
-                 glEnable(GL_BLEND);
-                 mc.getRenderItem().zLevel = -150.0f;
-                 mc.getRenderItem().renderItemAndEffectIntoGUI(itemStack, (int) (centerX + x + 1.0f), (int) (height - 17.0f));
-                  mc.getRenderItem().renderItemOverlays(mc.fontRenderer, itemStack, (int) (centerX + x + 1.0f), (int) (height - 17.0f));
-                  mc.getRenderItem().zLevel = 0.0f;
-                  RenderHelper.disableStandardItemLighting();
-                  glDisable(GL_BLEND);
-                    glDisable(GL_DEPTH_TEST);
-                    glPopMatrix();
-                    x += 18.0f;
+                      glEnable(GL_DEPTH_TEST);
+                      glEnable(GL_BLEND);
+                      mc.getRenderItem().zLevel = -150.0f;
+                      mc.getRenderItem().renderItemAndEffectIntoGUI(itemStack, (int) (centerX + x + 1.0f), (int) (height - 17.0f));
+                      mc.getRenderItem().renderItemOverlays(mc.fontRenderer, itemStack, (int) (centerX + x + 1.0f), (int) (height - 17.0f));
+                      mc.getRenderItem().zLevel = 0.0f;
+                      RenderHelper.disableStandardItemLighting();
+                      glDisable(GL_BLEND);
+                      glDisable(GL_DEPTH_TEST);
+                      glPopMatrix();
+                      x += 18.0f;
                  }
                   event.setCancelled(true);
              }
