@@ -18,6 +18,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.*;
 import net.minecraft.world.Explosion;
+import net.minecraft.world.chunk.Chunk;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -253,5 +254,56 @@ public class BlockUtil implements MC {
             }
         }
         return posses;
+    }
+    public static boolean canPlaceCrystal(final BlockPos pos, boolean second) {
+        final Chunk chunk = mc.world.getChunk(pos);
+        final Block block = chunk.getBlockState(pos).getBlock();
+        if (block != Blocks.BEDROCK && block != Blocks.OBSIDIAN) {
+            return false;
+        }
+
+        final int posX = pos.getX();
+        final int posY = pos.getY();
+        final int posZ = pos.getZ();
+
+        if (chunk.getBlockState(posX, posY + 1, posZ).getBlock() != Blocks.AIR || chunk.getBlockState(posX, posY + 2, posZ).getBlock() != Blocks.AIR) {
+            return false;
+        }
+
+        for (Entity entity : mc.world.loadedEntityList) {
+            if (entity != null && !entity.isDead || entity instanceof EntityEnderCrystal) {
+                if (entity.getEntityBoundingBox().intersects(new AxisAlignedBB(posX, posY + 1, posZ, posX + 1, posY + (second ? 3 : 2), posZ + 1))) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    public static void lookAtPos(BlockPos pos) {
+        double diffX = pos.getX() + 0.5 - mc.player.posX;
+        double diffY = pos.getY() + 0.5 - (mc.player.posY + mc.player.getEyeHeight());
+        double diffZ = pos.getZ() + 0.5 - mc.player.posZ;
+        double dist = Math.sqrt(diffX * diffX + diffZ * diffZ);
+
+        float yaw = (float) Math.toDegrees(Math.atan2(diffZ, diffX)) - 90F;
+        float pitch = (float) -Math.toDegrees(Math.atan2(diffY, dist));
+
+        setPlayerRotations(yaw, pitch);
+    }
+
+    private static void setPlayerRotations(float yaw, float pitch) {
+        mc.player.rotationYaw = yaw % 360;
+        mc.player.rotationPitch = pitch;
+    }
+    public static float[] calculateRotations(BlockPos pos) {
+        double diffX = pos.getX() + 0.5 - mc.player.posX;
+        double diffY = pos.getY() + 0.5 - (mc.player.posY + mc.player.getEyeHeight());
+        double diffZ = pos.getZ() + 0.5 - mc.player.posZ;
+        double dist = Math.sqrt(diffX * diffX + diffZ * diffZ);
+
+        float yaw = (float) Math.toDegrees(Math.atan2(diffZ, diffX)) - 90F;
+        float pitch = (float) -Math.toDegrees(Math.atan2(diffY, dist));
+
+        return new float[]{yaw, pitch};
     }
 }
