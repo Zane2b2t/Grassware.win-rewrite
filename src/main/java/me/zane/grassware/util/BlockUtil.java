@@ -26,7 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class BlockUtil implements MC {
-   // EntityOtherPlayerMP futurePlayer = new EntityOtherPlayerMP(mc.world, entityPlayer.getGameProfile());
+    // EntityOtherPlayerMP futurePlayer = new EntityOtherPlayerMP(mc.world, entityPlayer.getGameProfile());
     private static final Vec3i[] hole = new Vec3i[]{
             new Vec3i(-1, 0, 0),
             new Vec3i(1, 0, 0),
@@ -44,17 +44,19 @@ public class BlockUtil implements MC {
     }
 
 
-
     public static BlockPos center() {
         return new BlockPos(Math.floor(mc.player.posX), Math.floor(mc.player.posY), Math.floor(mc.player.posZ));
     }
+
     public static BlockPos getPosition() {
         return new BlockPos(Math.floor(mc.player.posX), Math.floor(mc.player.posY), Math.floor(mc.player.posZ));
     }
+
     public static boolean empty(BlockPos pos) {
         return mc.world.getEntitiesWithinAABB(EntityPlayer.class, new AxisAlignedBB(new BlockPos(pos.getX() + 0.5f, pos.getY() + 1.0f, pos.getZ() + 0.5f))).isEmpty();
     }
-    public static boolean isReplaceable(BlockPos pos){
+
+    public static boolean isReplaceable(BlockPos pos) {
         return mc.world.getBlockState(pos).getMaterial().isReplaceable();
     }
 
@@ -69,12 +71,15 @@ public class BlockUtil implements MC {
     public static float distance(BlockPos pos) {
         return (float) Math.sqrt(mc.player.getDistanceSq(pos));
     }
+
     public static BlockPos center(BlockPos pos) {
         return pos.add(0.5f, 0.5f, 0.5f);
     }
+
     public static boolean is(BlockPos pos, Block block) {
         return mc.world.getBlockState(pos).getBlock().equals(block);
     }
+
     public static boolean isPlayerSafe(EntityPlayer entityPlayer) {
         final BlockPos pos = entityPlayer.getPosition();
         if (isNotIntersecting(entityPlayer)) {
@@ -83,6 +88,7 @@ public class BlockUtil implements MC {
             return isIntersectingSafe(entityPlayer);
         }
     }
+
     public static boolean isNotIntersecting(EntityPlayer entityPlayer) {
         final BlockPos pos = entityPlayer.getPosition();
         final AxisAlignedBB bb = entityPlayer.getEntityBoundingBox();
@@ -113,6 +119,7 @@ public class BlockUtil implements MC {
         }
         return true;
     }
+
     public static boolean isBedrockOrObsidianOrEchest(final BlockPos pos) {
         return mc.world.getBlockState(pos).getBlock().equals(Blocks.BEDROCK) || mc.world.getBlockState(pos).getBlock().equals(Blocks.OBSIDIAN) || mc.world.getBlockState(pos).getBlock().equals(Blocks.ENDER_CHEST);
     }
@@ -122,7 +129,6 @@ public class BlockUtil implements MC {
     }
 
 
-
     public static float calculateEntityDamage(final EntityEnderCrystal crystal, final EntityPlayer entityPlayer) {
         return calculatePosDamage(crystal.posX, crystal.posY, crystal.posZ, entityPlayer);
     }
@@ -130,6 +136,7 @@ public class BlockUtil implements MC {
     public static float calculatePosDamage(final BlockPos position, final EntityPlayer entityPlayer) {
         return calculatePosDamage(position.getX() + 0.5, position.getY() + 1.0, position.getZ() + 0.5, entityPlayer);
     }
+
     public static float calculatePosDamageEx(final BlockPos position, final Vec3d futurePos) {
         // Calculate the damage based on the position
         // This is just a placeholder, replace with your actual damage calculation
@@ -255,6 +262,7 @@ public class BlockUtil implements MC {
         }
         return posses;
     }
+
     public static boolean canPlaceCrystal(final BlockPos pos, boolean second) {
         final Chunk chunk = mc.world.getChunk(pos);
         final Block block = chunk.getBlockState(pos).getBlock();
@@ -279,6 +287,7 @@ public class BlockUtil implements MC {
         }
         return true;
     }
+
     public static void lookAtPos(BlockPos pos) {
         double diffX = pos.getX() + 0.5 - mc.player.posX;
         double diffY = pos.getY() + 0.5 - (mc.player.posY + mc.player.getEyeHeight());
@@ -295,6 +304,7 @@ public class BlockUtil implements MC {
         mc.player.rotationYaw = yaw % 360;
         mc.player.rotationPitch = pitch;
     }
+
     public static float[] calculateRotations(BlockPos pos) {
         double diffX = pos.getX() + 0.5 - mc.player.posX;
         double diffY = pos.getY() + 0.5 - (mc.player.posY + mc.player.getEyeHeight());

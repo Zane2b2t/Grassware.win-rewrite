@@ -4,10 +4,7 @@ package me.zane.grassware.features.modules.combat;
 import com.mojang.realmsclient.gui.ChatFormatting;
 import me.zane.grassware.GrassWare;
 import me.zane.grassware.event.bus.EventListener;
-import me.zane.grassware.event.events.PacketEvent;
-import me.zane.grassware.event.events.Render3DEvent;
-import me.zane.grassware.event.events.Render3DPreEvent;
-import me.zane.grassware.event.events.UpdatePlayerWalkingEvent;
+import me.zane.grassware.event.events.*;
 import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.features.modules.client.ClickGui;
 import me.zane.grassware.features.setting.impl.BooleanSetting;
@@ -27,7 +24,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.network.play.client.CPacketPlayer;
 import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock;
 import net.minecraft.network.play.client.CPacketUseEntity;
 import net.minecraft.network.play.server.SPacketDestroyEntities;
@@ -91,12 +87,14 @@ public class AutoCrystal extends Module {
     ArrayList<EntityEnderCrystal> crystals = new ArrayList<>();
     ArrayList<BlockPos> blackListedPos = new ArrayList<>();
 
+    private boolean rotating;
     private BlockPos placedPos;
     private BlockPos lastPos;
     private BlockPos savedPos;
     private long placeTime;
     private long breakTime;
     private float i = 0.0f;
+    private float[] rotations;
     private EnumHand enumHand;
     private boolean hasPlaced = false;
     private boolean hasBroken = false;
@@ -108,6 +106,7 @@ public class AutoCrystal extends Module {
     public void onDisable() {
         crystals.clear();
         blackListedPos.clear();
+        rotating = false;
     }
 
     @Override
@@ -120,6 +119,7 @@ public class AutoCrystal extends Module {
         final EntityPlayer entityPlayer = target(targetRange.getValue());
         if (entityPlayer == null) {
             placedPos = null;
+            rotating = false;
         } else {
             final BlockPos pos = pos(entityPlayer);
             switch (logic.getValue()) {
@@ -156,6 +156,7 @@ public class AutoCrystal extends Module {
         hasPlaced = false;
         if (pos == null) {
             placedPos = null;
+            rotating = false;
             return;
         }
 
@@ -163,12 +164,12 @@ public class AutoCrystal extends Module {
         if (waitForBreak.getValue() && !hasBroken) {
             return;
         }
-        float[] rotations = calculateRotations(pos);
 
         if (System.currentTimeMillis() - placeTime > placeDelay.getValue()) {
             if (enumHand != null) {
                 if (rotateMode.getValue().equals("PlaceBreak") || rotateMode.getValue().equals("Place"))
-                    mc.getConnection().sendPacket(new CPacketPlayer.Rotation(rotations[0], rotations[1], mc.player.onGround));
+                    rotating = true;
+                    rotations = calculateRotations(pos);
 
                 (mc.getConnection()).sendPacket(new CPacketPlayerTryUseItemOnBlock(pos, EnumFacing.UP, enumHand, OFFSET, OFFSET, OFFSET));
                 swingHand();
@@ -190,14 +191,14 @@ public class AutoCrystal extends Module {
         if (entityEnderCrystal == null) {
             return;
         }
-        float[] rotations = calculateRotations(entityEnderCrystal.getPosition());
-
+        rotating = false;
         hasBroken = false;
         final boolean isCrystalNotListed = !inhibit.getValue() || !crystals.contains(entityEnderCrystal);
         if (System.currentTimeMillis() - breakTime > breakDelay.getValue() && isCrystalNotListed) {
             crystals.add(entityEnderCrystal);
             if (rotateMode.getValue().equals("PlaceBreak") || rotateMode.getValue().equals("Break"))
-                mc.getConnection().sendPacket(new CPacketPlayer.Rotation(rotations[0], rotations[1], mc.player.onGround));
+                rotating = true;
+                rotations = calculateRotations(entityEnderCrystal.getPosition());
 
             (mc.getConnection()).sendPacket(new CPacketUseEntity(entityEnderCrystal));
             hasBroken = true;
@@ -241,10 +242,8 @@ public class AutoCrystal extends Module {
             if (selfDamage > mc.player.getHealth() + mc.player.getAbsorptionAmount()) {
                 return;
             }
-            float[] rotations = calculateRotations(crystal.getPosition());
-
-            if (rotateMode.getValue().equals("PlaceBreak") || rotateMode.getValue().equals("Break"))
-                mc.getConnection().sendPacket(new CPacketPlayer.Rotation(rotations[0], rotations[1], mc.player.onGround));
+            rotating = rotateMode.getValue().equals("PlaceBreak") || rotateMode.getValue().equals("Break");
+                rotations = calculateRotations(crystal.getPosition());
 
             (mc.getConnection()).sendPacket(new CPacketUseEntity(crystal));
             if (predict.getValue()) {
@@ -298,7 +297,7 @@ public class AutoCrystal extends Module {
                 });
             }
         }
-        SPacketSpawnObject spawnedCrystal = new SPacketSpawnObject();
+        SPacketSpawnObject spawnedCrystal;
         if (event.getPacket() instanceof SPacketSpawnObject && (spawnedCrystal = event.getPacket()).getType() == 51 && this.instantExplode.getValue()) {
             CPacketUseEntity attackPacket = new CPacketUseEntity();
             ((ICPacketUseEntity) attackPacket).setEntityId(spawnedCrystal.getEntityID());
@@ -349,11 +348,6 @@ public class AutoCrystal extends Module {
             (packet.getEntityFromWorld(AutoCrystal.mc.world)).setDead();
             AutoCrystal.mc.world.removeEntityFromWorld(packet.entityId);
         }
-      //  if (event.getPacket() instanceof CPacketPlayerTryUseItemOnBlock) {
-      //      handleCPacketPlayerTryUseItemOnBlock(event);
-     //   } else if (event.getPacket() instanceof CPacketUseEntity) {
-      //      handleCPacketUseEntity(event);
-      //  }
     }
 
     @EventListener
@@ -365,9 +359,9 @@ public class AutoCrystal extends Module {
             }
 
             EntityEnderCrystal crystal = new EntityEnderCrystal(AutoCrystal.mc.world, packet.getX(), packet.getY(), packet.getZ());
-            float[] rotations = calculateRotations(crystal.getPosition());
             if (rotateMode.getValue().equals("PlaceBreak") || rotateMode.getValue().equals("Place"))
-                mc.getConnection().sendPacket(new CPacketPlayer.Rotation(rotations[0], rotations[1], mc.player.onGround));
+                rotating = true;
+                rotations = calculateRotations(crystal.getPosition());
 
             CPacketUseEntity crystalPacket = new CPacketUseEntity();
             crystalPacket.entityId = packet.getEntityID();
@@ -387,9 +381,15 @@ public class AutoCrystal extends Module {
 
     }
 
+    @EventListener
+    public void onMotionUpdate(MotionUpdateEvent event) {
+        if (rotating) {
+            event.setYaw(rotations[0]);
+            event.setPitch(rotations[1]);
+        }
+    }
 
     private void handleSetDead(EntityEnderCrystal crystal) {
-        mc.getConnection().sendPacket(new CPacketUseEntity(crystal));
         if (setDead.getValue().equals("Set Dead") || setDead.getValue().equals("Both"))
             crystal.setDead();
         if (setDead.getValue().equals("Remove") || setDead.getValue().equals("Both"))

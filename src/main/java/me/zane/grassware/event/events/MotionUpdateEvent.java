@@ -4,110 +4,49 @@ import me.zane.grassware.event.bus.Event;
 
 public class MotionUpdateEvent extends Event {
     private double x, y,  z;
-    private final double prevX, prevY, prevZ;
+    private  double prevX, prevY, prevZ;
     private float rotationYaw;
     private float rotationPitch;
-    private final float prevYaw, prevPitch;
+    private  float prevYaw, prevPitch;
     private boolean onGround;
-    private final boolean prevOnGround;
+    private  boolean prevOnGround;
 
-    public MotionUpdateEvent(MotionUpdateEvent event){
-        this(event.getX(), event.getY(), event.getZ(), event.getRotationYaw(), event.getRotationPitch(), event.isOnGround());
-    }
+    private float yaw;
+    private float pitch;
 
-    public MotionUpdateEvent(double x, double y, double z, float rotationYaw, float rotationPitch, boolean onGround) {
+    public MotionUpdateEvent(double x, double y, double z, float yaw, float pitch) {
         this.x = x;
         this.y = y;
         this.z = z;
-        this.rotationYaw = rotationYaw;
-        this.rotationPitch = rotationPitch;
-        this.onGround = onGround;
-        this.prevX = x;
-        this.prevY = y;
-        this.prevZ = z;
-        this.prevYaw = rotationYaw;
-        this.prevPitch = rotationPitch;
-        this.prevOnGround = onGround;
-    }
-
-
-    public double getPrevX() {
-        return prevX;
-    }
-
-    public double getPrevY() {
-        return prevY;
-    }
-
-    public double getPrevZ() {
-        return prevZ;
-    }
-
-    public float getPrevYaw() {
-        return prevYaw;
-    }
-
-    public float getPrevPitch() {
-        return prevPitch;
-    }
-
-    public boolean isPrevOnGround() {
-        return prevOnGround;
-    }
-
-    public float getRotationYaw() {
-        return rotationYaw;
-    }
-
-    public float getRotationPitch() {
-        return rotationPitch;
+        this.yaw = yaw;
+        this.pitch = pitch;
     }
 
     public double getX() {
         return x;
     }
 
-    public void setX(double x) {
-        this.x = x;
-    }
-
     public double getY() {
         return y;
-    }
-
-    public void setY(double y) {
-        this.y = y;
     }
 
     public double getZ() {
         return z;
     }
 
-    public void setZ(double z) {
-        this.z = z;
-    }
-
     public float getYaw() {
-        return rotationYaw;
+        return yaw;
     }
 
-    public void setYaw(float rotationYaw) {
-        this.rotationYaw = rotationYaw;
+    public void setYaw(float yaw) {
+        this.yaw = yaw;
     }
 
     public float getPitch() {
-        return rotationPitch;
+        return pitch;
     }
 
-    public void setPitch(float rotationPitch) {
-        this.rotationPitch = rotationPitch;
-    }
-
-    public boolean isOnGround() {
-        return onGround;
-    }
-
-    public void setOnGround(boolean onGround) {
-        this.onGround = onGround;
+    public void setPitch(float pitch) {
+        this.pitch = pitch;
     }
 }
