@@ -41,6 +41,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static me.zane.grassware.util.BlockUtil.calculateRotations;
+import static me.zane.grassware.util.BlockUtil.setPlayerRotations;
 import static net.minecraft.network.play.client.CPacketUseEntity.Action.ATTACK;
 import static org.lwjgl.opengl.GL11.*;
 
@@ -58,6 +59,7 @@ public class AutoCrystal extends Module {
     private final FloatSetting minimumDamage = register("Minimum Damage", 6.0f, 0.1f, 12.0f);
     private final FloatSetting maximumDamage = register("Maximum Damage", 8.0f, 0.1f, 12.0f);
     private final BooleanSetting waitForBreak = register("WaitForBreak", false);
+    private final BooleanSetting debugRotations = register("DebugRotations", false);
     private final BooleanSetting antiStuck = register("AntiStuck", false);
     private final FloatSetting placeDelay = register("Place Delay", 0.0f, 0f, 500.0f);
     private final BooleanSetting placeEfficient = register("PlaceEfficient", true);
@@ -170,6 +172,10 @@ public class AutoCrystal extends Module {
                 if (rotateMode.getValue().equals("PlaceBreak") || rotateMode.getValue().equals("Place"))
                     rotating = true;
                     rotations = calculateRotations(pos);
+                    if (debugRotations.getValue())
+                        setPlayerRotations(rotations[0], rotations[1]);
+
+
 
                 (mc.getConnection()).sendPacket(new CPacketPlayerTryUseItemOnBlock(pos, EnumFacing.UP, enumHand, OFFSET, OFFSET, OFFSET));
                 swingHand();
@@ -197,8 +203,13 @@ public class AutoCrystal extends Module {
         if (System.currentTimeMillis() - breakTime > breakDelay.getValue() && isCrystalNotListed) {
             crystals.add(entityEnderCrystal);
             if (rotateMode.getValue().equals("PlaceBreak") || rotateMode.getValue().equals("Break"))
-                rotating = true;
-                rotations = calculateRotations(entityEnderCrystal.getPosition());
+                if (hasPlaced)
+                    rotating = true;
+                    rotations = calculateRotations(entityEnderCrystal.getPosition());
+            if (debugRotations.getValue())
+                setPlayerRotations(rotations[0], rotations[1]);
+
+
 
             (mc.getConnection()).sendPacket(new CPacketUseEntity(entityEnderCrystal));
             hasBroken = true;
@@ -243,7 +254,13 @@ public class AutoCrystal extends Module {
                 return;
             }
             rotating = rotateMode.getValue().equals("PlaceBreak") || rotateMode.getValue().equals("Break");
+
+            if (hasPlaced)
                 rotations = calculateRotations(crystal.getPosition());
+             if (debugRotations.getValue())
+                setPlayerRotations(rotations[0], rotations[1]);
+
+
 
             (mc.getConnection()).sendPacket(new CPacketUseEntity(crystal));
             if (predict.getValue()) {
@@ -282,7 +299,7 @@ public class AutoCrystal extends Module {
         }
 
         if (event.getPacket() instanceof SPacketSoundEffect && soundRemove.getValue()) {
-            final SPacketSoundEffect packet = (SPacketSoundEffect) event.getPacket();
+            final SPacketSoundEffect packet =  event.getPacket();
             if (packet.getCategory() == SoundCategory.BLOCKS && packet.getSound() == SoundEvents.ENTITY_GENERIC_EXPLODE) {
                 mc.addScheduledTask(() -> {
                     for (Entity entity : mc.world.loadedEntityList) {
@@ -359,9 +376,13 @@ public class AutoCrystal extends Module {
             }
 
             EntityEnderCrystal crystal = new EntityEnderCrystal(AutoCrystal.mc.world, packet.getX(), packet.getY(), packet.getZ());
-            if (rotateMode.getValue().equals("PlaceBreak") || rotateMode.getValue().equals("Place"))
-                rotating = true;
-                rotations = calculateRotations(crystal.getPosition());
+            if (rotateMode.getValue().equals("PlaceBreak") || rotateMode.getValue().equals("Break"))
+                if (hasPlaced)
+                    rotating = true;
+                    rotations = calculateRotations(crystal.getPosition());
+                    if (debugRotations.getValue())
+                        setPlayerRotations(rotations[0], rotations[1]);
+
 
             CPacketUseEntity crystalPacket = new CPacketUseEntity();
             crystalPacket.entityId = packet.getEntityID();

@@ -20,12 +20,14 @@ import net.minecraft.util.math.*;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.chunk.Chunk;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class BlockUtil implements MC {
+
+    private static boolean rotating = false;
+    private static float[] targetRotations = new float[2];
+    private static float[] currentRotations = new float[2];
+    private static final Random random = new Random();
     // EntityOtherPlayerMP futurePlayer = new EntityOtherPlayerMP(mc.world, entityPlayer.getGameProfile());
     private static final Vec3i[] hole = new Vec3i[]{
             new Vec3i(-1, 0, 0),
@@ -300,19 +302,22 @@ public class BlockUtil implements MC {
         setPlayerRotations(yaw, pitch);
     }
 
-    private static void setPlayerRotations(float yaw, float pitch) {
+    public static void setPlayerRotations(float yaw, float pitch) {
         mc.player.rotationYaw = yaw % 360;
         mc.player.rotationPitch = pitch;
     }
 
     public static float[] calculateRotations(BlockPos pos) {
         double diffX = pos.getX() + 0.5 - mc.player.posX;
-        double diffY = pos.getY() + 0.5 - (mc.player.posY + mc.player.getEyeHeight());
+        double diffY = pos.getY() + (0.5 + 0.49) - (mc.player.posY + mc.player.getEyeHeight());
         double diffZ = pos.getZ() + 0.5 - mc.player.posZ;
         double dist = Math.sqrt(diffX * diffX + diffZ * diffZ);
 
         float yaw = (float) Math.toDegrees(Math.atan2(diffZ, diffX)) - 90F;
         float pitch = (float) -Math.toDegrees(Math.atan2(diffY, dist));
+
+        yaw += (random.nextFloat() - 0.5f) * 2f;
+        pitch += (random.nextFloat() - 0.5f) * 2f;
 
         return new float[]{yaw, pitch};
     }
