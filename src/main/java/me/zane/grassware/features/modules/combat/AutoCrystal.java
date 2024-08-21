@@ -5,8 +5,10 @@ import com.mojang.realmsclient.gui.ChatFormatting;
 import me.zane.grassware.GrassWare;
 import me.zane.grassware.event.bus.EventListener;
 import me.zane.grassware.event.events.*;
+import me.zane.grassware.features.command.Command;
 import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.features.modules.client.ClickGui;
+import me.zane.grassware.features.modules.render.BlockHighlight;
 import me.zane.grassware.features.setting.impl.BooleanSetting;
 import me.zane.grassware.features.setting.impl.FloatSetting;
 import me.zane.grassware.features.setting.impl.IntSetting;
@@ -27,19 +29,20 @@ import net.minecraft.init.SoundEvents;
 import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock;
 import net.minecraft.network.play.client.CPacketUseEntity;
 import net.minecraft.network.play.server.SPacketDestroyEntities;
+import net.minecraft.network.play.server.SPacketExplosion;
 import net.minecraft.network.play.server.SPacketSoundEffect;
 import net.minecraft.network.play.server.SPacketSpawnObject;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.*;
 
 import java.awt.*;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.sun.org.apache.xalan.internal.xsltc.compiler.util.Type.Int;
 import static me.zane.grassware.util.BlockUtil.calculateRotations;
 import static me.zane.grassware.util.BlockUtil.setPlayerRotations;
 import static net.minecraft.network.play.client.CPacketUseEntity.Action.ATTACK;
@@ -61,6 +64,7 @@ public class AutoCrystal extends Module {
     private final BooleanSetting waitForBreak = register("WaitForBreak", false);
     private final BooleanSetting debugRotations = register("DebugRotations", false);
     private final BooleanSetting antiStuck = register("AntiStuck", false);
+    private final IntSetting antiStuckTicks = register("AntiStuckTicks", 8, 0, 40);
     private final FloatSetting placeDelay = register("Place Delay", 0.0f, 0f, 500.0f);
     private final BooleanSetting placeEfficient = register("PlaceEfficient", true);
     private final FloatSetting breakDelay = register("Break Delay", 50.0f, 0f, 500.0f);
@@ -89,7 +93,7 @@ public class AutoCrystal extends Module {
     ArrayList<EntityEnderCrystal> crystals = new ArrayList<>();
     ArrayList<BlockPos> blackListedPos = new ArrayList<>();
 
-    private boolean rotating;
+    public boolean rotating;
     private BlockPos placedPos;
     private BlockPos lastPos;
     private BlockPos savedPos;
@@ -102,7 +106,9 @@ public class AutoCrystal extends Module {
     private boolean hasBroken = false;
     private final Timer timeOutTimer = new Timer();
     private static final float OFFSET = 0.5f;
-
+    public static AutoCrystal Instance = new AutoCrystal();
+    private final Map<BlockPos, Long> inhibitTimer = new HashMap<>();
+    private static final long INHIBIT_TIMEOUT = 250;
 
     @Override
     public void onDisable() {
@@ -282,6 +288,27 @@ public class AutoCrystal extends Module {
             } catch (Exception ignored) {
             }
         }
+
+        if (event.getPacket() instanceof SPacketExplosion) {
+            mc.addScheduledTask(() -> {
+                for (Entity crystal : mc.world.loadedEntityList) {
+                    if (crystal == null || crystal.isDead || !(crystal instanceof EntityEnderCrystal))
+                        continue;
+
+                    final double range = crystal.getDistance(((SPacketExplosion) event.getPacket()).getX() + 0.5, ((SPacketExplosion) event.getPacket()).getY() + 0.5, ((SPacketExplosion) event.getPacket()).getZ() + 0.5);
+
+                    if (range > ((SPacketExplosion) event.getPacket()).getStrength())
+                        continue;
+
+                    if (fastRemove.getValue()) {
+                        crystal.setDead();
+                        mc.world.removeEntity(crystal);
+                        mc.world.removeEntityDangerously(crystal);
+                    }
+                }
+            });
+        }
+
         if (event.getPacket() instanceof SPacketDestroyEntities) {
             SPacketDestroyEntities packet = event.getPacket();
             for (int id : packet.getEntityIDs()) {
@@ -305,7 +332,7 @@ public class AutoCrystal extends Module {
                     for (Entity entity : mc.world.loadedEntityList) {
                         if (entity instanceof EntityEnderCrystal && entity.getDistanceSq(packet.getX(), packet.getY(), packet.getZ()) < 36) {
                             entity.setDead();
-                            if (setDead.getValue().equals("Both")) {
+                            if (setDead.getValue().equals("Both") || soundRemove.getValue()) {
                                 mc.world.removeEntity(entity);
                                 mc.world.removeEntityDangerously(entity);
                             }
@@ -540,90 +567,103 @@ public class AutoCrystal extends Module {
         return breakWallRange.getValue();
     }
 
-    private BlockPos pos(final EntityPlayer entityPlayer) {
-        final TreeMap<Float, BlockPos> map = new TreeMap<>();
+    @EventListener
+    public void onUpdate(UpdateEvent event) {
+        for (Entity crystals : mc.world.loadedEntityList) {
+            if (crystals instanceof EntityEnderCrystal) {
 
-        BlockUtil.getBlocksInRadius(targetRange.getValue()).stream().filter(pos -> {
-            if (fireBreaker.getValue() && mc.world.getBlockState(pos.up()).getBlock() instanceof BlockFire) {
-                attackFire(pos);
-            }
-
-            return BlockUtil.valid(pos, updated.getValue());
-        }).forEach(pos -> {
-            if (mc.world.rayTraceBlocks(mc.player.getPositionVector().add(0, mc.player.eyeHeight, 0), new Vec3d(pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5), false, true, false) != null) {
-                if (mc.player.getDistance(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5) > placeWallRange.getValue())
-                    return;
-            }
-            if (Math.sqrt(mc.player.getDistanceSq(pos)) > placeRange.getValue()) {
-                return;
-            }
-            if (!mc.world.getEntitiesWithinAABB(EntityPlayer.class, new AxisAlignedBB(new BlockPos(pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5))).isEmpty()) {
-                return;
-            }
-            // Check for dropped items on the pos
-            if (!mc.world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(new BlockPos(pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5))).isEmpty()) {
-                return;
-            }
-            // Check for arrows on the pos
-            if (!mc.world.getEntitiesWithinAABB(EntityArrow.class, new AxisAlignedBB(new BlockPos(pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5))).isEmpty()) {
-                return;
-            }
-            final float selfDamage = BlockUtil.calculatePosDamage(pos, mc.player);
-            if (selfDamage > maximumDamage.getValue()) {
-                return;
-            }
-            final float enemyDamage = BlockUtil.calculatePosDamage(pos, entityPlayer);
-            if (enemyDamage < minimumDamage.getValue()) {
-                return;
-            }
-            if (placeEfficient.getValue() && selfDamage > enemyDamage) {
-                return;
-            }
-            final float damage = enemyDamage - selfDamage;
-            if (selfDamage > mc.player.getHealth() + mc.player.getAbsorptionAmount()) {
-                return;
-            }
-            if (blackListedPos.contains(pos)) {
-                return;
-            }
-            if (!BlockUtil.canPlaceCrystal(pos, false)) {
-                savedPos = pos;
-            } else if (savedPos != null && savedPos == pos && timeOutTimer.passedMs(3000)) {
-                if (!BlockUtil.canPlaceCrystal(pos, false)) {
-                    blackListedPos.add(pos);
-                    timeOutTimer.reset();
-                } else {
-                    blackListedPos.clear();
+                if (placedPos.distanceSq(crystals.posX, crystals.posY, crystals.posZ) <= 3) {
+                    if (isCrystalBlockingPos(crystals, placedPos)) {
+                        mc.playerController.attackEntity(mc.player, crystals);
+                        Command.sendRemovableMessage("unstucked" + crystals.getEntityId(), 1);
+                        break;
+                    }
                 }
             }
-            java.util.List<Entity> entities = mc.world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(pos));
-            for (Entity entity : entities) {
-                if(antiStuck.getValue()){
-                    AxisAlignedBB aabb = new AxisAlignedBB(
-                            pos.getX() -1,
-                            pos.getY() - 0.5,
-                            pos.getZ() - 1,
-                            pos.getX() + 2,
-                            pos.getY() + 1,
-                            pos.getZ() + 2
-                    );
-
-                    if(!mc.world.getEntitiesWithinAABB(EntityEnderCrystal.class, aabb).isEmpty())
-                        continue;
-                }
-                if (!(entity instanceof EntityEnderCrystal)) {
-                    return;
-                }
-            }
-            map.put(damage, pos);
-        });
-
-        if (!map.isEmpty()) {
-            return map.lastEntry().getValue();
         }
-
-        return null;
     }
+    private boolean isCrystalBlockingPos(Entity crystal, BlockPos pos) {
+        AxisAlignedBB crystalBB = crystal.getEntityBoundingBox();
+        AxisAlignedBB blockBB = new AxisAlignedBB(pos).expand(0.5, 0.5, 0.5);
+        return crystalBB.intersects(blockBB);
+    }
+    private BlockPos pos(final EntityPlayer entityPlayer) {
+        return BlockUtil.getBlocksInRadius(targetRange.getValue()).stream()
+                .filter(pos -> {
+                    if (fireBreaker.getValue() && mc.world.getBlockState(pos.up()).getBlock() instanceof BlockFire) {
+                        attackFire(pos);
+                    }
+
+                    if (!BlockUtil.valid(pos, updated.getValue())) {
+                        return false;
+                    }
+
+                    if (mc.world.rayTraceBlocks(mc.player.getPositionVector().add(0, mc.player.eyeHeight, 0), new Vec3d(pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5), false, true, false) != null) {
+                        if (mc.player.getDistance(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5) > placeWallRange.getValue()) {
+                            return false;
+                        }
+                    }
+
+                    if (mc.player.getDistanceSq(pos) > placeRange.getValue() * placeRange.getValue()) {
+                        return false;
+                    }
+
+                    //TODO: if crystal hasn't spawned in 20 ticks. also preform antistuck
+                    if (antiStuck.getValue()) {
+                        List<EntityEnderCrystal> crystals = mc.world.getEntitiesWithinAABB(EntityEnderCrystal.class, new AxisAlignedBB(pos.add(-1, 0, -1), pos.add(2, 3, 2)));
+                        for (EntityEnderCrystal crystal : crystals) {
+                            BlockPos crystalPos = new BlockPos(crystal.posX, crystal.posY - 1, crystal.posZ);
+                            if (crystalPos.equals(pos)) {
+                                if (crystal.ticksExisted > antiStuckTicks.getValue()) {
+                                    return false;
+                                }
+                            } else {
+                                return false;
+                            }
+                        }
+                    }
+
+                    if (!mc.world.getEntitiesWithinAABB(EntityPlayer.class, new AxisAlignedBB(pos.add(0.5, 1.0, 0.5))).isEmpty()) {
+                        return false;
+                    }
+                    // Check for dropped items on the pos
+                    if (!mc.world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos.add(0.5, 1.0, 0.5))).isEmpty()) {
+                        return false;
+                    }
+                    // Check for arrows on the pos
+                    if (!mc.world.getEntitiesWithinAABB(EntityArrow.class, new AxisAlignedBB(pos.add(0.5, 1.0, 0.5))).isEmpty()) {
+                        return false;
+                    }
+
+                    float selfDamage = BlockUtil.calculatePosDamage(pos, mc.player);
+                    if (selfDamage > maximumDamage.getValue()) {
+                        return false;
+                    }
+
+                    float enemyDamage = BlockUtil.calculatePosDamage(pos, entityPlayer);
+                    if (enemyDamage < minimumDamage.getValue()) {
+                        return false;
+                    }
+
+                    if (placeEfficient.getValue() && selfDamage > enemyDamage) {
+                        return false;
+                    }
+
+                    if (selfDamage > mc.player.getHealth() + mc.player.getAbsorptionAmount()) {
+                        return false;
+                    }
+
+                    return true;
+                })
+                .max(Comparator.comparingDouble(pos -> {
+                    float enemyDamage = BlockUtil.calculatePosDamage(pos, entityPlayer);
+                    float selfDamage = BlockUtil.calculatePosDamage(pos, mc.player);
+                    return enemyDamage - selfDamage;
+                }))
+                .orElse(null);
+    }
+
+
 
     private EntityPlayer target(final float range) {
         final TreeMap<Float, EntityPlayer> map = new TreeMap<>();

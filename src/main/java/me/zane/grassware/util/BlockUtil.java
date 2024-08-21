@@ -24,11 +24,7 @@ import java.util.*;
 
 public class BlockUtil implements MC {
 
-    private static boolean rotating = false;
-    private static float[] targetRotations = new float[2];
-    private static float[] currentRotations = new float[2];
     private static final Random random = new Random();
-    // EntityOtherPlayerMP futurePlayer = new EntityOtherPlayerMP(mc.world, entityPlayer.getGameProfile());
     private static final Vec3i[] hole = new Vec3i[]{
             new Vec3i(-1, 0, 0),
             new Vec3i(1, 0, 0),
