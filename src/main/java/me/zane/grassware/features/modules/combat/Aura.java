@@ -103,7 +103,8 @@ public class Aura extends Module {
 
     @EventListener
     public void onMotionUpdate(MotionUpdateEvent event) {
-        if (AutoCrystal.Instance.rotating) return;
+        if (!AutoCrystal.Instance.rotateMode.getValue().equals("None") && AutoCrystal.Instance.placedPos != null) return;
+        if (!mc.player.getHeldItemMainhand().getItem().equals(Items.DIAMOND_SWORD)) return;
         if (rotating) {
             event.setYaw(rotations[0]);
             event.setPitch(rotations[1]);
