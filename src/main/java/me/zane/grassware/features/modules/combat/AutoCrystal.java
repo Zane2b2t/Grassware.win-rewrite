@@ -8,7 +8,6 @@ import me.zane.grassware.event.events.*;
 import me.zane.grassware.features.command.Command;
 import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.features.modules.client.ClickGui;
-import me.zane.grassware.features.modules.render.BlockHighlight;
 import me.zane.grassware.features.setting.impl.BooleanSetting;
 import me.zane.grassware.features.setting.impl.FloatSetting;
 import me.zane.grassware.features.setting.impl.IntSetting;
@@ -17,7 +16,6 @@ import me.zane.grassware.mixin.mixins.ICPacketUseEntity;
 import me.zane.grassware.shader.impl.GradientShader;
 import me.zane.grassware.util.*;
 
-import me.zane.grassware.util.Timer;
 import net.minecraft.block.BlockFire;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityEnderCrystal;
@@ -42,7 +40,6 @@ import java.util.*;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.sun.org.apache.xalan.internal.xsltc.compiler.util.Type.Int;
 import static me.zane.grassware.util.BlockUtil.calculateRotations;
 import static me.zane.grassware.util.BlockUtil.setPlayerRotations;
 import static net.minecraft.network.play.client.CPacketUseEntity.Action.ATTACK;
@@ -51,7 +48,7 @@ import static org.lwjgl.opengl.GL11.*;
 public class AutoCrystal extends Module {
     private final ModeSetting mode = register("Mode", "Sequential", Arrays.asList("Sequential", "Adaptive"));
     private final ModeSetting syncMode = register("SynMode", "instant", Arrays.asList("Instant", "Sound"));
-    private final ModeSetting rotateMode = register("RotateMode", "PlaceBreak", Arrays.asList("Place", "Break", "PlaceBreak", "None"));
+    public final ModeSetting rotateMode = register("RotateMode", "PlaceBreak", Arrays.asList("Place", "Break", "PlaceBreak", "None"));
 
     private final ModeSetting logic = register("Logic", "BreakPlace", Arrays.asList("BreakPlace", "PlaceBreak"));
     private final FloatSetting placeRange = register("Place Range", 5.0f, 1.0f, 6.0f);
@@ -64,6 +61,7 @@ public class AutoCrystal extends Module {
     private final BooleanSetting waitForBreak = register("WaitForBreak", false);
     private final BooleanSetting debugRotations = register("DebugRotations", false);
     private final BooleanSetting antiStuck = register("AntiStuck", false);
+    private final BooleanSetting rebreakStuck = register("ReBreakStuck", false);
     private final IntSetting antiStuckTicks = register("AntiStuckTicks", 8, 0, 40);
     private final FloatSetting placeDelay = register("Place Delay", 0.0f, 0f, 500.0f);
     private final BooleanSetting placeEfficient = register("PlaceEfficient", true);
@@ -94,9 +92,8 @@ public class AutoCrystal extends Module {
     ArrayList<BlockPos> blackListedPos = new ArrayList<>();
 
     public boolean rotating;
-    private BlockPos placedPos;
+    public BlockPos placedPos;
     private BlockPos lastPos;
-    private BlockPos savedPos;
     private long placeTime;
     private long breakTime;
     private float i = 0.0f;
@@ -104,12 +101,9 @@ public class AutoCrystal extends Module {
     private EnumHand enumHand;
     private boolean hasPlaced = false;
     private boolean hasBroken = false;
-    private final Timer timeOutTimer = new Timer();
     private static final float OFFSET = 0.5f;
     public static AutoCrystal Instance = new AutoCrystal();
-    private final Map<BlockPos, Long> inhibitTimer = new HashMap<>();
-    private static final long INHIBIT_TIMEOUT = 250;
-
+    private Set<Integer> attackedCrystalIds = new HashSet<>(); //this only used for stuck crystals. not inhibit
     @Override
     public void onDisable() {
         crystals.clear();
@@ -567,26 +561,7 @@ public class AutoCrystal extends Module {
         return breakWallRange.getValue();
     }
 
-    @EventListener
-    public void onUpdate(UpdateEvent event) {
-        for (Entity crystals : mc.world.loadedEntityList) {
-            if (crystals instanceof EntityEnderCrystal) {
-
-                if (placedPos.distanceSq(crystals.posX, crystals.posY, crystals.posZ) <= 3) {
-                    if (isCrystalBlockingPos(crystals, placedPos)) {
-                        mc.playerController.attackEntity(mc.player, crystals);
-                        Command.sendRemovableMessage("unstucked" + crystals.getEntityId(), 1);
-                        break;
-                    }
-                }
-            }
-        }
-    }
-    private boolean isCrystalBlockingPos(Entity crystal, BlockPos pos) {
-        AxisAlignedBB crystalBB = crystal.getEntityBoundingBox();
-        AxisAlignedBB blockBB = new AxisAlignedBB(pos).expand(0.5, 0.5, 0.5);
-        return crystalBB.intersects(blockBB);
-    }
+    //TODO: somehow optimize this or make code look better
     private BlockPos pos(final EntityPlayer entityPlayer) {
         return BlockUtil.getBlocksInRadius(targetRange.getValue()).stream()
                 .filter(pos -> {
@@ -607,17 +582,31 @@ public class AutoCrystal extends Module {
                     if (mc.player.getDistanceSq(pos) > placeRange.getValue() * placeRange.getValue()) {
                         return false;
                     }
+                    List<EntityEnderCrystal> crystals = mc.world.getEntitiesWithinAABB(EntityEnderCrystal.class, new AxisAlignedBB(pos.add(-1, 0, -1), pos.add(2, 3, 2)));
+                    for (EntityEnderCrystal crystal : crystals) {
+                        BlockPos crystalPos = new BlockPos(crystal.posX, crystal.posY - 1, crystal.posZ);
+                        if (crystalPos.equals(pos)) {
+                            if (crystal.ticksExisted >= antiStuckTicks.getValue() / 2 && rebreakStuck.getValue()) {
+                                int crystalId = crystal.getEntityId();
+                                if (!attackedCrystalIds.contains(crystalId)) {
+                                    mc.playerController.attackEntity(mc.player, crystal);
+                                    attackedCrystalIds.add(crystalId);
+                                    Command.sendMessage("Atacked" + crystalId);
+                                }
+                            }
+                        }
+                    }
 
-                    //TODO: if crystal hasn't spawned in 20 ticks. also preform antistuck
                     if (antiStuck.getValue()) {
-                        List<EntityEnderCrystal> crystals = mc.world.getEntitiesWithinAABB(EntityEnderCrystal.class, new AxisAlignedBB(pos.add(-1, 0, -1), pos.add(2, 3, 2)));
                         for (EntityEnderCrystal crystal : crystals) {
                             BlockPos crystalPos = new BlockPos(crystal.posX, crystal.posY - 1, crystal.posZ);
                             if (crystalPos.equals(pos)) {
                                 if (crystal.ticksExisted > antiStuckTicks.getValue()) {
                                     return false;
                                 }
+
                             } else {
+                                //TODO : if position hasn't changed for 1 second and it still doesn't have a crystal. skip
                                 return false;
                             }
                         }
@@ -662,6 +651,7 @@ public class AutoCrystal extends Module {
                 }))
                 .orElse(null);
     }
+
 
 
 
