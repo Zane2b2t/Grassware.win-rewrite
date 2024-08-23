@@ -103,7 +103,10 @@ public class Aura extends Module {
 
     @EventListener
     public void onMotionUpdate(MotionUpdateEvent event) {
+        final EntityPlayer entityPlayer = EntityUtil.entityPlayer(this.Range.getValue()); //this shit assigned like 3 times lol
+        if (entityPlayer == null) return;
         if (!AutoCrystal.Instance.rotateMode.getValue().equals("None") && AutoCrystal.Instance.placedPos != null) return; //shit used to work but noww idk
+        if (AutoCrystalRewrite.Instance.rotate.getValue() || AutoCrystalRewrite.Instance.placedPos != null) return;
         if (!mc.player.getHeldItemMainhand().getItem().equals(Items.DIAMOND_SWORD)) return;
         if (rotating) {
             event.setYaw(rotations[0]);

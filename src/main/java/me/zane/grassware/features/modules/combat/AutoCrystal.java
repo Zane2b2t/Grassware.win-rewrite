@@ -80,6 +80,7 @@ public class AutoCrystal extends Module {
     private final BooleanSetting instantExplode = register("InstantBreak", false); //dev setting
     private final BooleanSetting breakMop = register("breakMap", false); //dev setting
     private final BooleanSetting bongo = register("bongo", false);
+    private final BooleanSetting second = register("Second", false);
     private final BooleanSetting predict = register("Predict", false);
 
     private final BooleanSetting inhibit = register("Inhibit", false);
@@ -103,7 +104,7 @@ public class AutoCrystal extends Module {
     private boolean hasBroken = false;
     private static final float OFFSET = 0.5f;
     public static AutoCrystal Instance = new AutoCrystal();
-    private Set<Integer> attackedCrystalIds = new HashSet<>(); //this only used for stuck crystals. not inhibit
+    private final Set<Integer> attackedCrystalIds = new HashSet<>(); //this only used for stuck crystals. not inhibit
     @Override
     public void onDisable() {
         crystals.clear();
@@ -513,7 +514,7 @@ public class AutoCrystal extends Module {
         BlockPos renderPos = (placedPos != null) ? placedPos : lastPos;
         if (renderPos != null && mc.player.getHeldItemOffhand().getItem().equals(Items.END_CRYSTAL) || mc.player.getHeldItemMainhand().getItem().equals(Items.END_CRYSTAL)) {
             float newOpacity = (placedPos != null) ? defualtOpacityVal.getValue() : MathUtil.lerp(opacity.getValue(), 0f, 0.05f);
-            opacity.setValue(Math.max(newOpacity, 0.0f)); // Ensure opacity doesn't go below 0
+            opacity.setValue(Math.max(newOpacity, 0.0f));
             GradientShader.setup(opacity.getValue());
             RenderUtil.boxShader(renderPos);
             RenderUtil.outlineShader(renderPos);
@@ -569,19 +570,22 @@ public class AutoCrystal extends Module {
                         attackFire(pos);
                     }
 
-                    if (!BlockUtil.valid(pos, updated.getValue())) {
-                        return false;
-                    }
+                    if (second.getValue())
+                        if (!BlockUtil.canPlaceCrystal(pos, true)) return false;
+
+                    if (!BlockUtil.valid(pos, updated.getValue())) return false;
+
 
                     if (mc.world.rayTraceBlocks(mc.player.getPositionVector().add(0, mc.player.eyeHeight, 0), new Vec3d(pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5), false, true, false) != null) {
-                        if (mc.player.getDistance(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5) > placeWallRange.getValue()) {
+                        if (mc.player.getPosition().add(0, mc.player.eyeHeight, 0).distanceSq(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5) > placeWallRange.getValue() * placeWallRange.getValue()) {
                             return false;
                         }
                     }
 
-                    if (mc.player.getDistanceSq(pos) > placeRange.getValue() * placeRange.getValue()) {
+                    if (mc.player.getPosition().add(0, mc.player.eyeHeight, 0).distanceSq(pos) > placeRange.getValue() * placeRange.getValue()) {
                         return false;
                     }
+
                     List<EntityEnderCrystal> crystals = mc.world.getEntitiesWithinAABB(EntityEnderCrystal.class, new AxisAlignedBB(pos.add(-1, 0, -1), pos.add(2, 3, 2)));
                     for (EntityEnderCrystal crystal : crystals) {
                         BlockPos crystalPos = new BlockPos(crystal.posX, crystal.posY - 1, crystal.posZ);
@@ -660,8 +664,8 @@ public class AutoCrystal extends Module {
         mc.world.playerEntities.stream().filter(e -> !e.equals(mc.player) && !e.isDead).forEach(entityPlayer -> {
             if (entityPlayer.getHealth() <= 0)
                 return;
-            final float distance = entityPlayer.getDistance(mc.player);
-            if (distance < range && !GrassWare.friendManager.isFriend(entityPlayer.getName())) {
+            final double distance = mc.player.getPosition().add(0, mc.player.eyeHeight, 0).distanceSq(entityPlayer.getPosition());
+            if (distance <= range * range && !GrassWare.friendManager.isFriend(entityPlayer.getName())) {
                 float enemyDamage = BlockUtil.calculatePosDamage(entityPlayer.getPosition(), entityPlayer);
                 map.put(enemyDamage, entityPlayer);
             }

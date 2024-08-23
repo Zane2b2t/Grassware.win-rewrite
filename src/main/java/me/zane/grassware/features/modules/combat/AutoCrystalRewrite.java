@@ -4,12 +4,15 @@ import com.mojang.realmsclient.gui.ChatFormatting;
 
 import me.zane.grassware.GrassWare;
 import me.zane.grassware.event.bus.EventListener;
+import me.zane.grassware.event.events.MotionUpdateEvent;
 import me.zane.grassware.event.events.PacketEvent;
 import me.zane.grassware.event.events.Render3DEvent;
 import me.zane.grassware.event.events.UpdatePlayerWalkingEvent;
+import me.zane.grassware.features.command.Command;
 import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.features.setting.impl.BooleanSetting;
 import me.zane.grassware.features.setting.impl.FloatSetting;
+import me.zane.grassware.features.setting.impl.IntSetting;
 import me.zane.grassware.features.setting.impl.ModeSetting;
 import me.zane.grassware.shader.impl.GradientShader;
 import me.zane.grassware.util.BlockUtil;
@@ -17,9 +20,12 @@ import me.zane.grassware.util.EntityUtil;
 import me.zane.grassware.util.MathUtil;
 import me.zane.grassware.util.RenderUtil;
 
+import net.minecraft.block.BlockFire;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityEnderCrystal;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock;
@@ -37,6 +43,8 @@ import net.minecraft.util.math.Vec3d;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static me.zane.grassware.util.BlockUtil.calculateRotations;
+import static me.zane.grassware.util.BlockUtil.setPlayerRotations;
 import static net.minecraft.network.play.client.CPacketUseEntity.Action.ATTACK;
 
 /**
@@ -48,23 +56,27 @@ public class AutoCrystalRewrite extends Module {
 
     //Calculations Page
     private final BooleanSetting updated = register("1.13+", true).invokeVisibility(z -> page.getValue().equals("Calculations"));
+    private final BooleanSetting second = register("Second", false).invokeVisibility(z -> page.getValue().equals("Calculations"));
+    private final IntSetting antiStuckTicks = register("AntiStuckTicks", 8, 0, 40).invokeVisibility(z -> page.getValue().equals("Calculations"));
     private final FloatSetting targetRange = register("TargetRange", 10.0f, 1.0f, 12.0f).invokeVisibility(z -> page.getValue().equals("Calculations"));
     private final FloatSetting maximumDamage = register("MaxSelf", 6.0f, 1.0f, 12.0f).invokeVisibility(z -> page.getValue().equals("Calculations"));
     private final FloatSetting minimumDamage = register("MinDamage", 4.0f, 1.0f, 16.0f).invokeVisibility(z -> page.getValue().equals("Calculations"));
 
     //Place Page
+
     private final FloatSetting placeDelay = register("PlaceDelay", 50.0f, 0.0f, 200.0f).invokeVisibility(z -> page.getValue().equals("Place"));
     private final FloatSetting placeRange = register("PlaceRange", 4.5f, 1.0f, 6.0f).invokeVisibility(z -> page.getValue().equals("Place"));
     private final FloatSetting placeWallRange = register("PlaceWall", 4.5f, 1.0f, 6.0f).invokeVisibility(z -> page.getValue().equals("Place"));
     private final BooleanSetting placeEfficient = register("PlaceEfficient", true).invokeVisibility(z -> page.getValue().equals("Place"));
+    private final BooleanSetting antiStuck = register("AntiStuck", false).invokeVisibility(z -> page.getValue().equals("Place"));
 
     //Break Page
     private final FloatSetting breakDelay = register("BreakDelay", 50f, 0f, 200f).invokeVisibility(z -> page.getValue().equals("Break"));
     private final ModeSetting setDead = register("SetDead", "Both", Arrays.asList("SetDead", "Remove", "Both")).invokeVisibility(z -> page.getValue().equals("Break"));
-
-    //Break Page
+    private final BooleanSetting rebreakStuck = register("ReBreakStuck", false).invokeVisibility(z -> page.getValue().equals("Break"));
     private final FloatSetting breakRange = register("BreakRange", 4.5f, 1.0f, 6.0f).invokeVisibility(z -> page.getValue().equals("Break"));
     private final FloatSetting breakWallRange = register("BreakTrace", 4.5f, 1.0f, 6.0f).invokeVisibility(z -> page.getValue().equals("Break"));
+    private final BooleanSetting earlyPredict = register("earlyPredict", false).invokeVisibility(z -> page.getValue().equals("Break"));
     private final BooleanSetting inhibit = register("Inhibit", false).invokeVisibility(z -> page.getValue().equals("Break"));
     private final BooleanSetting predict = register("Predict", false).invokeVisibility(z -> page.getValue().equals("Break"));
     private final BooleanSetting await = register("Await", false).invokeVisibility(z -> page.getValue().equals("Break"));
@@ -77,23 +89,30 @@ public class AutoCrystalRewrite extends Module {
     private final FloatSetting defualtOpacityVal = register("DOV", 0.5f, 0.0f, 1.0f).invokeVisibility(z -> page.getValue().equals("Render"));
 
     //Misc Page
+    public final BooleanSetting rotate = register("Rotate", false).invokeVisibility(z -> page.getValue().equals("Misc"));
+    private final BooleanSetting debugRotations = register("DebugRotations", false).invokeVisibility(z -> page.getValue().equals("Misc"));
+    private final BooleanSetting fireBreaker = register("FireBreaker", false).invokeVisibility(z -> page.getValue().equals("Misc"));
     private final ModeSetting mode = register("Mode", "Sequential", Arrays.asList("Sequential", "Adaptive")).invokeVisibility(z -> page.getValue().equals("Misc"));
     private final ModeSetting syncMode = register("SynMode", "instant", Arrays.asList("Instant", "Sound")).invokeVisibility(z -> page.getValue().equals("Misc"));
     private final ModeSetting logic = register("Logic", "BreakPlace", Arrays.asList("BreakPlace", "PlaceBreak")).invokeVisibility(z -> page.getValue().equals("Misc"));
     private final BooleanSetting bongo = register("Bongo", false).invokeVisibility(z -> page.getValue().equals("Misc"));
-    private final BooleanSetting blyat = register("Blayt", false);
 
-    //The stuff
-    private BlockPos placedPos;
+    //Variables
+    public BlockPos placedPos;
     private BlockPos lastPos;
     private BlockPos currentPos;
     private EntityPlayer targetPlayer;
     ArrayList<EntityEnderCrystal> crystals = new ArrayList<>();
+    private Set<Integer> attackedCrystalIds = new HashSet<>(); //this only used for stuck crystals. not inhibit
     private final Map<Integer, Long> breakMap = new ConcurrentHashMap<>();
     private EnumHand enumHand;
     private boolean hasPlaced = false;
     private long placeTime;
+    private float[] rotations;
+    public boolean rotating;
     private long breakTime = 0;
+    public static AutoCrystalRewrite Instance = new AutoCrystalRewrite();
+
 
     @EventListener
     public void onUpdate(final UpdatePlayerWalkingEvent event) {
@@ -117,10 +136,7 @@ public class AutoCrystalRewrite extends Module {
         }
     }
     @Override
-    public void onEnable() {
-        swingHand();
-    }
-
+    public void onEnable() {swingHand();} //removing this for some reason makes it not function? this was an old issue idk if it still exists
 
     //Place Code
     public void placeCrystal(BlockPos pos) {
@@ -130,6 +146,12 @@ public class AutoCrystalRewrite extends Module {
         }
         if (System.currentTimeMillis() - placeTime > placeDelay.getValue()) {
             if (enumHand != null) {
+                if (rotate.getValue()) //this time in this autocrystal it's rotate place only since we always look on the top of the block anyways (where the crystal is located) and i don't ant to bloat this ac
+                    rotating = true;
+                rotations = calculateRotations(pos);
+                if (debugRotations.getValue())
+                    setPlayerRotations(rotations[0], rotations[1]);
+
                 (mc.getConnection()).sendPacket(new CPacketPlayerTryUseItemOnBlock(pos, EnumFacing.UP, enumHand, 0.5f, 0.5f, 0.5f));
                 swingHand();
             }
@@ -180,6 +202,7 @@ public class AutoCrystalRewrite extends Module {
                 return;
             }
             EntityEnderCrystal crystal = new EntityEnderCrystal(AutoCrystal.mc.world, packet.getX(), packet.getY(), packet.getZ());
+            if (crystals.contains(crystal)) return;
             CPacketUseEntity crystalPacket = new CPacketUseEntity();
             crystalPacket.entityId = packet.getEntityID();
             crystalPacket.action = ATTACK;
@@ -256,6 +279,14 @@ public void onPacketReceive(PacketEvent.Receive event) {
         EntityEnderCrystal crystal = (EntityEnderCrystal) mc.world.getEntityByID(packet.getEntityID());
         if (crystal == null)
             return;
+        if (crystals.contains(crystal)) return;
+        if (earlyPredict.getValue() && !predict.getValue()) {
+            CPacketUseEntity packetUseEntity = new CPacketUseEntity();
+            packetUseEntity.entityId = packet.getEntityID();
+            packetUseEntity.action = ATTACK;
+            crystals.add(crystal);
+        }
+
         final EntityPlayer entityPlayer = target(targetRange.getValue());
         if (entityPlayer == null)
             return;
@@ -272,10 +303,11 @@ public void onPacketReceive(PacketEvent.Receive event) {
             return;
         }
         (mc.getConnection()).sendPacket(new CPacketUseEntity(crystal));
-        if (predict.getValue()) {
+        if (predict.getValue() && !earlyPredict.getValue()) {
             CPacketUseEntity packetUseEntity = new CPacketUseEntity();
             packetUseEntity.entityId = packet.getEntityID();
             packetUseEntity.action = ATTACK;
+            crystals.add(crystal);
         }
         swingHand();
         handleSetDead(crystal);
@@ -380,88 +412,133 @@ public void onPacketReceive(PacketEvent.Receive event) {
 
         return null;} //omg smile so good!!!
 
-    private BlockPos pos(final EntityPlayer entityPlayer) {
-        if (blyat.getValue()) {
-            BlockPos blockPos = null;
-            float maxDamage = 1.0F;
-
-            float radius = placeRange.getValue();
-            EntityPlayer target = null;
-            BlockPos.PooledMutableBlockPos pos = BlockPos.PooledMutableBlockPos.retain();
-            for (float x = radius; x >= -radius; x--) {
-                for (float z = radius; z >= -radius; z--) {
-                    for (float y = radius; y >= -radius; y--) {
-                        pos.setPos(mc.player.posX + x, mc.player.posY + y, mc.player.posZ + z);
-                        final double distance = mc.player.getDistanceSq(pos);
-                        if (distance > radius * radius)
-                            continue;
-                    }
-                }
-            }
+    private void attackFire(BlockPos pos) {
+        BlockPos firePos = pos.up();
+        if (mc.world.getBlockState(firePos).getBlock() instanceof BlockFire) {
+            mc.playerController.clickBlock(firePos, EnumFacing.UP);
         }
-
-        final TreeMap<Float, BlockPos> map = new TreeMap<>(); // Create a TreeMap to store the damage and position of blocks
-
-        // Get all blocks within a certain radius and filter out invalid blocks
-        BlockUtil.getBlocksInRadius(targetRange.getValue()).stream().filter(pos -> BlockUtil.valid(pos, updated.getValue())).forEach(pos -> {
-            AxisAlignedBB bb = mc.player.getEntityBoundingBox(); // Calculate the player's bounding box
-            Vec3d center = new Vec3d(bb.minX + (bb.maxX - bb.minX) / 2, bb.minY + (bb.maxY - bb.minY) / 2, bb.minZ + (bb.maxZ - bb.minZ) / 2); // Calculate the center of the player's bounding box
-
-            // Check if the enemy is behind a wall
-            if (mc.world.rayTraceBlocks(center, new Vec3d(pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5), false, true, false) != null) {
-                // If the distance between the player and the block is greater than the PlaceWallRange (If the check above is not fulfilled) , return
-                if (mc.player.getDistance(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5) > placeWallRange.getValue())
-                    return;
-            }
-            if (Math.sqrt(mc.player.getDistanceSq(pos)) > placeRange.getValue()) { // If the distance between the player and the block is greater than the PlaceRange, return
-                return;
-            }
-
-            if (!mc.world.getEntitiesWithinAABB(EntityPlayer.class, new AxisAlignedBB(new BlockPos(pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5))).isEmpty()) {
-
-                return;
-            }
-            final float selfDamage = BlockUtil.calculatePosDamage(pos, mc.player); // Calculate the damage that would be inflicted on the player if the block were placed
-            if (selfDamage > maximumDamage.getValue()) {
-                return;
-            }
-            final float enemyDamage = BlockUtil.calculatePosDamage(pos, entityPlayer); // Calculate the damage that would be inflicted on the enemy player if the block were placed
-            if (enemyDamage < minimumDamage.getValue()) {
-                return;
-            }
-
-            if (placeEfficient.getValue() && selfDamage > enemyDamage) {
-                return;
-            }
-
-            final float damage = enemyDamage - (selfDamage * 0.5f); // more efficient to value self damage less - cubic
-            if (selfDamage > mc.player.getHealth() + mc.player.getAbsorptionAmount()) { // If the self damage is greater than the player's health plus absorption amount, return
-                return;
-            }
-            map.put(damage, pos); // Add the net damage and position to the map
-        });
-
-        if (!map.isEmpty()) { // If the map is not empty, return the position with the highest net damage
-            return map.lastEntry().getValue();
-        }
-
-        return null; // Otherwise, return null
     }
 
+    @EventListener
+    public void onMotionUpdate(MotionUpdateEvent event) {
+        if (rotating) {
+            event.setYaw(rotations[0]);
+            event.setPitch(rotations[1]);
+        }
+    }
+
+    private BlockPos pos(final EntityPlayer entityPlayer) {
+        //loop through all blocks in the targetrange radius
+        return BlockUtil.getBlocksInRadius(targetRange.getValue()).stream()
+                .filter(pos -> {
+                    //remove fire from the pos if the setting is enabled. this prevents multiplacing in the end since we can't place crystals on fire. another pos will be chosen. but with this the fire will be gone before that happens
+                    if (fireBreaker.getValue() && mc.world.getBlockState(pos.up()).getBlock() instanceof BlockFire) {
+                        attackFire(pos);
+                    }
+
+                    //some extra checks for hitboxes nd shit. that's why its optional it has lots of un-needed stuff
+                    if (second.getValue())
+                        if (!BlockUtil.canPlaceCrystal(pos, true)) return false;
+
+                    //if the pos is valid (has 1 or 2 air blcks abve it depending on the 1.13+ setting
+                    if (!BlockUtil.valid(pos, updated.getValue())) return false;
+
+
+                    //range checks for walls
+                    if (mc.world.rayTraceBlocks(mc.player.getPositionVector().add(0, mc.player.eyeHeight, 0), new Vec3d(pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5), false, true, false) != null) {
+                        if (mc.player.getPosition().add(0, mc.player.eyeHeight, 0).distanceSq(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5) > placeWallRange.getValue() * placeWallRange.getValue()) {
+                            return false;
+                        }
+                    }
+                    //range checks for visible
+                    if (mc.player.getPosition().add(0, mc.player.eyeHeight, 0).distanceSq(pos) > placeRange.getValue() * placeRange.getValue()) {
+                        return false;
+                    }
+                    //antistuck rebreak, if a crystal existed for half the amount of antistuckticks and rebreakstuck setting is on, attempt to un-stuck the crystal by rebreaking it once.
+                    List<EntityEnderCrystal> crystals = mc.world.getEntitiesWithinAABB(EntityEnderCrystal.class, new AxisAlignedBB(pos.add(-1, 0, -1), pos.add(2, 3, 2)));
+                    for (EntityEnderCrystal crystal : crystals) {
+                        BlockPos crystalPos = new BlockPos(crystal.posX, crystal.posY - 1, crystal.posZ);
+                        if (crystalPos.equals(pos)) {
+                            if (crystal.ticksExisted >= antiStuckTicks.getValue() / 2 && rebreakStuck.getValue()) {
+                                int crystalId = crystal.getEntityId();
+                                if (!attackedCrystalIds.contains(crystalId)) {
+                                    mc.playerController.attackEntity(mc.player, crystal);
+                                    attackedCrystalIds.add(crystalId);
+                                    Command.sendMessage("Atacked" + crystalId);
+                                }
+                            }
+                        }
+                    }
+                    //antistuck replace, if a crystal has existed on the pos for more than antistuckticks then the ac will chose a different pos
+                    if (antiStuck.getValue()) {
+                        for (EntityEnderCrystal crystal : crystals) {
+                            BlockPos crystalPos = new BlockPos(crystal.posX, crystal.posY - 1, crystal.posZ);
+                            if (crystalPos.equals(pos)) {
+                                if (crystal.ticksExisted > antiStuckTicks.getValue()) {
+                                    return false;
+                                }
+
+                            } else {
+                                //TODO : if position hasn't changed for 1 second and it still doesn't have a crystal. skip
+                                return false;
+                            }
+                        }
+                    }
+
+                    //checks if player hitboxes are blocking the pos
+                    if (!mc.world.getEntitiesWithinAABB(EntityPlayer.class, new AxisAlignedBB(pos.add(0.5, 1.0, 0.5))).isEmpty()) {
+                        return false;
+                    }
+                    // Check for dropped items on the pos
+                    if (!mc.world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos.add(0.5, 1.0, 0.5))).isEmpty()) {
+                        return false;
+                    }
+                    // Check for arrows on the pos
+                    if (!mc.world.getEntitiesWithinAABB(EntityArrow.class, new AxisAlignedBB(pos.add(0.5, 1.0, 0.5))).isEmpty()) {
+                        return false;
+                    }
+                    //doesn't need explaination
+                    float selfDamage = BlockUtil.calculatePosDamage(pos, mc.player);
+                    if (selfDamage > maximumDamage.getValue()) {
+                        return false;
+                    }
+
+                    float enemyDamage = BlockUtil.calculatePosDamage(pos, entityPlayer);
+                    if (enemyDamage < minimumDamage.getValue()) {
+                        return false;
+                    }
+
+                    if (placeEfficient.getValue() && selfDamage > enemyDamage) {
+                        return false;
+                    }
+
+                    if (selfDamage > mc.player.getHealth() + mc.player.getAbsorptionAmount()) {
+                        return false;
+                    }
+
+                    return true;
+                })
+                .max(Comparator.comparingDouble(pos -> {
+                    float enemyDamage = BlockUtil.calculatePosDamage(pos, entityPlayer);
+                    float selfDamage = BlockUtil.calculatePosDamage(pos, mc.player);
+                    return enemyDamage - selfDamage;
+                }))
+                .orElse(null);
+    }
 
     private EntityPlayer target(final float range) {
-        final HashMap<Float, List<EntityPlayer>> map = new HashMap<>();
+        final TreeMap<Float, EntityPlayer> map = new TreeMap<>();
         mc.world.playerEntities.stream().filter(e -> !e.equals(mc.player) && !e.isDead).forEach(entityPlayer -> {
             if (entityPlayer.getHealth() <= 0)
                 return;
-            final float distance = entityPlayer.getDistance(mc.player);
-            if (distance < range && !GrassWare.friendManager.isFriend(entityPlayer.getName())) {
-                map.computeIfAbsent(distance, k -> new ArrayList<>()).add(entityPlayer);
+            final double distance = mc.player.getPosition().add(0, mc.player.eyeHeight, 0).distanceSq(entityPlayer.getPosition());
+            if (distance <= range * range && !GrassWare.friendManager.isFriend(entityPlayer.getName())) {
+                float enemyDamage = BlockUtil.calculatePosDamage(entityPlayer.getPosition(), entityPlayer);
+                map.put(enemyDamage, entityPlayer);
             }
         });
         if (!map.isEmpty()) {
-            final float minDistance = Collections.min(map.keySet());
-            return map.get(minDistance).get(0);
+            return map.lastEntry().getValue();
         }
         return null;} //zane like smile ;}
 
