@@ -92,7 +92,7 @@ public class Aura extends Module {
     }
     if (rotate.getValue())
         rotating = true;
-        rotations = calculateRotations(entityPlayer.getPosition());
+        rotations = calculateRotations(entityPlayer.getPosition().add(0, -0.49, 0)); //-0.49 bcs im lazy to add a grim boolean to the calcrotaions method
         if (debugRotations.getValue())
             setPlayerRotations(rotations[0], rotations[1]);
 
