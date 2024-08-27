@@ -4,6 +4,7 @@ import me.zane.grassware.GrassWare;
 import me.zane.grassware.event.bus.EventListener;
 import me.zane.grassware.event.events.NameplateEvent;
 import me.zane.grassware.event.events.Render3DEvent;
+import me.zane.grassware.event.events.Render3DPreEvent;
 import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.features.setting.impl.FloatSetting;
 import me.zane.grassware.shader.impl.GradientShader;
