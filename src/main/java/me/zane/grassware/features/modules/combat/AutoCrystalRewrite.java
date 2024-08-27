@@ -4,10 +4,7 @@ import com.mojang.realmsclient.gui.ChatFormatting;
 
 import me.zane.grassware.GrassWare;
 import me.zane.grassware.event.bus.EventListener;
-import me.zane.grassware.event.events.MotionUpdateEvent;
-import me.zane.grassware.event.events.PacketEvent;
-import me.zane.grassware.event.events.Render3DEvent;
-import me.zane.grassware.event.events.UpdatePlayerWalkingEvent;
+import me.zane.grassware.event.events.*;
 import me.zane.grassware.features.command.Command;
 import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.features.setting.impl.BooleanSetting;
@@ -421,7 +418,7 @@ public void onPacketReceive(PacketEvent.Receive event) {
 
     @EventListener
     public void onMotionUpdate(MotionUpdateEvent event) {
-        if (rotating) {
+        if (rotating && placedPos != null) {
             event.setYaw(rotations[0]);
             event.setPitch(rotations[1]);
         }

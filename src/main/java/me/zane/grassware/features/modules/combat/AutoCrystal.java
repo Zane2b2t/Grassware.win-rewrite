@@ -16,6 +16,7 @@ import me.zane.grassware.mixin.mixins.ICPacketUseEntity;
 import me.zane.grassware.shader.impl.GradientShader;
 import me.zane.grassware.util.*;
 
+import me.zane.grassware.util.Timer;
 import net.minecraft.block.BlockFire;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityEnderCrystal;
@@ -47,6 +48,7 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class AutoCrystal extends Module {
     private final ModeSetting mode = register("Mode", "Sequential", Arrays.asList("Sequential", "Adaptive"));
+    private final ModeSetting breakingMode = register("BreakingMode", "Calculated", Arrays.asList("Calculated", "Instant"));
     private final ModeSetting syncMode = register("SynMode", "instant", Arrays.asList("Instant", "Sound"));
     public final ModeSetting rotateMode = register("RotateMode", "PlaceBreak", Arrays.asList("Place", "Break", "PlaceBreak", "None"));
 
@@ -57,6 +59,7 @@ public class AutoCrystal extends Module {
     private final FloatSetting breakWallRange = register("Break Wall Range", 3.0f, 1.0f, 6.0f);
     private final FloatSetting targetRange = register("Target Range", 5.0f, 0.1f, 15.0f);
     private final FloatSetting minimumDamage = register("Minimum Damage", 6.0f, 0.1f, 12.0f);
+    private final FloatSetting facePlaceHP = register("FacePlaceHP", 6.0f, 0.1f, 12.0f);
     private final FloatSetting maximumDamage = register("Maximum Damage", 8.0f, 0.1f, 12.0f);
     private final BooleanSetting waitForBreak = register("WaitForBreak", false);
     private final BooleanSetting debugRotations = register("DebugRotations", false);
@@ -88,6 +91,7 @@ public class AutoCrystal extends Module {
     private final FloatSetting opacity = register("Opacity", 0.5f, 0.1f, 1.0f);
     private final FloatSetting defualtOpacityVal = register("DOV", 0.5f, 0.1f, 1.0f);
     private final BooleanSetting renderRing = register("Ring", false); //for some reason this is banga langa. when disabled it renders ring. when enabled it doesn't?
+    private final BooleanSetting lethal = register("FacePlaceIfLethal", false); //for some reason this is banga langa. when disabled it renders ring. when enabled it doesn't?
     private final Map<Integer, Long> breakMap = new ConcurrentHashMap<>();
     ArrayList<EntityEnderCrystal> crystals = new ArrayList<>();
     ArrayList<BlockPos> blackListedPos = new ArrayList<>();
@@ -104,6 +108,7 @@ public class AutoCrystal extends Module {
     private boolean hasBroken = false;
     private static final float OFFSET = 0.5f;
     public static AutoCrystal Instance = new AutoCrystal();
+    Timer timer = new Timer();
     private final Set<Integer> attackedCrystalIds = new HashSet<>(); //this only used for stuck crystals. not inhibit
     @Override
     public void onDisable() {
@@ -243,16 +248,18 @@ public class AutoCrystal extends Module {
             final EntityPlayer entityPlayer = target(targetRange.getValue());
             if (entityPlayer == null)
                 return;
-            final float selfDamage = BlockUtil.calculateEntityDamage(crystal, mc.player);
-            if (selfDamage > maximumDamage.getValue()) {
-                return;
-            }
-            final float enemyDamage = BlockUtil.calculateEntityDamage(crystal, entityPlayer); //cba to make it extrapolate
-            if (enemyDamage < minimumDamage.getValue()) {
-                return;
-            }
-            if (selfDamage > mc.player.getHealth() + mc.player.getAbsorptionAmount()) {
-                return;
+            if (breakingMode.getValue().equals("Calculated")) {
+                final float selfDamage = BlockUtil.calculateEntityDamage(crystal, mc.player);
+                if (selfDamage > maximumDamage.getValue()) {
+                    return;
+                }
+                final float enemyDamage = BlockUtil.calculateEntityDamage(crystal, entityPlayer); //cba to make it extrapolate
+                if (enemyDamage < minimumDamage.getValue()) {
+                    return;
+                }
+                if (selfDamage > mc.player.getHealth() + mc.player.getAbsorptionAmount()) {
+                    return;
+                }
             }
             rotating = rotateMode.getValue().equals("PlaceBreak") || rotateMode.getValue().equals("Break");
 
@@ -426,7 +433,7 @@ public class AutoCrystal extends Module {
 
     @EventListener
     public void onMotionUpdate(MotionUpdateEvent event) {
-        if (rotating) {
+        if (rotating && placedPos != null) {
             event.setYaw(rotations[0]);
             event.setPitch(rotations[1]);
         }
@@ -468,6 +475,7 @@ public class AutoCrystal extends Module {
         }
         if (renderRing.getValue()) {
             final Vec3d vec = RenderUtil.interpolateEntity(entityPlayer);
+            RenderUtil.renderLine(new Vec3d(placedPos.getX(), placedPos.getY(), placedPos.getZ()), entityPlayer.getPositionVector());
             final Color color = ClickGui.Instance.getGradient()[0];
             final Color color2 = ClickGui.Instance.getGradient()[1];
             final Color color3 = ClickGui.Instance.getGradient()[2];
@@ -586,7 +594,8 @@ public class AutoCrystal extends Module {
                         return false;
                     }
 
-                    List<EntityEnderCrystal> crystals = mc.world.getEntitiesWithinAABB(EntityEnderCrystal.class, new AxisAlignedBB(pos.add(-1, 0, -1), pos.add(2, 3, 2)));
+                    List<EntityEnderCrystal> crystals = mc.world.getEntitiesWithinAABB(EntityEnderCrystal.class,
+                            new AxisAlignedBB(pos.add(-1, 0, -1), pos.add(2, 3, 2)));
                     for (EntityEnderCrystal crystal : crystals) {
                         BlockPos crystalPos = new BlockPos(crystal.posX, crystal.posY - 1, crystal.posZ);
                         if (crystalPos.equals(pos)) {
@@ -594,26 +603,22 @@ public class AutoCrystal extends Module {
                                 int crystalId = crystal.getEntityId();
                                 if (!attackedCrystalIds.contains(crystalId)) {
                                     mc.playerController.attackEntity(mc.player, crystal);
+                                    handleSetDead(crystal);
+                                    handleFastRemove(crystal);
                                     attackedCrystalIds.add(crystalId);
-                                    Command.sendMessage("Atacked" + crystalId);
+                                    Command.sendMessage("Attacked " + crystalId);
                                 }
                             }
                         }
                     }
 
                     if (antiStuck.getValue()) {
-                        for (EntityEnderCrystal crystal : crystals) {
-                            BlockPos crystalPos = new BlockPos(crystal.posX, crystal.posY - 1, crystal.posZ);
-                            if (crystalPos.equals(pos)) {
-                                if (crystal.ticksExisted > antiStuckTicks.getValue()) {
-                                    return false;
-                                }
-
-                            } else {
-                                //TODO : if position hasn't changed for 1 second and it still doesn't have a crystal. skip
-                                return false;
-                            }
-                        }
+                        boolean hasValidCrystal = crystals.stream()
+                                .anyMatch(crystal -> {
+                                    BlockPos crystalPos = new BlockPos(crystal.posX, crystal.posY - 1, crystal.posZ);
+                                    return crystalPos.equals(pos) && crystal.ticksExisted <= antiStuckTicks.getValue();
+                                });
+                        if (!hasValidCrystal) return false;
                     }
 
                     if (!mc.world.getEntitiesWithinAABB(EntityPlayer.class, new AxisAlignedBB(pos.add(0.5, 1.0, 0.5))).isEmpty()) {
@@ -627,10 +632,13 @@ public class AutoCrystal extends Module {
                     if (!mc.world.getEntitiesWithinAABB(EntityArrow.class, new AxisAlignedBB(pos.add(0.5, 1.0, 0.5))).isEmpty()) {
                         return false;
                     }
-
                     float selfDamage = BlockUtil.calculatePosDamage(pos, mc.player);
                     if (selfDamage > maximumDamage.getValue()) {
                         return false;
+                    }
+
+                    if (entityPlayer.getHealth() + entityPlayer.getAbsorptionAmount() <= facePlaceHP.getValue()) {
+                        return true;
                     }
 
                     float enemyDamage = BlockUtil.calculatePosDamage(pos, entityPlayer);

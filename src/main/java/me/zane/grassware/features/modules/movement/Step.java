@@ -17,7 +17,9 @@ public class Step extends Module {
 
     @EventListener
     public void onTick(final TickEvent event) {
-        mc.player.stepHeight = height.getValue();
+        if (!mc.player.movementInput.jump && mc.player.collidedVertically && (double) mc.player.fallDistance < 0.1) {
+            mc.player.stepHeight = height.getValue();
+        }
     }
     @Override
     public String getInfo() {

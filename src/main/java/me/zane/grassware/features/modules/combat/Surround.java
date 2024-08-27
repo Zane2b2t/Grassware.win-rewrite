@@ -5,7 +5,6 @@ import me.zane.grassware.event.events.PacketEvent;
 import me.zane.grassware.event.events.UpdatePlayerWalkingEvent;
 import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.features.setting.impl.BooleanSetting;
-import me.zane.grassware.features.setting.impl.FloatSetting;
 import me.zane.grassware.features.setting.impl.IntSetting;
 import me.zane.grassware.util.BlockUtil;
 import me.zane.grassware.util.InventoryUtil;
@@ -17,7 +16,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.network.play.client.CPacketHeldItemChange;
 import net.minecraft.network.play.client.CPacketPlayer;
-import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock;
 import net.minecraft.network.play.client.CPacketUseEntity;
 import net.minecraft.network.play.server.*;
 import net.minecraft.util.EnumFacing;
@@ -28,11 +26,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
 
 public class Surround extends Module {
@@ -301,7 +296,8 @@ public class Surround extends Module {
             }
 
             if (rotate.getValue()) {
-                float[] rots = calcAngle(mc.player.getPositionEyes(1f), new Vec3d(pos.add(0.5, 0.5, 0.5)));
+                //float[] rots = calcAngle(mc.player.getPositionEyes(1f), new Vec3d(pos.add(0.5, 0.5, 0.5)));
+                float[] rots = BlockUtil.calculateRotations(pos);
                 mc.player.connection.sendPacket(new CPacketPlayer.Rotation(rots[0], rots[1], mc.player.onGround));
             }
 
