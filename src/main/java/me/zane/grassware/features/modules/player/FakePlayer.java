@@ -29,6 +29,7 @@ public class FakePlayer extends Module {
 
     private final BooleanSetting inv = register("Inventory", true);
     private final BooleanSetting pop = register("TotemPop", true);
+    private final BooleanSetting copyHealth = register("CopyHealth", true);
     private final StringSetting plrName = register("Name", "ZANE");
     private EntityOtherPlayerMP falesnejhrac;
 
@@ -87,7 +88,7 @@ public class FakePlayer extends Module {
         if (this.inv.getValue()) {
             this.falesnejhrac.inventory = FakePlayer.mc.player.inventory;
         }
-        this.falesnejhrac.setHealth(36.0f);
+        this.falesnejhrac.setHealth(copyHealth.getValue() ? (mc.player.getHealth() + mc.player.getAbsorptionAmount()) : 36.0f);
         FakePlayer.mc.world.addEntityToWorld(-100, this.falesnejhrac);
     }
 
