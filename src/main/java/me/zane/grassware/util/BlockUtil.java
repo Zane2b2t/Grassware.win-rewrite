@@ -317,4 +317,64 @@ public class BlockUtil implements MC {
 
         return new float[]{yaw, pitch};
     }
+    public static Vec3d getVectorForRotation(final float[] rotation) {
+        final float yawCos = MathHelper.cos(-rotation[0] * 0.017453292F - (float) Math.PI);
+        final float yawSin = MathHelper.sin(-rotation[0] * 0.017453292F - (float) Math.PI);
+        final float pitchCos = -MathHelper.cos(-rotation[1] * 0.017453292F);
+        final float pitchSin = MathHelper.sin(-rotation[1] * 0.017453292F);
+        return new Vec3d(yawSin * pitchCos, pitchSin, yawCos * pitchCos);
+    }
+    public static EnumFacing getStrictDirection(BlockPos placedPos, float[] rotations, double placeRange) {
+        double faceX = 0;
+        double faceY = 0;
+        double faceZ = 0;
+
+        Vec3d placeVector = BlockUtil.getVectorForRotation(rotations);
+
+        RayTraceResult interactVector = mc.world.rayTraceBlocks(
+                mc.player.getPositionEyes(1),
+                mc.player.getPositionEyes(1).add(placeVector.x * placeRange, placeVector.y * placeRange, placeVector.z * placeRange),
+                false, false, true
+        );
+
+        EnumFacing facing = EnumFacing.UP;
+            Pair<Double, EnumFacing> closestDirection = new Pair<>(Double.MAX_VALUE, EnumFacing.UP);
+
+            float step = 0.05f;
+            if (mc.getDebugFPS() < 60) {
+                step = 0.1f;
+            }
+
+            for (float x = 0; x <= 1; x += step) {
+                for (float y = 0; y <= 1; y += step) {
+                    for (float z = 0; z <= 1; z += step) {
+                        Vec3d traceVector = new Vec3d(placedPos).add(x, y, z);
+                        double directionDistance = mc.player.getDistance(traceVector.x, traceVector.y, traceVector.z);
+
+                        if (directionDistance < closestDirection.getKey()) {
+                            RayTraceResult strictResult = mc.world.rayTraceBlocks(
+                                    mc.player.getPositionEyes(1),
+                                    traceVector,
+                                    false, true, false
+                            );
+
+                            if (strictResult != null && strictResult.typeOfHit.equals(RayTraceResult.Type.BLOCK)) {
+                                closestDirection = new Pair<>(directionDistance, strictResult.sideHit);
+                            }
+                        }
+                    }
+                }
+            }
+
+            facing = closestDirection.getValue();
+
+
+        if (interactVector != null && interactVector.hitVec != null) {
+            faceX = interactVector.hitVec.x - placedPos.getX();
+            faceY = interactVector.hitVec.y - placedPos.getY();
+            faceZ = interactVector.hitVec.z - placedPos.getZ();
+        }
+        return facing;
+    }
+
 }

@@ -1,6 +1,6 @@
 package me.zane.grassware.features.modules.combat;
 //WARNING: ALL CONTENT BELONGS TO https://github.com/Zane2b2t , IF ANY OF THE CLASSES CONTAINING THIS WARNING ARENT IN https://github.com/Zane2b2t/Grassware.win-Rewrite INFORM GITHUB TO DMCA
-
+//TODO: make it so we only rotate to visible hitbox of a crystal.
 import com.mojang.realmsclient.gui.ChatFormatting;
 import me.zane.grassware.GrassWare;
 import me.zane.grassware.event.bus.EventListener;
@@ -85,6 +85,7 @@ public class AutoCrystal extends Module {
     private final BooleanSetting bongo = register("bongo", false);
     private final BooleanSetting second = register("Second", false);
     private final BooleanSetting predict = register("Predict", false);
+    private final BooleanSetting strictDir = register("StrictDirection", false);
 
     private final BooleanSetting inhibit = register("Inhibit", false);
     private final IntSetting packetAmount = register("PacketAmount", 1, 1, 20);
@@ -175,20 +176,33 @@ public class AutoCrystal extends Module {
 
         if (System.currentTimeMillis() - placeTime > placeDelay.getValue()) {
             if (enumHand != null) {
-                if (rotateMode.getValue().equals("PlaceBreak") || rotateMode.getValue().equals("Place"))
+                if (rotateMode.getValue().equals("PlaceBreak") || rotateMode.getValue().equals("Place")) {
                     rotating = true;
                     rotations = calculateRotations(pos);
-                    if (debugRotations.getValue())
+
+                    EnumFacing facing = EnumFacing.UP;
+
+                    if (placedPos != null && placedPos.getY() > mc.player.posY + mc.player.getEyeHeight()) {
+                        if (strictDir.getValue()) {
+                            facing = BlockUtil.getStrictDirection(pos, rotations, placeRange.getValue());
+                            if (facing == null) return;
+                        }
+                    }
+
+                    (mc.getConnection()).sendPacket(new CPacketPlayerTryUseItemOnBlock(pos, facing, enumHand, OFFSET, OFFSET, OFFSET));
+
+                    if (debugRotations.getValue()) {
                         setPlayerRotations(rotations[0], rotations[1]);
+                    }
 
-
-
-                (mc.getConnection()).sendPacket(new CPacketPlayerTryUseItemOnBlock(pos, EnumFacing.UP, enumHand, OFFSET, OFFSET, OFFSET));
-                swingHand();
-                hasPlaced = true;
+                    swingHand();
+                    hasPlaced = true;
+                }
             }
+
             placedPos = pos;
             placeTime = System.currentTimeMillis();
+
             if (placedPos != null && bongo.getValue()) {
                 (mc.getConnection()).sendPacket(new CPacketPlayerTryUseItemOnBlock(placedPos, EnumFacing.UP, enumHand, OFFSET, OFFSET, OFFSET));
             }
@@ -228,7 +242,9 @@ public class AutoCrystal extends Module {
                 });
             }
         }
+
         breakTime = System.currentTimeMillis();
+
         try {
             breakMap.put(entityEnderCrystal.getEntityId(), System.currentTimeMillis());
         } catch (Exception e) {
@@ -242,12 +258,15 @@ public class AutoCrystal extends Module {
             SPacketSpawnObject packet = event.getPacket();
             if (packet.getType() != 51 || !(mc.world.getEntityByID(packet.getEntityID()) instanceof EntityEnderCrystal))
                 return;
+
             EntityEnderCrystal crystal = (EntityEnderCrystal) mc.world.getEntityByID(packet.getEntityID());
             if (crystal == null)
                 return;
+
             final EntityPlayer entityPlayer = target(targetRange.getValue());
             if (entityPlayer == null)
                 return;
+
             if (breakingMode.getValue().equals("Calculated")) {
                 final float selfDamage = BlockUtil.calculateEntityDamage(crystal, mc.player);
                 if (selfDamage > maximumDamage.getValue()) {
@@ -261,6 +280,7 @@ public class AutoCrystal extends Module {
                     return;
                 }
             }
+
             rotating = rotateMode.getValue().equals("PlaceBreak") || rotateMode.getValue().equals("Break");
 
             if (hasPlaced)
@@ -400,6 +420,7 @@ public class AutoCrystal extends Module {
     public void onPredict(PacketEvent.Receive event) {
         if (event.getPacket() instanceof SPacketSpawnObject && this.predict.getValue()) {
             SPacketSpawnObject packet = event.getPacket();
+
             if (packet.getType() != 51) {
                 return;
             }
@@ -428,8 +449,8 @@ public class AutoCrystal extends Module {
             AutoCrystal.mc.player.connection.sendPacket(crystalPacket);
             crystals.add(crystal);
         }
-
     }
+
 
     @EventListener
     public void onMotionUpdate(MotionUpdateEvent event) {
