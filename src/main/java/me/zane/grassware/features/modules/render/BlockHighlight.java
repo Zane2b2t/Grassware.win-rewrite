@@ -23,7 +23,7 @@ public class BlockHighlight
 
 
     @EventListener
-    public void onRender3D(Render3DPostEvent event) {
+    public void onRender3D(Render3DEvent event) {
         RayTraceResult ray = BlockHighlight.mc.objectMouseOver;
         if (ray == null || ray.typeOfHit != RayTraceResult.Type.BLOCK)
             return;

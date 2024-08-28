@@ -33,6 +33,8 @@ public class EventManager extends Feature {
         if (!nullCheck()) {
             mc.profiler.startSection("grassware");
 
+            final Render3DPrePreEvent render3DPrePreEvent = new Render3DPrePreEvent(event.getPartialTicks());
+
             final Render3DPreEvent render3dPreEvent = new Render3DPreEvent(event.getPartialTicks());
             GrassWare.eventBus.invoke(render3dPreEvent);
 

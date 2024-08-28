@@ -613,12 +613,18 @@ public class AutoCrystal extends Module {
                     }
 
                     if (antiStuck.getValue()) {
-                        boolean hasValidCrystal = crystals.stream()
-                                .anyMatch(crystal -> {
-                                    BlockPos crystalPos = new BlockPos(crystal.posX, crystal.posY - 1, crystal.posZ);
-                                    return crystalPos.equals(pos) && crystal.ticksExisted <= antiStuckTicks.getValue();
-                                });
-                        if (!hasValidCrystal) return false;
+                        for (EntityEnderCrystal crystal : crystals) {
+                            BlockPos crystalPos = new BlockPos(crystal.posX, crystal.posY - 1, crystal.posZ);
+                            if (crystalPos.equals(pos)) {
+                                if (crystal.ticksExisted > antiStuckTicks.getValue()) {
+                                    return false;
+                                }
+
+                            } else {
+                                //TODO : if position hasn't changed for 1 second and it still doesn't have a crystal. skip
+                                return false;
+                            }
+                        }
                     }
 
                     if (!mc.world.getEntitiesWithinAABB(EntityPlayer.class, new AxisAlignedBB(pos.add(0.5, 1.0, 0.5))).isEmpty()) {

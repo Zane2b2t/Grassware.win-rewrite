@@ -21,7 +21,7 @@ public class ShaderESP extends Module {
     private final FloatSetting lineWidth = register("Line Width", 1.0f, 0f, 5.0f);
 
     @EventListener
-    public void onRender3D(final Render3DEvent event) {
+    public void onRender3D(final Render3DPrePreEvent event) {
         if (mc.gameSettings.thirdPersonView != 0) {
             return;
         }

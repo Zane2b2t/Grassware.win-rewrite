@@ -16,6 +16,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 
 public class FastUse extends Module { //rename to fastuse bcs we add more stuff
+    //tf does that mean? - me 1 year later or maybe 2
     private final IntSetting speed = register("Delay", 0, 0, 3);
     private final BooleanSetting exp = register("EXP", false);
     private final BooleanSetting crystal = register("Crystal", false);
