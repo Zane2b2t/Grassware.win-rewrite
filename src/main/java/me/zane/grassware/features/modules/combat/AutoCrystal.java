@@ -225,7 +225,7 @@ public class AutoCrystal extends Module {
             if (rotateMode.getValue().equals("PlaceBreak") || rotateMode.getValue().equals("Break"))
                 if (hasPlaced)
                     rotating = true;
-                    rotations = calculateRotations(entityEnderCrystal.getPosition());
+                    rotations = calculateRotations(entityEnderCrystal.getPosition().down().add(0, 0.5, 0));
             if (debugRotations.getValue())
                 setPlayerRotations(rotations[0], rotations[1]);
 
@@ -281,10 +281,10 @@ public class AutoCrystal extends Module {
                 }
             }
 
-            rotating = rotateMode.getValue().equals("PlaceBreak") || rotateMode.getValue().equals("Break");
+            rotating = rotateMode.getValue().equals("PlaceBreak") || rotateMode.getValue().equals("Break") || rotateMode.getValue().equals("Break");
 
             if (hasPlaced)
-                rotations = calculateRotations(crystal.getPosition());
+                rotations = calculateRotations(crystal.getPosition().add(0, -0.5, 0));
              if (debugRotations.getValue())
                 setPlayerRotations(rotations[0], rotations[1]);
 
@@ -429,7 +429,7 @@ public class AutoCrystal extends Module {
             if (rotateMode.getValue().equals("PlaceBreak") || rotateMode.getValue().equals("Break"))
                 if (hasPlaced)
                     rotating = true;
-                    rotations = calculateRotations(crystal.getPosition());
+                    rotations = calculateRotations(crystal.getPosition().down().add(0, 0.5, 0));
                     if (debugRotations.getValue())
                         setPlayerRotations(rotations[0], rotations[1]);
 
@@ -623,7 +623,8 @@ public class AutoCrystal extends Module {
                             if (crystal.ticksExisted >= antiStuckTicks.getValue() / 2 && rebreakStuck.getValue()) {
                                 int crystalId = crystal.getEntityId();
                                 if (!attackedCrystalIds.contains(crystalId)) {
-                                    mc.playerController.attackEntity(mc.player, crystal);
+                                    crystals.remove(crystal);
+                                    //mc.playerController.attackEntity(mc.player, crystal);
                                     handleSetDead(crystal);
                                     handleFastRemove(crystal);
                                     attackedCrystalIds.add(crystalId);
