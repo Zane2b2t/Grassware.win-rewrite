@@ -34,6 +34,7 @@ public class ClickGui extends Module {
 
     public final FloatSetting step = register("Step", 0.3f, 0.01f, 2.0f).invokeVisibility(z -> !mode.getValue().equals("Static"));
     public final FloatSetting speed = register("Speed", 1.0f, 0.1f, 5.0f).invokeVisibility(z -> !mode.getValue().equals("Static"));
+    public final FloatSetting time = register("Time", 1.0f, 0.1f, 5.0f).invokeVisibility(z -> !mode.getValue().equals("Static"));
     private final BooleanSetting randoms = register("Randomize", false);
 
     public final IntSetting gradientRed1 = register("Red1", 5, 0, 255).invokeVisibility(z -> mode.getValue().equals("Gradient"));

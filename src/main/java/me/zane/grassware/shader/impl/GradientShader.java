@@ -58,5 +58,4 @@ public class GradientShader implements MC {
         GlStateManager.bindTexture(0);
         glEnable(GL_BLEND);
     }
-
 }

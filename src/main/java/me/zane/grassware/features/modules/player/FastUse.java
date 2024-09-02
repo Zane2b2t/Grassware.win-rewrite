@@ -55,6 +55,7 @@ public class FastUse extends Module { //rename to fastuse bcs we add more stuff
             if (outline.getValue()) {
                 RenderUtil.outlineShader(pos);
             }
+            GradientShader.finish();
         }
     }
 }

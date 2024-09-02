@@ -35,12 +35,6 @@ public class PopESP extends Module {
                 continue;
             }
             GradientShader.setup(
-                    ClickGui.Instance.step.getValue(),
-                    ClickGui.Instance.speed.getValue(),
-                    ClickGui.Instance.getGradient()[0],
-                    ClickGui.Instance.getGradient()[1],
-                    ClickGui.Instance.getGradient()[2],
-                    ClickGui.Instance.getGradient()[3],
                     Math.max(0.0f, 1.0f - alpha)
             );
             glPushMatrix();

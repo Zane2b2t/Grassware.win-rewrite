@@ -21,17 +21,11 @@ public class ShaderESP extends Module {
     private final FloatSetting lineWidth = register("Line Width", 1.0f, 0f, 5.0f);
 
     @EventListener
-    public void onRender3D(final Render3DPrePreEvent event) {
+    public void onRender3D(final Render3DEvent event) {
         if (mc.gameSettings.thirdPersonView != 0) {
             return;
         }
         GradientShader.setup(
-                ClickGui.Instance.step.getValue(),
-                ClickGui.Instance.speed.getValue(),
-                ClickGui.Instance.getGradient()[0],
-                ClickGui.Instance.getGradient()[1],
-                ClickGui.Instance.getGradient()[2],
-                ClickGui.Instance.getGradient()[3],
                 opacity.getValue()
         );
         for (final Entity entity : mc.world.loadedEntityList) {

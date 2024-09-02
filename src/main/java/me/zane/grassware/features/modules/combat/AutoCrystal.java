@@ -109,12 +109,12 @@ public class AutoCrystal extends Module {
     private boolean hasBroken = false;
     private static final float OFFSET = 0.5f;
     public static AutoCrystal Instance = new AutoCrystal();
-    Timer timer = new Timer();
     private final Set<Integer> attackedCrystalIds = new HashSet<>(); //this only used for stuck crystals. not inhibit
     @Override
     public void onDisable() {
         crystals.clear();
         blackListedPos.clear();
+        attackedCrystalIds.clear();
         rotating = false;
     }
 
@@ -623,8 +623,8 @@ public class AutoCrystal extends Module {
                             if (crystal.ticksExisted >= antiStuckTicks.getValue() / 2 && rebreakStuck.getValue()) {
                                 int crystalId = crystal.getEntityId();
                                 if (!attackedCrystalIds.contains(crystalId)) {
-                                    crystals.remove(crystal);
-                                    //mc.playerController.attackEntity(mc.player, crystal);
+                                    //crystals.remove(crystal);
+                                    mc.playerController.attackEntity(mc.player, crystal);
                                     handleSetDead(crystal);
                                     handleFastRemove(crystal);
                                     attackedCrystalIds.add(crystalId);

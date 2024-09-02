@@ -3,6 +3,8 @@ package me.zane.grassware.features.modules.render;
 import me.zane.grassware.GrassWare;
 import me.zane.grassware.event.bus.EventListener;
 import me.zane.grassware.event.events.Render3DEvent;
+import me.zane.grassware.event.events.Render3DPreEvent;
+import me.zane.grassware.event.events.Render3DPrePreEvent;
 import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.features.modules.client.ClickGui;
 import me.zane.grassware.features.setting.impl.IntSetting;
@@ -34,7 +36,7 @@ public class HoleESP extends Module {
     }
 
     @EventListener
-    public void onRender3D(final Render3DEvent event) {
+    public void onRender3D(final Render3DPreEvent event) {
         camera.setPosition(Objects.requireNonNull(mc.getRenderViewEntity()).posX, mc.getRenderViewEntity().posY, mc.getRenderViewEntity().posZ);
 
         GrassWare.threadManager.invokeThread(() -> {

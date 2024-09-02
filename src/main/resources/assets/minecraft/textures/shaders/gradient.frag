@@ -9,22 +9,25 @@ uniform float step;
 uniform float offset;
 uniform float mix;
 
-
 void main() {
-    float alpha =texture2D(texture, gl_TexCoord[0].xy).a;
-    if (alpha != 0f) {
+    float alpha = texture2D(texture, gl_TexCoord[0].xy).a;
+    if (alpha != 0.0) {
         float distance = sqrt(gl_FragCoord.x * gl_FragCoord.x + gl_FragCoord.y * gl_FragCoord.y) + offset;
-        float distance2 = sqrt((gl_FragCoord.x - 800.0) * (gl_FragCoord.x - 800.0) + gl_FragCoord.y * gl_FragCoord.y) + offset;
-        float distance3 = sqrt((gl_FragCoord.x - 400.0) * (gl_FragCoord.x - 400.0) + (gl_FragCoord.y - 400.0) * (gl_FragCoord.y - 400.0)) + offset;
-        distance = distance / step;
-        distance2 = distance2 / step;
-        distance3 = distance3 / step;
+        float distance2 = sqrt((gl_FragCoord.x - 1920.0) * (gl_FragCoord.x - 1920.0) + gl_FragCoord.y * gl_FragCoord.y) + offset;
+        float distance3 = sqrt((gl_FragCoord.x - 1080.0) * (gl_FragCoord.x - 1080.0) + (gl_FragCoord.y - 1080.0) * (gl_FragCoord.y - 1080.0)) + offset;
 
-        distance = ((sin(distance) + 1.0) / 2.0);
-        distance2 = ((sin(distance2) + 1.0) / 2.0);
-        distance3 = ((sin(distance3) + 1.0) / 2.0);
+        distance = sin(distance / step + sin(gl_FragCoord.y / step)) * 0.5 + 0.5;
+        distance2 = sin(distance2 / step + sin(gl_FragCoord.x / step)) * 0.5 + 0.5;
+        distance3 = sin(distance3 / step + sin(gl_FragCoord.y / step + gl_FragCoord.x / step)) * 0.5 + 0.5;
 
-        float distanceInv = 1 - distance;
+        float ripple = sin(distance * 10 + step) * 0.05;
+        float swirl = cos((gl_FragCoord.x - 960.0) * 0.05 + (gl_FragCoord.y - 540.0) * 0.05 + step) * 0.05;
+
+        distance += ripple + swirl;
+        distance2 += ripple - swirl;
+        distance3 += ripple + swirl;
+
+        float distanceInv = 1.0 - distance;
         float r = rgb.r * distance + rgb1.r * distanceInv + rgb2.r * distance2 + rgb3.r * distance3;
         float g = rgb.g * distance + rgb1.g * distanceInv + rgb2.g * distance2 + rgb3.g * distance3;
         float b = rgb.b * distance + rgb1.b * distanceInv + rgb2.b * distance2 + rgb3.b * distance3;
