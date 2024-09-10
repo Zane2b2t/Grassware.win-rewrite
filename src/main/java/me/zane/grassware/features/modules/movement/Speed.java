@@ -72,7 +72,7 @@ public class Speed extends Module {
             event.setMotionZ((forward * motionSpeed * Math.cos(Math.toRadians(yaw)) - strafe * motionSpeed * -Math.sin(Math.toRadians(yaw))) * 0.99f);
             ++currentState;
         } else {
-            if (!(mc.player.isSneaking() || mc.player.movementInput.moveForward == 0.0f && mc.player.movementInput.moveStrafe == 0.0f) || !mc.player.onGround) {
+            if (!(mc.player.isSneaking() || mc.player.movementInput.moveForward == 0.0f && mc.player.movementInput.moveStrafe == 0.0f) || !mc.player.onGround || !mc.player.collidedHorizontally) {
                 MovementInput movementInput = mc.player.movementInput;
                 float moveForward = movementInput.moveForward;
                 float moveStrafe = movementInput.moveStrafe;

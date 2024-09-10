@@ -1,8 +1,14 @@
 package me.zane.grassware.util;
 //WARNING: ALL CONTENT BELONGS TO https://github.com/Zane2b2t , IF ANY OF THE CLASSES CONTAINING THIS WARNING ARENT IN https://github.com/Zane2b2t/Grassware.win-Rewrite INFORM GITHUB TO DMCA
+import com.mojang.realmsclient.gui.ChatFormatting;
+import jdk.nashorn.internal.ir.Block;
 import me.zane.grassware.GrassWare;
+import me.zane.grassware.features.command.Command;
+import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
+import net.minecraft.network.play.client.CPacketPlayer;
+import net.minecraft.network.play.client.CPacketUseEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -14,7 +20,6 @@ import java.util.Objects;
 import java.util.TreeMap;
 
 public class EntityUtil implements MC {
-
     public static EntityOtherPlayerMP setupEntity(EntityPlayer entityPlayer, Vec3d vec) { //maybe for PopESP?
         EntityOtherPlayerMP entityOtherPlayerMP1 = new EntityOtherPlayerMP(mc.world, entityPlayer.getGameProfile());
         entityOtherPlayerMP1.copyLocationAndAnglesFrom(entityPlayer);
@@ -86,5 +91,20 @@ public class EntityUtil implements MC {
 
     public static float getHealth(EntityPlayer entityPlayer) {
         return entityPlayer.getHealth() + entityPlayer.getAbsorptionAmount();
+    }
+    public static void breakCrystal(EntityEnderCrystal crystal, boolean rotate, boolean debug, boolean strictDir, float range) {
+        if ((range * range) - 8 >= mc.player.getPositionEyes(1).squareDistanceTo(crystal.getPositionVector())) {
+            if (rotate) {
+                float[] rotations = BlockUtil.calculateRotations(crystal.getPosition().down().add(0, strictDir ? 0.5 : 1, 0), true, true, true); //if strictdir is on, look at the top face of the block below the crystal, if not look at the crystal itself
+                mc.getConnection().sendPacket(new CPacketPlayer.Rotation(rotations[0], rotations[1], mc.player.onGround));
+            }
+            mc.getConnection().sendPacket(new CPacketUseEntity(crystal));
+            if (debug) {
+                Command.sendMessage("Attacked " + crystal.getEntityId() + "At range^2 " + ChatFormatting.WHITE + mc.player.getPositionEyes(1).squareDistanceTo(crystal.getPositionVector()));
+            }
+            if (rotate) {
+                mc.getConnection().sendPacket(new CPacketPlayer.Rotation(mc.player.rotationYaw, mc.player.rotationPitch, mc.player.onGround));
+            }
+        }
     }
 }

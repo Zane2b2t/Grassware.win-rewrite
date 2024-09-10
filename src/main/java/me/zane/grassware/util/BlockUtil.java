@@ -135,15 +135,6 @@ public class BlockUtil implements MC {
         return calculatePosDamage(position.getX() + 0.5, position.getY() + 1.0, position.getZ() + 0.5, entityPlayer);
     }
 
-    public static float calculatePosDamageEx(final BlockPos position, final Vec3d futurePos) {
-        // Calculate the damage based on the position
-        // This is just a placeholder, replace with your actual damage calculation
-        float damage = (float) (position.distanceSqToCenter(futurePos.x, futurePos.y, futurePos.z) / 100.0);
-
-        return damage;
-    }
-
-
     public static void rightClickBlock(BlockPos pos, Vec3d vec, EnumHand hand, EnumFacing direction, boolean packet) {
         if (packet) {
             float f = (float) (vec.x - (double) pos.getX());
@@ -303,18 +294,19 @@ public class BlockUtil implements MC {
         mc.player.rotationPitch = pitch;
     }
 
-    public static float[] calculateRotations(BlockPos pos) {
-        double diffX = pos.getX() + 0.5 - mc.player.posX;
-        double diffY = pos.getY() + (0.5 + 0.49) - (mc.player.posY + mc.player.getEyeHeight());
-        double diffZ = pos.getZ() + 0.5 - mc.player.posZ;
+    public static float[] calculateRotations(BlockPos pos, boolean grim, boolean yawstep, boolean center) {
+        float centerOffset = center ? 0.5f : 0;
+        double diffX = pos.getX() + centerOffset - mc.player.posX;
+        double diffY = pos.getY() + (centerOffset + (grim ? 0.49 : 0)) - (mc.player.posY + mc.player.getEyeHeight());
+        double diffZ = pos.getZ() + centerOffset - mc.player.posZ;
         double dist = Math.sqrt(diffX * diffX + diffZ * diffZ);
 
         float yaw = (float) Math.toDegrees(Math.atan2(diffZ, diffX)) - 90F;
         float pitch = (float) -Math.toDegrees(Math.atan2(diffY, dist));
-
-        yaw += (random.nextFloat() - 0.5f) * 2f;
-        pitch += (random.nextFloat() - 0.5f) * 2f;
-
+        if (yawstep) {
+            yaw += (random.nextFloat() - 0.5f) * 2f;
+            pitch += (random.nextFloat() - 0.5f) * 2f;
+        }
         return new float[]{yaw, pitch};
     }
     public static Vec3d getVectorForRotation(final float[] rotation) {
@@ -325,19 +317,9 @@ public class BlockUtil implements MC {
         return new Vec3d(yawSin * pitchCos, pitchSin, yawCos * pitchCos);
     }
     public static EnumFacing getStrictDirection(BlockPos placedPos, float[] rotations, double placeRange) {
-        double faceX = 0;
-        double faceY = 0;
-        double faceZ = 0;
+//        Vec3d placeVector = BlockUtil.getVectorForRotation(rotations);
 
-        Vec3d placeVector = BlockUtil.getVectorForRotation(rotations);
-
-        RayTraceResult interactVector = mc.world.rayTraceBlocks(
-                mc.player.getPositionEyes(1),
-                mc.player.getPositionEyes(1).add(placeVector.x * placeRange, placeVector.y * placeRange, placeVector.z * placeRange),
-                false, false, true
-        );
-
-        EnumFacing facing = EnumFacing.UP;
+        EnumFacing facing;
             Pair<Double, EnumFacing> closestDirection = new Pair<>(Double.MAX_VALUE, EnumFacing.UP);
 
             float step = 0.05f;
@@ -367,13 +349,6 @@ public class BlockUtil implements MC {
             }
 
             facing = closestDirection.getValue();
-
-
-        if (interactVector != null && interactVector.hitVec != null) {
-            faceX = interactVector.hitVec.x - placedPos.getX();
-            faceY = interactVector.hitVec.y - placedPos.getY();
-            faceZ = interactVector.hitVec.z - placedPos.getZ();
-        }
         return facing;
     }
 

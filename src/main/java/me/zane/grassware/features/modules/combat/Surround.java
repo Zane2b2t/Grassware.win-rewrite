@@ -297,7 +297,7 @@ public class Surround extends Module {
 
             if (rotate.getValue()) {
                 //float[] rots = calcAngle(mc.player.getPositionEyes(1f), new Vec3d(pos.add(0.5, 0.5, 0.5)));
-                float[] rots = BlockUtil.calculateRotations(pos);
+                float[] rots = BlockUtil.calculateRotations(pos, false, false, true);
                 mc.player.connection.sendPacket(new CPacketPlayer.Rotation(rots[0], rots[1], mc.player.onGround));
             }
 
