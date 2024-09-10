@@ -1,5 +1,6 @@
 package me.zane.grassware.features.modules.render;
 //WARNING: ALL CONTENT BELONGS TO https://github.com/Zane2b2t , IF ANY OF THE CLASSES CONTAINING THIS WARNING ARENT IN https://github.com/Zane2b2t/Grassware.win-Rewrite INFORM GITHUB TO DMCA
+import com.mojang.realmsclient.gui.ChatFormatting;
 import me.zane.grassware.GrassWare;
 import me.zane.grassware.event.bus.EventListener;
 import me.zane.grassware.event.events.Render3DEvent;
@@ -7,9 +8,12 @@ import me.zane.grassware.event.events.Render3DPreEvent;
 import me.zane.grassware.event.events.Render3DPrePreEvent;
 import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.features.modules.client.ClickGui;
+import me.zane.grassware.features.setting.impl.FloatSetting;
 import me.zane.grassware.features.setting.impl.IntSetting;
+import me.zane.grassware.features.setting.impl.ModeSetting;
 import me.zane.grassware.manager.EventManager;
 import me.zane.grassware.manager.HoleManager;
+import me.zane.grassware.shader.impl.GradientShader;
 import me.zane.grassware.util.MathUtil;
 import me.zane.grassware.util.RenderUtil;
 
@@ -19,11 +23,14 @@ import net.minecraft.util.math.AxisAlignedBB;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
 
 public class HoleESP extends Module {
     private final IntSetting range = register("Range", 5, 1, 20);
     private final IntSetting speed = register("Speed", 50, 1, 200);
+    private final FloatSetting height = register("Height", 0.0f, 0, 1.0f);
+    private final ModeSetting mode = register("Mode", "Fade", Arrays.asList("Fade", "Gradient"));
     private final ArrayList<Hole> renderHoles = new ArrayList<>();
     private final ICamera camera = new Frustum();
 
@@ -41,7 +48,7 @@ public class HoleESP extends Module {
 
         GrassWare.threadManager.invokeThread(() -> {
             GrassWare.holeManager.loadHoles(range.getValue());
-            invokeInfo(GrassWare.holeManager.time); //modulelist
+            invokeInfo(ChatFormatting.WHITE + "[" + ChatFormatting.RESET + GrassWare.holeManager.time + ChatFormatting.WHITE + "]"); //modulelist
         });
 
         for (HoleManager.HolePos holePos : GrassWare.holeManager.getHoles()) {
@@ -85,18 +92,36 @@ public class HoleESP extends Module {
             if (!camera.isBoundingBoxInFrustum(bb.grow(2.0))) {
                 return;
             }
-            if (holePos.isDouble()) {
-                if (holePos.isWestDouble()) {
-                    RenderUtil.boxShader(bb.minX - 1, bb.minY, bb.minZ, bb.maxX, bb.maxY - 1 + size, bb.maxZ, color);
-                    RenderUtil.renderGradientLine(bb.minX - 1, bb.minY, bb.minZ, bb.maxX, bb.maxY - 1 + size, bb.maxZ, color);
+            if (mode.getValue().equals("Fade")) {
+                if (holePos.isDouble()) {
+                    if (holePos.isWestDouble()) {
+                        RenderUtil.boxShader(bb.minX - 1, bb.minY, bb.minZ, bb.maxX, bb.maxY - 1 + size, bb.maxZ, color);
+                        RenderUtil.renderGradientLine(bb.minX - 1, bb.minY, bb.minZ, bb.maxX, bb.maxY - 1 + size, bb.maxZ, color);
+                    } else {
+                        RenderUtil.boxShader(bb.minX, bb.minY, bb.minZ - 1, bb.maxX, bb.maxY - 1 + size, bb.maxZ, color);
+                        RenderUtil.renderGradientLine(bb.minX, bb.minY, bb.minZ - 1, bb.maxX, bb.maxY - 1 + size, bb.maxZ, color);
+                    }
                 } else {
-                    RenderUtil.boxShader(bb.minX, bb.minY, bb.minZ - 1, bb.maxX, bb.maxY - 1 + size, bb.maxZ, color);
-                    RenderUtil.renderGradientLine(bb.minX, bb.minY, bb.minZ - 1, bb.maxX, bb.maxY - 1 + size, bb.maxZ, color);
+                    RenderUtil.boxShader(bb.minX, bb.minY, bb.minZ, bb.maxX, bb.maxY - 1 + size, bb.maxZ, color);
+                    RenderUtil.renderGradientLine(bb.minX, bb.minY, bb.minZ, bb.maxX, bb.maxY - 1 + size, bb.maxZ, color);
                 }
-            } else {
-                RenderUtil.boxShader(bb.minX, bb.minY, bb.minZ, bb.maxX, bb.maxY - 1 + size, bb.maxZ, color);
-                RenderUtil.renderGradientLine(bb.minX, bb.minY, bb.minZ, bb.maxX, bb.maxY - 1 + size, bb.maxZ, color);
             }
+         else {
+                GradientShader.setup(0.5f);
+                if (holePos.isDouble()) {
+                    if (holePos.isWestDouble()) {
+                        RenderUtil.outlineShader(bb.minX - 1, bb.minY, bb.minZ, bb.minX * (1.0f - size) + bb.maxX * size, bb.minY + height.getValue(), bb.minZ * (1.0f - size) + bb.maxZ * size);
+                        RenderUtil.boxShader(bb.minX - 1, bb.minY, bb.minZ, bb.minX * (1.0f - size) + bb.maxX * size, bb.minY + height.getValue(), bb.minZ * (1.0f - size) + bb.maxZ * size);
+                    } else {
+                        RenderUtil.outlineShader(bb.minX, bb.minY, bb.minZ - 1, bb.minX * (1.0f - size) + bb.maxX * size, bb.minY + height.getValue(), bb.minZ * (1.0f - size) + bb.maxZ * size);
+                        RenderUtil.boxShader(bb.minX, bb.minY, bb.minZ - 1, bb.minX * (1.0f - size) + bb.maxX * size, bb.minY + height.getValue(), bb.minZ * (1.0f - size) + bb.maxZ * size);
+                    }
+                } else {
+                    RenderUtil.outlineShader(bb.minX, bb.minY, bb.minZ, bb.minX * (1.0f - size) + bb.maxX * size, bb.minY + height.getValue(), bb.minZ * (1.0f - size) + bb.maxZ * size);
+                    RenderUtil.boxShader(bb.minX, bb.minY, bb.minZ, bb.minX * (1.0f - size) + bb.maxX * size, bb.minY + height.getValue(), bb.minZ * (1.0f - size) + bb.maxZ * size);
+                }
+            GradientShader.finish();
+        }
         }
     }
 }
