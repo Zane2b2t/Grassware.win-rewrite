@@ -33,7 +33,7 @@ public final class EventBus {
             try {
                 listener.method.invoke(listener.object, event);
             } catch (Exception exception) {
-                exception.printStackTrace();
+
             }
         });
     }

@@ -16,15 +16,10 @@ public class Sprint extends Module {
     public void onTick(final TickEvent event) {
         switch (mode.getValue()) {
             case "Rage":
-                if (mc.player.movementInput.moveForward != 0.0f || mc.player.movementInput.moveStrafe != 0.0f) {
-                    mc.player.setSprinting(true);
-                }
+                mc.player.setSprinting(mc.player.movementInput.moveForward != 0.0f || mc.player.movementInput.moveStrafe != 0.0f);
                 break;
                 case "Legit":
-                    if (mc.player.movementInput.moveForward != 0.0f) {
-                        mc.player.setSprinting(true);
-                    }
-
+                    mc.player.setSprinting(mc.player.movementInput.moveForward != 0.0f);
         }
     }
     @Override
