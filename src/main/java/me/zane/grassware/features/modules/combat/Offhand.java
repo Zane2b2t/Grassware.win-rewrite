@@ -3,9 +3,11 @@ package me.zane.grassware.features.modules.combat;
 import com.mojang.realmsclient.gui.ChatFormatting;
 import me.zane.grassware.event.bus.EventListener;
 import me.zane.grassware.features.modules.Module;
+import me.zane.grassware.features.setting.impl.BooleanSetting;
 import me.zane.grassware.features.setting.impl.FloatSetting;
 import me.zane.grassware.event.events.UpdatePlayerWalkingEvent;
 
+import me.zane.grassware.util.BlockUtil;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.item.Item;
@@ -17,6 +19,8 @@ import java.util.Arrays;
 public class Offhand extends Module {
     private final FloatSetting health = register("Health", 14.0f, 0.0f, 36.0f);
     private final FloatSetting defualtHealthVal = register("DHV", 14.0f, 0.0f, 36.0f);
+    private final BooleanSetting halfInHole = register("HalfInHole", true);
+
 
     @EventListener
     public void onUpdate(final UpdatePlayerWalkingEvent event) {
@@ -41,7 +45,7 @@ public class Offhand extends Module {
         } else {
             health.setValue(defualtHealthVal.getValue());
         }
-        if (mc.player.getHealth() + mc.player.getAbsorptionAmount() <= health.getValue()) {
+        if (mc.player.getHealth() + mc.player.getAbsorptionAmount() <= (BlockUtil.isPlayerSafe(mc.player) && halfInHole.getValue() ? health.getValue() / 2 : health.getValue())) {
             return totem;
         }
         if (mc.player.getHeldItemMainhand().getItem().equals(Items.DIAMOND_SWORD)) {
