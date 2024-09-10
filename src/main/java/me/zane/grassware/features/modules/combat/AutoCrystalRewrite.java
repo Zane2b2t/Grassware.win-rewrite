@@ -60,11 +60,11 @@ public class AutoCrystalRewrite extends Module {
     private final FloatSetting minimumDamage = register("MinDamage", 4.0f, 1.0f, 16.0f).invokeVisibility(z -> page.getValue().equals("Calculations"));
 
     //Place Page
-
     private final FloatSetting placeDelay = register("PlaceDelay", 50.0f, 0.0f, 200.0f).invokeVisibility(z -> page.getValue().equals("Place"));
     private final FloatSetting placeRange = register("PlaceRange", 4.5f, 1.0f, 6.0f).invokeVisibility(z -> page.getValue().equals("Place"));
     private final FloatSetting placeWallRange = register("PlaceWall", 4.5f, 1.0f, 6.0f).invokeVisibility(z -> page.getValue().equals("Place"));
     private final BooleanSetting placeEfficient = register("PlaceEfficient", true).invokeVisibility(z -> page.getValue().equals("Place"));
+    private final BooleanSetting strictDir = register("StrictDir", true).invokeVisibility(z -> page.getValue().equals("Place"));
     private final BooleanSetting antiStuck = register("AntiStuck", false).invokeVisibility(z -> page.getValue().equals("Place"));
 
     //Break Page
@@ -145,7 +145,7 @@ public class AutoCrystalRewrite extends Module {
             if (enumHand != null) {
                 if (rotate.getValue()) //this time in this autocrystal it's rotate place only since we always look on the top of the block anyways (where the crystal is located) and i don't ant to bloat this ac
                     rotating = true;
-                rotations = calculateRotations(pos);
+                rotations = calculateRotations(pos, true, true, true);
                 if (debugRotations.getValue())
                     setPlayerRotations(rotations[0], rotations[1]);
 
@@ -314,7 +314,7 @@ public void onPacketReceive(PacketEvent.Receive event) {
             breakMap.put(crystal.getEntityId(), System.currentTimeMillis());
         } catch (Exception ignored) {
         }
-        if (mode.getValue().equals("Sequential") && lastPos != null && lastPos == placedPos || (mode.getValue().equals("Sequential")) && lastPos != null && lastPos == currentPos) {
+        if (bongo.getValue() && lastPos != null && lastPos == placedPos || (mode.getValue().equals("Sequential")) && lastPos != null && lastPos == currentPos) {
             mc.getConnection().sendPacket(new CPacketPlayerTryUseItemOnBlock(lastPos, EnumFacing.UP, enumHand, 0.5f, 0.5f, 0.5f));
         }
     }
@@ -451,36 +451,6 @@ public void onPacketReceive(PacketEvent.Receive event) {
                     if (mc.player.getPosition().add(0, mc.player.eyeHeight, 0).distanceSq(pos) > placeRange.getValue() * placeRange.getValue()) {
                         return false;
                     }
-                    //antistuck rebreak, if a crystal existed for half the amount of antistuckticks and rebreakstuck setting is on, attempt to un-stuck the crystal by rebreaking it once.
-                    List<EntityEnderCrystal> crystals = mc.world.getEntitiesWithinAABB(EntityEnderCrystal.class, new AxisAlignedBB(pos.add(-1, 0, -1), pos.add(2, 3, 2)));
-                    for (EntityEnderCrystal crystal : crystals) {
-                        BlockPos crystalPos = new BlockPos(crystal.posX, crystal.posY - 1, crystal.posZ);
-                        if (crystalPos.equals(pos)) {
-                            if (crystal.ticksExisted >= antiStuckTicks.getValue() / 2 && rebreakStuck.getValue()) {
-                                int crystalId = crystal.getEntityId();
-                                if (!attackedCrystalIds.contains(crystalId)) {
-                                    mc.playerController.attackEntity(mc.player, crystal);
-                                    attackedCrystalIds.add(crystalId);
-                                    Command.sendMessage("Atacked" + crystalId);
-                                }
-                            }
-                        }
-                    }
-                    //antistuck replace, if a crystal has existed on the pos for more than antistuckticks then the ac will chose a different pos
-                    if (antiStuck.getValue()) {
-                        for (EntityEnderCrystal crystal : crystals) {
-                            BlockPos crystalPos = new BlockPos(crystal.posX, crystal.posY - 1, crystal.posZ);
-                            if (crystalPos.equals(pos)) {
-                                if (crystal.ticksExisted > antiStuckTicks.getValue()) {
-                                    return false;
-                                }
-
-                            } else {
-                                //TODO : if position hasn't changed for 1 second and it still doesn't have a crystal. skip
-                                return false;
-                            }
-                        }
-                    }
 
                     //checks if player hitboxes are blocking the pos
                     if (!mc.world.getEntitiesWithinAABB(EntityPlayer.class, new AxisAlignedBB(pos.add(0.5, 1.0, 0.5))).isEmpty()) {
@@ -511,6 +481,30 @@ public void onPacketReceive(PacketEvent.Receive event) {
 
                     if (selfDamage > mc.player.getHealth() + mc.player.getAbsorptionAmount()) {
                         return false;
+                    }
+
+                    //antistuck rebreak, if a crystal existed for half the amount of antistuckticks and rebreakstuck setting is on, attempt to un-stuck the crystal by rebreaking it once.
+                    List<EntityEnderCrystal> crystals = mc.world.getEntitiesWithinAABB(EntityEnderCrystal.class,
+                            new AxisAlignedBB(pos.add(-1, 0, -1), pos.add(2, 3, 2)));
+                    for (EntityEnderCrystal crystal : crystals) {
+                        if (crystal.ticksExisted >= antiStuckTicks.getValue() / 2 && rebreakStuck.getValue()) {
+                            int crystalId = crystal.getEntityId();
+                            if (!attackedCrystalIds.contains(crystalId)) {
+                                EntityUtil.breakCrystal(crystal, rotating, true, strictDir.getValue(), breakRange(crystal));
+                                handleSetDead(crystal);
+                                handleFastRemove(crystal);
+                                attackedCrystalIds.add(crystalId);
+                            }
+                        }
+                    }
+                    //antistuck replace, if a crystal has existed on the pos for more than antistuckticks then the ac will chose a different pos
+
+                    if (antiStuck.getValue()) {
+                        for (EntityEnderCrystal crystal : crystals) {
+                            if (crystal.ticksExisted > antiStuckTicks.getValue()) {
+                                return false;
+                            }
+                        }
                     }
 
                     return true;
@@ -544,7 +538,7 @@ public void onPacketReceive(PacketEvent.Receive event) {
     public void onRender3D(final Render3DEvent event) {
         BlockPos renderPos = (placedPos != null) ? placedPos : lastPos;
         if (renderPos != null && mc.player.getHeldItemOffhand().getItem().equals(Items.END_CRYSTAL) || mc.player.getHeldItemMainhand().getItem().equals(Items.END_CRYSTAL)) {
-            float newOpacity = (placedPos != null) ? defualtOpacityVal.getValue() : MathUtil.lerp(opacity.getValue(), 0f, 0.01f); //This code is too cramped in for me to comment out thanks to MrBubbleGum. thanks for improving tho
+            float newOpacity = (placedPos != null) ? defualtOpacityVal.getValue() : MathUtil.lerp(opacity.getValue(), 0.0f, 0.01f); //This code is too cramped in for me to comment out thanks to MrBubbleGum. thanks for improving tho
             opacity.setValue(Math.max(newOpacity, 0.0f)); // Ensure opacity doesn't go below 0
             GradientShader.setup(opacity.getValue());
             RenderUtil.boxShader(renderPos);

@@ -4,7 +4,6 @@ import com.mojang.realmsclient.gui.ChatFormatting;
 import me.zane.grassware.event.bus.EventListener;
 import me.zane.grassware.event.events.MotionUpdateEvent;
 import me.zane.grassware.event.events.Render3DPreEvent;
-import me.zane.grassware.event.events.Render3DPrePreEvent;
 import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.features.modules.client.ClickGui;
 import me.zane.grassware.features.setting.impl.BooleanSetting;
@@ -17,6 +16,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.network.play.client.CPacketUseEntity;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
 import java.awt.*;
@@ -29,7 +29,7 @@ import static org.lwjgl.opengl.GL11.*;
 public class Aura extends Module {
 
     private final ModeSetting delayMode = register("Default", "Default", Arrays.asList("Default", "Custom"));
-    private final IntSetting delay = register("Delay", 650, 1,800);
+    private final IntSetting delay = register("Delay", 580, 1,800);
     private final BooleanSetting render = register("Render", true);
     private final BooleanSetting rotate = register("Rotate", true);
     private final BooleanSetting debugRotations = register("DebugRotations", true);
@@ -81,25 +81,6 @@ public class Aura extends Module {
         glDisable(GL_BLEND);
         glPopMatrix();
     }
-    if (delayMode.getValue().equals("Default")) {
-        if (!timer.passedMs(600)) {
-            return;
-        }
-    }
-    else if (delayMode.getValue().equals("Custom")) {
-        if (!timer.passedMs(delay.getValue())) {
-            return;
-        }
-    }
-    if (rotate.getValue())
-        rotating = true;
-        rotations = calculateRotations(entityPlayer.getPosition().add(0.5, 0, 0.5)); //-0.49 bcs im lazy to add a grim boolean to the calcrotaions method
-        if (debugRotations.getValue())
-            setPlayerRotations(rotations[0], rotations[1]);
-
-        mc.player.connection.sendPacket(new CPacketUseEntity(entityPlayer));
-        mc.player.swingArm(EnumHand.MAIN_HAND);
-        timer.sync();
     }
 
     @EventListener
@@ -109,15 +90,38 @@ public class Aura extends Module {
         if (!AutoCrystal.Instance.rotateMode.getValue().equals("None") && AutoCrystal.Instance.placedPos != null) return; //shit used to work but noww idk
         if (AutoCrystalRewrite.Instance.rotate.getValue() || AutoCrystalRewrite.Instance.placedPos != null) return;
         if (!mc.player.getHeldItemMainhand().getItem().equals(Items.DIAMOND_SWORD)) return;
+
+        if (rotate.getValue())
+            rotating = AutoCrystal.Instance.placedPos == null; //mmm. still rotating even when ac is active
+        rotations = calculateRotations(entityPlayer.getPosition(), true, false, false); //-0.49 bcs im lazy to add a grim boolean to the calcrotaions method
+        if (debugRotations.getValue() && rotating)
+            setPlayerRotations(rotations[0], rotations[1]);
+
         if (rotating) {
             event.setYaw(rotations[0]);
             event.setPitch(rotations[1]);
         }
+        if (delayMode.getValue().equals("Default")) {
+            if (!timer.passedMs(600)) {
+                return;
+            }
+        }
+        else if (delayMode.getValue().equals("Custom")) {
+            if (!timer.passedMs(delay.getValue())) {
+                return;
+            }
+        }
+
+        mc.player.connection.sendPacket(new CPacketUseEntity(entityPlayer));
+        mc.player.swingArm(EnumHand.MAIN_HAND);
+        timer.sync();
     }
 
     @Override
     public String getInfo() {
-        final EntityPlayer entityPlayer = EntityUtil.entityPlayer(this.Range.getValue());
+        EntityPlayer entityPlayer = EntityUtil.entityPlayer(this.Range.getValue());
+        if (!mc.player.getHeldItemMainhand().getItem().equals(Items.DIAMOND_SWORD))
+            entityPlayer = null;
         if (entityPlayer == null) return "";
         return " [" + ChatFormatting.WHITE + entityPlayer.getName() + ChatFormatting.RESET + "]";
     }
