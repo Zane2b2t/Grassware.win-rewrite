@@ -20,7 +20,7 @@ void main() {
         distance2 = sin(distance2 / step + sin(gl_FragCoord.x / step)) * 0.5 + 0.5;
         distance3 = sin(distance3 / step + sin(gl_FragCoord.y / step + gl_FragCoord.x / step)) * 0.5 + 0.5;
 
-        float ripple = sin(distance * 10 + step * 1000) * 0.05;
+        float ripple = sin(distance * 10 + step * 10000) * 0.05;
         float swirl = cos((gl_FragCoord.x - 960.0) * 0.05 + (gl_FragCoord.y - 540.0) * 0.05 + step) * 0.05;
 
         distance += ripple + swirl;

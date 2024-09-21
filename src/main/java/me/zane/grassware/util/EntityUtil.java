@@ -7,8 +7,12 @@ import me.zane.grassware.features.command.Command;
 import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
+import net.minecraft.init.Items;
 import net.minecraft.network.play.client.CPacketPlayer;
+import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock;
 import net.minecraft.network.play.client.CPacketUseEntity;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -20,6 +24,9 @@ import java.util.Objects;
 import java.util.TreeMap;
 
 public class EntityUtil implements MC {
+    public static EnumHand enumHand;
+    private static final float OFFSET = 0.5f;
+
     public static EntityOtherPlayerMP setupEntity(EntityPlayer entityPlayer, Vec3d vec) { //maybe for PopESP?
         EntityOtherPlayerMP entityOtherPlayerMP1 = new EntityOtherPlayerMP(mc.world, entityPlayer.getGameProfile());
         entityOtherPlayerMP1.copyLocationAndAnglesFrom(entityPlayer);
@@ -107,4 +114,22 @@ public class EntityUtil implements MC {
             }
         }
     }
+    public static void placeCrystal(BlockPos pos, boolean rotate, boolean debug, boolean strictDir, float range) {
+            float[] rotations = BlockUtil.calculateRotations(pos, true, true, true); //if strictdir is on, look at the top face of the block below the crystal, if not look at the crystal itself
+            EnumFacing facing = BlockUtil.getStrictDirection(pos, rotations, range);
+
+            if (rotate) {
+                mc.getConnection().sendPacket(new CPacketPlayer.Rotation(rotations[0], rotations[1], mc.player.onGround));
+            }
+
+            (mc.getConnection()).sendPacket(new CPacketPlayerTryUseItemOnBlock(pos, strictDir ? facing : EnumFacing.UP, mc.player.getHeldItemMainhand().getItem() == Items.END_CRYSTAL ? EnumHand.MAIN_HAND : EnumHand.OFF_HAND, OFFSET, OFFSET, OFFSET));
+
+            if (debug) {
+                Command.sendMessage(ChatFormatting.WHITE + "sent place packet at " + pos);
+            }
+            if (rotate) {
+                mc.getConnection().sendPacket(new CPacketPlayer.Rotation(mc.player.rotationYaw, mc.player.rotationPitch, mc.player.onGround));
+            }
+        }
+
 }

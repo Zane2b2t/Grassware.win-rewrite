@@ -22,6 +22,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.item.ItemFood;
 import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock;
 import net.minecraft.network.play.client.CPacketUseEntity;
 import net.minecraft.network.play.server.SPacketDestroyEntities;
@@ -58,6 +59,7 @@ public class AutoCrystal extends Module {
     private final FloatSetting minimumDamage = register("Minimum Damage", 6.0f, 0.1f, 12.0f);
     private final FloatSetting facePlaceHP = register("FacePlaceHP", 6.0f, 0.1f, 12.0f);
     private final FloatSetting maximumDamage = register("Maximum Damage", 8.0f, 0.1f, 12.0f);
+    private final BooleanSetting whileEating = register("WhileEating", true);
     private final BooleanSetting waitForBreak = register("WaitForBreak", false);
     private final BooleanSetting debugRotations = register("DebugRotations", false);
     private final BooleanSetting antiStuck = register("AntiStuck", false);
@@ -80,6 +82,8 @@ public class AutoCrystal extends Module {
     private final BooleanSetting instantExplode = register("InstantBreak", false); //dev setting
     private final BooleanSetting breakMop = register("breakMap", false); //dev setting
     private final BooleanSetting bongo = register("bongo", false);
+    private final BooleanSetting placeInhibit = register("placeInhibit", false);
+    private final BooleanSetting newP = register("New", false);
     private final BooleanSetting second = register("Second", false);
     private final BooleanSetting predict = register("Predict", false);
     private final BooleanSetting strictDir = register("StrictDirection", false);
@@ -162,15 +166,16 @@ public class AutoCrystal extends Module {
             rotating = false;
             return;
         }
-        if (rebreakStuck.getValue()) {
-            List<EntityEnderCrystal> crystals = mc.world.getEntitiesWithinAABB(EntityEnderCrystal.class,
-                    new AxisAlignedBB(pos.add(-1, 0, -1), pos.add(2, 3, 2)));
-            for (EntityEnderCrystal crystal : crystals) {
-                if (crystal.getPosition().down().equals(pos)
-                        && attackedCrystalIds.contains(crystal.getEntityId()) && crystals.contains(crystal)
-                        && crystal.ticksExisted >= antiStuckTicks.getValue() / 1.47) {
-                    EntityUtil.breakCrystal(crystal, rotating, false, strictDir.getValue(), breakRange(crystal));
-                }
+        for (EntityEnderCrystal crystal : crystals) {
+            if (crystal.getPosition().down().equals(pos)
+                    && rebreakStuck.getValue()
+                    && attackedCrystalIds.contains(crystal.getEntityId()) && crystals.contains(crystal)
+                    && crystal.ticksExisted >= antiStuckTicks.getValue() / 1.47) {
+                EntityUtil.breakCrystal(crystal, rotating, false, strictDir.getValue(), breakRange(crystal));
+            }
+
+            if (crystal.getPosition().down().equals(pos) && placeInhibit.getValue()) {
+                continue; //need to fix the logic
             }
         }
         if (waitForBreak.getValue() && !hasBroken) {
@@ -226,7 +231,7 @@ public class AutoCrystal extends Module {
             if (rotateMode.getValue().equals("PlaceBreak") || rotateMode.getValue().equals("Break")) {
                 if (hasPlaced)
                     rotating = true;
-                rotations = calculateRotations(entityEnderCrystal.getPosition().down().add(0, 0.5, 0), true, true, true);
+                rotations = calculateRotations(entityEnderCrystal.getPosition().down().add(0, entityEnderCrystal.posY - mc.player.posY >= 3 ? 1.0f : 0.5f, 0), true, true, true);
                 if (debugRotations.getValue())
                     setPlayerRotations(rotations[0], rotations[1]);
             }
@@ -255,7 +260,9 @@ public class AutoCrystal extends Module {
             SPacketSpawnObject packet = event.getPacket();
             if (packet.getType() != 51 || !(mc.world.getEntityByID(packet.getEntityID()) instanceof EntityEnderCrystal))
                 return;
-
+            if (mc.player.getHeldItemMainhand().getItem() instanceof ItemFood && mc.gameSettings.keyBindUseItem.pressed && !whileEating.getValue()) {
+                return;
+            }
             EntityEnderCrystal crystal = (EntityEnderCrystal) mc.world.getEntityByID(packet.getEntityID());
             if (crystal == null)
                 return;
@@ -281,7 +288,9 @@ public class AutoCrystal extends Module {
             rotating = rotateMode.getValue().equals("PlaceBreak") || rotateMode.getValue().equals("Break") || rotateMode.getValue().equals("Place");
 
             if (hasPlaced)
-                rotations = calculateRotations(crystal.getPosition().add(0, -0.5, 0), true, true, true);
+                rotations = calculateRotations(crystal.getPosition().down().add(0, crystal.posY - mc.player.posY >= 3 ? 1.0f : 0.5f, 0), true, true, true);
+
+            //rotations = calculateRotations(crystal.getPosition().add(0, -0.5, 0), true, true, true);
              if (debugRotations.getValue())
                 setPlayerRotations(rotations[0], rotations[1]);
 
@@ -437,6 +446,9 @@ public class AutoCrystal extends Module {
             if (packet.getType() != 51) {
                 return;
             }
+            if (mc.player.getHeldItemMainhand().getItem() instanceof ItemFood && mc.gameSettings.keyBindUseItem.pressed && !whileEating.getValue()) {
+                return;
+            }
             hasBroken = false;
             EntityEnderCrystal crystal = new EntityEnderCrystal(AutoCrystal.mc.world, packet.getX(), packet.getY(), packet.getZ());
             if (mc.player.getPositionEyes(1).squareDistanceTo(crystal.getPositionVector()) > breakRange(crystal) * breakRange(crystal)) return;
@@ -444,7 +456,14 @@ public class AutoCrystal extends Module {
             if (rotateMode.getValue().equals("PlaceBreak") || rotateMode.getValue().equals("Break")) {
                 if (hasPlaced)
                     rotating = true;
-                rotations = calculateRotations(crystal.getPosition().down().add(0, 0.5, 0), true, true, true);
+                rotations = calculateRotations(crystal.getPosition().down().add(0, crystal.posY - mc.player.posY >= 3 ? 1.0f : 0.5f, 0), true, true, true); //me explain this only once
+                //center is true. pos is centered
+                //grim is true. pos is now at the top face of the block (adds 0.49 to the Y)
+                //now what we get is aim on top of the block.
+                //if the Y difference between our and the crystal's position is 3 or more. we rotate to the crystal itself because a block might be blocking the crystal hitbox. however this issue still remains
+
+
+//                rotations = calculateRotations(crystal.getPosition().down().add(0, 0.5, 0), true, true, true);
                 if (debugRotations.getValue())
                     setPlayerRotations(rotations[0], rotations[1]);
             }
@@ -465,7 +484,7 @@ public class AutoCrystal extends Module {
 
     @EventListener
     public void onMotionUpdate(MotionUpdateEvent event) {
-        if (rotating && placedPos != null) {
+        if (rotating && placedPos != null && !newP.getValue()) {
             event.setYaw(rotations[0]);
             event.setPitch(rotations[1]);
         }
@@ -611,7 +630,9 @@ public class AutoCrystal extends Module {
                     if (fireBreaker.getValue() && mc.world.getBlockState(pos.up()).getBlock() instanceof BlockFire) {
                         attackFire(pos);
                     }
-
+                    if (mc.player.getHeldItemMainhand().getItem() instanceof ItemFood && mc.gameSettings.keyBindUseItem.pressed && !whileEating.getValue()) {
+                        return false;
+                    }
                     if (second.getValue())
                         if (!BlockUtil.canPlaceCrystal(pos, true)) return false;
 
@@ -663,11 +684,13 @@ public class AutoCrystal extends Module {
                     List<EntityEnderCrystal> crystals = mc.world.getEntitiesWithinAABB(EntityEnderCrystal.class,
                             new AxisAlignedBB(pos.add(-1, 0, -1), pos.add(2, 3, 2)));
                     for (EntityEnderCrystal crystal : crystals) {
+
                         if (crystal.ticksExisted >= antiStuckTicks.getValue() / 2 && rebreakStuck.getValue()) {
                             int crystalId = crystal.getEntityId();
                             if (!attackedCrystalIds.contains(crystalId)) {
                                 //mc.playerController.attackEntity(mc.player, crystal);
                                 EntityUtil.breakCrystal(crystal, rotating, false, strictDir.getValue(), breakRange(crystal));
+                                swingHand();
                                 handleSetDead(crystal);
                                 handleFastRemove(crystal);
                                 attackedCrystalIds.add(crystalId);
@@ -701,7 +724,7 @@ public class AutoCrystal extends Module {
                 return;
             final double distance = mc.player.getPositionEyes(1).squareDistanceTo(entityPlayer.getPositionVector());
             if (distance <= range * range && !GrassWare.friendManager.isFriend(entityPlayer.getName())) {
-                float enemyDamage = BlockUtil.calculatePosDamage(entityPlayer.getPosition().add(entityPlayer.motionX * mc.getConnection().getPlayerInfo(mc.player.getName()).getResponseTime() / 2, entityPlayer.motionY * mc.getConnection().getPlayerInfo(mc.player.getName()).getResponseTime() / 2, entityPlayer.motionZ * mc.getConnection().getPlayerInfo(mc.player.getName()).getResponseTime() / 2), entityPlayer);
+                float enemyDamage = BlockUtil.calculatePosDamage(entityPlayer.getPosition(), entityPlayer);
                 map.put(enemyDamage, entityPlayer);
             }
         });
@@ -714,7 +737,11 @@ public class AutoCrystal extends Module {
     @Override
     public String getInfo() {
         if (placedPos != null) {
-            return " [" + ChatFormatting.WHITE + target(targetRange.getValue()).getName() + ChatFormatting.RESET + "]";
+            return " [" + ChatFormatting.WHITE + target(targetRange.getValue()).getName() + ", " + ChatFormatting.RED +
+                    mc.player.getPositionEyes(1).squareDistanceTo(target(targetRange.getValue()).getPositionVector()) + ChatFormatting.WHITE + ", " + ChatFormatting.DARK_RED +
+                    mc.player.getDistanceSq(target(targetRange.getValue())) +
+                    ChatFormatting.WHITE + ", " + ChatFormatting.BLUE + target(targetRange.getValue()).getDistance(placedPos.getX(), placedPos.getY(), placedPos.getZ())
+                    + ChatFormatting.RESET + "]";
         } else {
             return " [" + ChatFormatting.WHITE + "Idle" + ChatFormatting.RESET + "]";
         }
