@@ -4,8 +4,8 @@ import me.zane.grassware.GrassWare;
 import me.zane.grassware.event.bus.EventListener;
 import me.zane.grassware.event.events.NameplateEvent;
 import me.zane.grassware.event.events.Render3DEvent;
-import me.zane.grassware.event.events.Render3DPreEvent;
 import me.zane.grassware.features.modules.Module;
+import me.zane.grassware.features.setting.impl.BooleanSetting;
 import me.zane.grassware.features.setting.impl.FloatSetting;
 import me.zane.grassware.shader.impl.GradientShader;
 import me.zane.grassware.util.MathUtil;
@@ -23,6 +23,7 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class NameTags extends Module {
     private final FloatSetting scale = register("Scale", 1.5f, 0.1f, 10.0f);
+    private final BooleanSetting dynamic = register("Dynamic", false);
 
     @EventListener
     public void onNameplate(final NameplateEvent event) {
@@ -44,9 +45,9 @@ public class NameTags extends Module {
             glRotatef(-mc.getRenderManager().playerViewY, 0.0f, 1.0f, 0.0f);
             glRotatef((mc.getRenderManager().options.thirdPersonView == 2 ? -1 : 1) * mc.getRenderManager().playerViewX, 1.0f, 0.0f, 0.0f);
 
-           // double distance = ((mc.getRenderViewEntity() == null) ? mc.player : mc.getRenderViewEntity()).getDistance(vec.x + mc.getRenderManager().viewerPosX, vec.y + mc.getRenderManager().viewerPosY, vec.z + mc.getRenderManager().viewerPosZ);
-            double scale = 0.0018 + scaleVal * 6; //fix dumb scaling by replacing * distance with * 6, so it's static
-
+            double distance = ((mc.getRenderViewEntity() == null) ? mc.player : mc.getRenderViewEntity()).getDistance(vec.x + mc.getRenderManager().viewerPosX, vec.y + mc.getRenderManager().viewerPosY, vec.z + mc.getRenderManager().viewerPosZ);
+            double factor = dynamic.getValue() ? distance : 6;
+            double scale = 0.0018 + scaleVal * factor;
             glScaled(-scale, -scale, scale);
             glDisable(GL_DEPTH_TEST);
 

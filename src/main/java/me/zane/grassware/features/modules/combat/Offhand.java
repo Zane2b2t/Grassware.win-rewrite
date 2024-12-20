@@ -2,12 +2,15 @@ package me.zane.grassware.features.modules.combat;
 //WARNING: ALL CONTENT BELONGS TO https://github.com/Zane2b2t , IF ANY OF THE CLASSES CONTAINING THIS WARNING ARENT IN https://github.com/Zane2b2t/Grassware.win-Rewrite INFORM GITHUB TO DMCA
 import com.mojang.realmsclient.gui.ChatFormatting;
 import me.zane.grassware.event.bus.EventListener;
+import me.zane.grassware.features.command.Command;
 import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.features.setting.impl.BooleanSetting;
 import me.zane.grassware.features.setting.impl.FloatSetting;
 import me.zane.grassware.event.events.UpdatePlayerWalkingEvent;
 
 import me.zane.grassware.util.BlockUtil;
+import me.zane.grassware.util.EntityUtil;
+import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.item.Item;
@@ -20,7 +23,9 @@ public class Offhand extends Module {
     private final FloatSetting health = register("Health", 14.0f, 0.0f, 36.0f);
     private final FloatSetting defualtHealthVal = register("DHV", 14.0f, 0.0f, 36.0f);
     private final BooleanSetting halfInHole = register("HalfInHole", true);
-
+    private final BooleanSetting lethaCheck = register("Lethal", true);
+    private final BooleanSetting debug = register("Debug", true);
+    float selfDamage;
 
     @EventListener
     public void onUpdate(final UpdatePlayerWalkingEvent event) {
@@ -47,6 +52,10 @@ public class Offhand extends Module {
         }
         if (mc.player.getHealth() + mc.player.getAbsorptionAmount() <= (BlockUtil.isPlayerSafe(mc.player) && halfInHole.getValue() ? health.getValue() / 2 : health.getValue())) {
             return totem;
+        }
+        if (isLetheal() && lethaCheck.getValue()) {
+            Command.sendMessage(ChatFormatting.WHITE + "Lethal, selfDamage:" + selfDamage + " currentHealth:" + EntityUtil.getHealth(mc.player) + " healthCfg:" + health.getValue());
+            return totem; //i love untested code :heart:
         }
         if (mc.player.getHeldItemMainhand().getItem().equals(Items.DIAMOND_SWORD)) {
             if (mc.gameSettings.keyBindUseItem.isKeyDown()) {
@@ -88,7 +97,13 @@ public class Offhand extends Module {
         }
         return itemSlot;
     }
-
+    private boolean isLetheal() {
+        mc.world.loadedEntityList.stream().filter(entity -> entity instanceof EntityEnderCrystal
+                && !(mc.player.getDistanceSq(entity) > 36)).map(entity -> (EntityEnderCrystal) entity).forEach(entityEnderCrystal -> { //get all crystals within 6 block radius
+             selfDamage = BlockUtil.calculateEntityDamage(entityEnderCrystal, mc.player);
+    });
+        return selfDamage > health.getValue(); //true if self damage is more than health setting
+    }
 
     @Override
     public String getInfo() {

@@ -5,6 +5,7 @@
     "description": "Prefix is !",
     "version": "v1.0",
     "mcversion": "1.12.2",
+    "mixins": "mixins.grassware.json",
     "logoFile": "grassware.png",
     "url": "https://discord.gg/JdYGZntM48",
     "updateUrl": "",
