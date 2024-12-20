@@ -53,8 +53,10 @@ public class Offhand extends Module {
         if (mc.player.getHealth() + mc.player.getAbsorptionAmount() <= (BlockUtil.isPlayerSafe(mc.player) && halfInHole.getValue() ? health.getValue() / 2 : health.getValue())) {
             return totem;
         }
-        if (isLetheal() && lethaCheck.getValue()) {
-            Command.sendMessage(ChatFormatting.WHITE + "Lethal, selfDamage:" + selfDamage + " currentHealth:" + EntityUtil.getHealth(mc.player) + " healthCfg:" + health.getValue());
+        if (isLetheal() && lethaCheck.getValue() && totem != -1) { //if a crystal is lethal, and we have totem inventory and the lethal setting is enabled. (this is nbot in order i cba)
+            if (debug.getValue()) {
+                Command.sendMessage(ChatFormatting.WHITE + "Lethal, selfDamage:" + selfDamage + " currentHealth:" + EntityUtil.getHealth(mc.player) + " healthCfg:" + health.getValue());
+            }
             return totem; //i love untested code :heart:
         }
         if (mc.player.getHeldItemMainhand().getItem().equals(Items.DIAMOND_SWORD)) {
@@ -102,7 +104,7 @@ public class Offhand extends Module {
                 && !(mc.player.getDistanceSq(entity) > 36)).map(entity -> (EntityEnderCrystal) entity).forEach(entityEnderCrystal -> { //get all crystals within 6 block radius
              selfDamage = BlockUtil.calculateEntityDamage(entityEnderCrystal, mc.player);
     });
-        return selfDamage > health.getValue(); //true if self damage is more than health setting
+        return selfDamage > EntityUtil.getHealth(mc.player); //true if self damage is more than player's health
     }
 
     @Override
