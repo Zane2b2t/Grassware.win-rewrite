@@ -109,6 +109,7 @@ public class AutoCrystal extends Module {
     private static final float OFFSET = 0.5f;
     public static AutoCrystal Instance = new AutoCrystal();
     private final Set<Integer> attackedCrystalIds = new HashSet<>(); //this only used for stuck crystals. not inhibit
+    private long lastCalculationTime = 0;
     @Override
     public void onDisable() {
         crystals.clear();
@@ -264,7 +265,7 @@ public class AutoCrystal extends Module {
                 return;
             }
             EntityEnderCrystal crystal = (EntityEnderCrystal) mc.world.getEntityByID(packet.getEntityID());
-            if (crystal == null)
+            if (crystal == null || crystals.contains(crystal) && inhibit.getValue())
                 return;
             if (mc.player.getPositionEyes(1).squareDistanceTo(crystal.getPositionVector()) > breakRange(crystal) * breakRange(crystal)) return;
 
@@ -295,9 +296,7 @@ public class AutoCrystal extends Module {
                 setPlayerRotations(rotations[0], rotations[1]);
 
 
-
-            (mc.getConnection()).sendPacket(new CPacketUseEntity(crystal));
-            if (predict.getValue() && !crystals.contains(crystal)) {
+            if (predict.getValue()) {
                 if (await.getValue() && !hasPlaced) {
                     return;
                 }
@@ -308,6 +307,9 @@ public class AutoCrystal extends Module {
                 mc.getConnection().sendPacket(packetUseEntity);
                 crystals.add(crystal);
                 handleFastRemove(crystal);
+            }
+            if (!crystals.contains(crystal) && inhibit.getValue()) {
+                (mc.getConnection()).sendPacket(new CPacketUseEntity(crystal));
             }
             swingHand();
             hasBroken = true;
@@ -451,6 +453,7 @@ public class AutoCrystal extends Module {
             }
             hasBroken = false;
             EntityEnderCrystal crystal = new EntityEnderCrystal(AutoCrystal.mc.world, packet.getX(), packet.getY(), packet.getZ());
+            if (crystals.contains(crystal) && inhibit.getValue()) return;
             if (mc.player.getPositionEyes(1).squareDistanceTo(crystal.getPositionVector()) > breakRange(crystal) * breakRange(crystal)) return;
 
             if (rotateMode.getValue().equals("PlaceBreak") || rotateMode.getValue().equals("Break")) {
@@ -625,7 +628,9 @@ public class AutoCrystal extends Module {
 
     //TODO: somehow optimize this or make code look better
     private BlockPos pos(final EntityPlayer entityPlayer) {
-        return BlockUtil.getBlocksInRadius(targetRange.getValue()).stream()
+        long startTime = System.currentTimeMillis(); // for latency calc
+
+        BlockPos result = BlockUtil.getBlocksInRadius(targetRange.getValue()).stream()
                 .filter(pos -> {
                     if (fireBreaker.getValue() && mc.world.getBlockState(pos.up()).getBlock() instanceof BlockFire) {
                         attackFire(pos);
@@ -715,6 +720,10 @@ public class AutoCrystal extends Module {
                     return enemyDamage - selfDamage;
                 }))
                 .orElse(null);
+
+        lastCalculationTime = System.currentTimeMillis() - startTime;
+
+        return result;
     }
 
     private EntityPlayer target(final float range) {
@@ -734,16 +743,29 @@ public class AutoCrystal extends Module {
         return null;
     }
 
+
     @Override
     public String getInfo() {
         if (placedPos != null) {
-            return " [" + ChatFormatting.WHITE + target(targetRange.getValue()).getName() + ", " + ChatFormatting.RED +
-                    mc.player.getPositionEyes(1).squareDistanceTo(target(targetRange.getValue()).getPositionVector()) + ChatFormatting.WHITE + ", " + ChatFormatting.DARK_RED +
-                    mc.player.getDistanceSq(target(targetRange.getValue())) +
-                    ChatFormatting.WHITE + ", " + ChatFormatting.BLUE + target(targetRange.getValue()).getDistance(placedPos.getX(), placedPos.getY(), placedPos.getZ())
-                    + ChatFormatting.RESET + "]";
+            EntityPlayer targetPlayer = target(targetRange.getValue());
+            if (targetPlayer == null) {
+                return " [" + ChatFormatting.WHITE + "No Target" + ChatFormatting.RESET + "]";
+            }
+
+            return " [" + ChatFormatting.WHITE + targetPlayer.getName() + ", " +
+                    ChatFormatting.RED + String.format("%.1f", mc.player.getPositionEyes(1).squareDistanceTo(targetPlayer.getPositionVector())) +
+                    ChatFormatting.WHITE + ", " +
+                    ChatFormatting.DARK_RED + String.format("%.1f", mc.player.getDistanceSq(targetPlayer)) +
+                    ChatFormatting.WHITE + ", " +
+                    ChatFormatting.BLUE + String.format("%.1f", targetPlayer.getDistance(placedPos.getX(), placedPos.getY(), placedPos.getZ())) +
+                    ChatFormatting.WHITE + ", Calc: " +
+                    ChatFormatting.GREEN + lastCalculationTime + "ms" +
+                    ChatFormatting.RESET + "]";
         } else {
-            return " [" + ChatFormatting.WHITE + "Idle" + ChatFormatting.RESET + "]";
+            return " [" + ChatFormatting.WHITE + "Idle" +
+                    ChatFormatting.WHITE + ", Calc: " +
+                    ChatFormatting.GREEN + lastCalculationTime + "ms" +
+                    ChatFormatting.RESET + "]";
         }
     }
 }
