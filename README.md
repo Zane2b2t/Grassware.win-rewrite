@@ -15,6 +15,8 @@
 
 Grassware.win is a private Minecraft Utility Mod for anarchy-related servers such as 2b2t, 2b2tau and 8b8t.<br>
 This project was made for the popular group, Grassers. Hence the name Grassware.win
+Here is Grassers discord: https://discord.gg/wcbqpPrMh3
+it's dead but all memories are archived if you want to check the history
 
 #### Grassware.win Contributors
 
