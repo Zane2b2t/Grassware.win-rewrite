@@ -4,6 +4,7 @@ import me.zane.grassware.event.bus.EventListener;
 import me.zane.grassware.event.events.PacketEvent;
 import me.zane.grassware.event.events.UpdatePlayerWalkingEvent;
 import me.zane.grassware.features.modules.Module;
+import me.zane.grassware.features.modules.client.ClickGui;
 import me.zane.grassware.features.setting.impl.BooleanSetting;
 import me.zane.grassware.features.setting.impl.IntSetting;
 import me.zane.grassware.util.BlockUtil;
@@ -31,7 +32,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class Surround extends Module {
-
+    public static Surround Instance;
     //private final FloatSetting delay = register("Delay", 0f, 0f, 10f);
     private final BooleanSetting extend = register("Extend", false);
     private final BooleanSetting center = register("Center", true);
@@ -55,6 +56,9 @@ public class Surround extends Module {
     private double originalY;
     private List<EntityEnderCrystal> lastHitCrystals;
 
+    public Surround() {
+        Instance = this;
+    }
     @Override
     public void onEnable() {
         if (nullCheck()) {
@@ -265,7 +269,7 @@ public class Surround extends Module {
                 .collect(Collectors.toList());
     }
 
-    private void placeBlocks(List<BlockPos> blocks) {
+    public void placeBlocks(List<BlockPos> blocks) {
 
         if (blocks.isEmpty()) {
             return;
@@ -313,7 +317,7 @@ public class Surround extends Module {
         swap(oldSlot);
     }
 
-    private boolean hasEntities(BlockPos pos, boolean crystals) {
+    public boolean hasEntities(BlockPos pos, boolean crystals) {
         for (Entity entity : mc.world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(pos))) {
             if (entity instanceof EntityItem || entity instanceof EntityXPOrb || (entity instanceof EntityEnderCrystal && !crystals)) {
                 continue;
@@ -363,7 +367,7 @@ public class Surround extends Module {
         };
     }
 
-    private void swap(int slot) {
+    public void swap(int slot) {
         mc.player.connection.sendPacket(new CPacketHeldItemChange(slot));
         mc.player.inventory.currentItem = slot;
     }

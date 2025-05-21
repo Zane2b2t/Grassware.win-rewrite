@@ -309,12 +309,39 @@ public class BlockUtil implements MC {
         }
         return new float[]{yaw, pitch};
     }
-    public static Vec3d getVectorForRotation(final float[] rotation) {
-        final float yawCos = MathHelper.cos(-rotation[0] * 0.017453292F - (float) Math.PI);
-        final float yawSin = MathHelper.sin(-rotation[0] * 0.017453292F - (float) Math.PI);
-        final float pitchCos = -MathHelper.cos(-rotation[1] * 0.017453292F);
-        final float pitchSin = MathHelper.sin(-rotation[1] * 0.017453292F);
-        return new Vec3d(yawSin * pitchCos, pitchSin, yawCos * pitchCos);
+    private float[] calculateRotationsVector(Vec3d target) {
+        // Get player's eye position
+        Vec3d eyesPos = new Vec3d(
+                mc.player.posX,
+                mc.player.posY + mc.player.getEyeHeight(),
+                mc.player.posZ
+        );
+
+        // Calculate vector from eyes to target
+        double diffX = target.x - eyesPos.x;
+        double diffY = target.y - eyesPos.y;
+        double diffZ = target.z - eyesPos.z;
+
+        // Calculate yaw
+        float yaw = (float) Math.toDegrees(Math.atan2(diffZ, diffX)) - 90f;
+        yaw = MathHelper.wrapDegrees(yaw); // Normalize to -180 to 180
+
+        // Calculate pitch
+        double diffXZ = Math.sqrt(diffX * diffX + diffZ * diffZ);
+        float pitch = (float) -Math.toDegrees(Math.atan2(diffY, diffXZ));
+        pitch = MathHelper.wrapDegrees(pitch); // Normalize to -90 to 90
+
+        return new float[] { yaw, pitch };
+    }
+    public static float[] getRotationForVector(final Vec3d vec) {
+        double x = vec.x;
+        double y = vec.y;
+        double z = vec.z;
+        double pitchRad = Math.asin(-y);
+        double yawRad = Math.atan2(-x, z);
+        float pitch = (float) (pitchRad * (180.0 / Math.PI));
+        float yaw = (float) (yawRad * (180.0 / Math.PI));
+        return new float[]{yaw, pitch};
     }
     public static EnumFacing getStrictDirection(BlockPos placedPos, float[] rotations, double placeRange) {
 //        Vec3d placeVector = BlockUtil.getVectorForRotation(rotations);
