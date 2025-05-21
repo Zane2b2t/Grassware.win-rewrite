@@ -21,6 +21,7 @@ public class HoleSnap extends Module {
     private final BooleanSetting timeoutOnBlockPlacement = register("Timeout On Block Placement", true);
     private final BooleanSetting down = register("Down", true);
     private final FloatSetting motionY = register("Motion Y", 1.0f, 0.1f, 5.0f);
+    private final FloatSetting motionXZ = register("Motion XZ", 0.2f, 0.05f, 1.0f); // New setting for horizontal speed
     private long sys;
 
     @EventListener
@@ -34,18 +35,34 @@ public class HoleSnap extends Module {
         if (!mc.player.onGround) {
             return;
         }
-        HoleManager.HolePos closest = GrassWare.holeManager.getHoles().stream().min(Comparator.comparingDouble(hole -> Math.sqrt(mc.player.getDistanceSq(BlockUtil.center(hole.getPos()))))).orElse(null);
+        HoleManager.HolePos closest = GrassWare.holeManager.getHoles().stream()
+                .min(Comparator.comparingDouble(hole -> Math.sqrt(mc.player.getDistanceSq(BlockUtil.center(hole.getPos())))))
+                .orElse(null);
         if (closest == null) {
             return;
         }
         BlockPos pos = BlockUtil.center(closest.getPos()).add(0.0f, 1.0f, 0.0f);
         AxisAlignedBB bb = new AxisAlignedBB(pos).shrink(0.1f * (boundingBoxSize.max - (boundingBoxSize.getValue() + 5.0f)));
+
         if (mc.player.getEntityBoundingBox().intersects(bb)) {
             mc.player.setPosition(pos.getX() + 0.5f, mc.player.posY, pos.getZ() + 0.5f);
             if (down.getValue()) {
                 mc.player.motionY = -motionY.getValue();
             }
             sys = System.currentTimeMillis();
+        } else {
+            double dx = (pos.getX() + 0.5f) - mc.player.posX;
+            double dz = (pos.getZ() + 0.5f) - mc.player.posZ;
+            double distance = Math.sqrt(dx * dx + dz * dz);
+
+            if (distance > 0.1) {
+                double speed = motionXZ.getValue();
+                mc.player.motionX = (dx / distance) * speed;
+                mc.player.motionZ = (dz / distance) * speed;
+            } else {
+                // if close enough, snap to center
+                mc.player.setPosition(pos.getX() + 0.5f, mc.player.posY, pos.getZ() + 0.5f);
+            }
         }
     }
 
