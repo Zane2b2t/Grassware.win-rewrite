@@ -4,6 +4,7 @@ import me.zane.grassware.GrassWare;
 import me.zane.grassware.event.bus.EventListener;
 import me.zane.grassware.event.events.PacketEvent;
 import me.zane.grassware.event.events.TickEvent;
+import me.zane.grassware.event.events.UpdatePlayerWalkingEvent;
 import me.zane.grassware.manager.HoleManager;
 import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.features.setting.impl.BooleanSetting;
@@ -22,14 +23,15 @@ public class HoleSnap extends Module {
     private final BooleanSetting down = register("Down", true);
     private final FloatSetting motionY = register("Motion Y", 1.0f, 0.1f, 5.0f);
     private final FloatSetting motionXZ = register("Motion XZ", 0.2f, 0.05f, 1.0f); // New setting for horizontal speed
+    private final FloatSetting delay = register("Motion XZ", 500, 0.0f, 1000); // New setting for horizontal speed
     private long sys;
 
     @EventListener
-    public void onTick(final TickEvent event) {
+    public void onUpdate(final UpdatePlayerWalkingEvent event) {
         if (BlockUtil.isPlayerSafe(mc.player)) {
             sys = System.currentTimeMillis();
         }
-        if (System.currentTimeMillis() - sys < 1000) {
+        if (System.currentTimeMillis() - sys < delay.getValue()) {
             return;
         }
         if (!mc.player.onGround) {
