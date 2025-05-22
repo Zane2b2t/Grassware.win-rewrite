@@ -93,6 +93,8 @@ public class AutoCrystal extends Module {
     private final FloatSetting opacity = register("Opacity", 0.5f, 0.1f, 1.0f);
     private final FloatSetting defualtOpacityVal = register("DOV", 0.5f, 0.1f, 1.0f);
     private final BooleanSetting renderRing = register("Ring", false); //for some reason this is banga langa. when disabled it renders ring. when enabled it doesn't?
+    private final BooleanSetting fadeIn = register("FadeIn", false);
+
     private final Map<Integer, Long> breakMap = new ConcurrentHashMap<>();
     ArrayList<EntityEnderCrystal> crystals = new ArrayList<>();
 
@@ -110,6 +112,9 @@ public class AutoCrystal extends Module {
     public static AutoCrystal Instance = new AutoCrystal();
     private final Set<Integer> attackedCrystalIds = new HashSet<>(); //this only used for stuck crystals. not inhibit
     private long lastCalculationTime = 0;
+    private long lastPlacedTime = -1; // For fade-in timing
+    private BlockPos initialPlacedPos = null; // Store the initial placed position for multiblock fade
+    private Map<BlockPos, Long> placedBlockTimestamps = new ConcurrentHashMap<>(); // For multiblock fade
     @Override
     public void onDisable() {
         crystals.clear();
@@ -304,12 +309,12 @@ public class AutoCrystal extends Module {
                 CPacketUseEntity packetUseEntity = new CPacketUseEntity();
                 packetUseEntity.entityId = packet.getEntityID();
                 packetUseEntity.action = ATTACK;
-                mc.getConnection().sendPacket(packetUseEntity);
+                if (!crystals.contains(crystal) && inhibit.getValue()) {
+                    mc.addScheduledTask(() -> (mc.getConnection()).sendPacket(new CPacketUseEntity(crystal)));
+                }
+                mc.addScheduledTask(() -> mc.getConnection().sendPacket(packetUseEntity));
                 crystals.add(crystal);
                 handleFastRemove(crystal);
-            }
-            if (!crystals.contains(crystal) && inhibit.getValue()) {
-                (mc.getConnection()).sendPacket(new CPacketUseEntity(crystal));
             }
             swingHand();
             hasBroken = true;
@@ -478,9 +483,11 @@ public class AutoCrystal extends Module {
                 breakMap.put(packet.getEntityID(), breakMap.containsKey(packet.getEntityID()) ? breakMap.get(packet.getEntityID()) + 1 : 1);
             }
             hasBroken = true;
-            AutoCrystal.mc.player.connection.sendPacket(crystalPacket);
-            crystals.add(crystal);
-            handleFastRemove(crystal);
+            mc.addScheduledTask(() -> {
+                        AutoCrystal.mc.player.connection.sendPacket(crystalPacket);
+                        crystals.add(crystal);
+                    });
+
         }
     }
 
@@ -576,12 +583,37 @@ public class AutoCrystal extends Module {
         if (placedPos == null && lastPos == null) return;
         BlockPos renderPos = (placedPos != null) ? placedPos : lastPos;
         if (mc.player.getHeldItemOffhand().getItem().equals(Items.END_CRYSTAL) || mc.player.getHeldItemMainhand().getItem().equals(Items.END_CRYSTAL)) {
-            float newOpacity = (placedPos != null) ? defualtOpacityVal.getValue() : MathUtil.lerp(opacity.getValue(), 0.0f, 0.05f);
-            opacity.setValue(Math.max(newOpacity, 0.0f));
+            float currentOpacity = defualtOpacityVal.getValue();
+
+            if (fadeIn.getValue()) {
+                if (placedPos != null && lastPlacedTime == -1) {
+                    lastPlacedTime = System.currentTimeMillis();
+                } else if (placedPos == null) {
+                    lastPlacedTime = -1;
+                }
+
+                if (lastPlacedTime != -1) {
+                    long elapsedTime = System.currentTimeMillis() - lastPlacedTime;
+                    float fadeDuration = 500.0f; // milliseconds for fade-in duration (adjust as needed)
+                    float progress = Math.min(1.0f, elapsedTime / fadeDuration);
+                    currentOpacity = MathUtil.lerp(0.0f, defualtOpacityVal.getValue(), progress);
+                }
+            } else {
+                //fade in is disabled, set opacity back to normal once we get a new position
+                if (placedPos != null) {
+                    currentOpacity = defualtOpacityVal.getValue();
+                }
+            }
+
+            if (placedPos == null) {
+                currentOpacity = MathUtil.lerp(opacity.getValue(), 0.0f, 0.05f);
+            }
+            opacity.setValue(Math.max(currentOpacity, 0.0f));
             GradientShader.setup(opacity.getValue());
             RenderUtil.boxShader(renderPos);
             GradientShader.finish();
-            GradientShader.setup(placedPos != null ? 1.0f : opacity.getValue());
+
+            GradientShader.setup(opacity.getValue());
             RenderUtil.outlineShader(renderPos);
             GradientShader.finish();
             if (placedPos != null) {
