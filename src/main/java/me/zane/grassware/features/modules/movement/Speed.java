@@ -7,6 +7,7 @@ import me.zane.grassware.event.events.MoveEvent;
 import me.zane.grassware.features.command.Command;
 import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.features.setting.impl.BindSetting;
+import me.zane.grassware.features.setting.impl.FloatSetting;
 import me.zane.grassware.features.setting.impl.ModeSetting;
 import me.zane.grassware.util.EntityUtil;
 import net.minecraft.init.MobEffects;
@@ -18,6 +19,9 @@ import java.util.Objects;
 public class Speed extends Module {
     private final ModeSetting mode = register("Mode", "Strafe", Arrays.asList("Strafe", "Instant"));
     private final BindSetting switchBind = register("Switch Bind", -1);
+    private final FloatSetting initialMultiplyer = register("Initial Multiplyer", 1.7f, 0.1f, 5.0f);
+    private final FloatSetting jumpMultiplyer = register("Jump Multiplyer", 1.4f, 0.1f, 5.0f);
+
     private double previousDistance, motionSpeed;
     private int currentState = 1;
 
@@ -32,17 +36,19 @@ public class Speed extends Module {
     @EventListener
     public void onMove(final MoveEvent event) {
         if (mode.getValue().equals("Strafe")) {
+            double baseSpeed = EntityUtil.getBaseMotionSpeed();
+            double targetSpeed = baseSpeed;
+
             switch (currentState) {
                 case 0:
-                    ++currentState;
-                    previousDistance = 0.0;
+                    targetSpeed = baseSpeed * initialMultiplyer.getValue(); // Was 2.873
                     break;
                 case 1:
                 default:
                     if ((mc.world.getCollisionBoxes(mc.player, mc.player.getEntityBoundingBox().offset(0.0, mc.player.motionY, 0.0)).size() > 0 || mc.player.collidedVertically) && currentState > 0) {
                         currentState = mc.player.moveForward == 0.0f && mc.player.moveStrafing == 0.0f ? 0 : 1;
                     }
-                    motionSpeed = previousDistance - previousDistance / 159.0f;
+                    targetSpeed = motionSpeed * 0.99f;
                     break;
                 case 2:
                     double y = 0.40123128;
@@ -51,25 +57,30 @@ public class Speed extends Module {
                             y += (Objects.requireNonNull(mc.player.getActivePotionEffect(MobEffects.JUMP_BOOST)).getAmplifier() + 1) * 0.1f;
                         }
                         event.setMotionY(mc.player.motionY = y);
-                        motionSpeed *= 2.149f;
+                        targetSpeed *= jumpMultiplyer.getValue();
                     }
                     break;
                 case 3:
-                    motionSpeed = previousDistance - 0.76f * (previousDistance - EntityUtil.getBaseMotionSpeed() * 1.05f);
+                    targetSpeed = previousDistance * 0.99f;
             }
-            motionSpeed = Math.max(motionSpeed, EntityUtil.getBaseMotionSpeed() * 1.05f);
+            motionSpeed = Math.max(targetSpeed, baseSpeed * 1.1);
             double forward = mc.player.movementInput.moveForward;
             double strafe = mc.player.movementInput.moveStrafe;
             double yaw = mc.player.rotationYaw;
+
             if (forward != 0.0 && strafe != 0.0) {
                 forward *= Math.sin(0.7853981633974483);
                 strafe *= Math.cos(0.7853981633974483);
             }
-            if (event.motionY < 0.0f) {
-                event.setMotionY(event.motionY - 0.15f);
-            }
-            event.setMotionX((forward * motionSpeed * -Math.sin(Math.toRadians(yaw)) + strafe * motionSpeed * Math.cos(Math.toRadians(yaw))) * 0.99f);
-            event.setMotionZ((forward * motionSpeed * Math.cos(Math.toRadians(yaw)) - strafe * motionSpeed * -Math.sin(Math.toRadians(yaw))) * 0.99f);
+
+            double finalMotionX = (forward * motionSpeed * -Math.sin(Math.toRadians(yaw)) + strafe * motionSpeed * Math.cos(Math.toRadians(yaw)));
+            double finalMotionZ = (forward * motionSpeed * Math.cos(Math.toRadians(yaw)) - strafe * motionSpeed * -Math.sin(Math.toRadians(yaw)));
+
+            event.setMotionX(finalMotionX);
+            event.setMotionZ(finalMotionZ);
+
+            previousDistance = Math.sqrt(event.motionX * event.motionX + event.motionZ * event.motionZ);
+
             ++currentState;
         } else {
             if (!(mc.player.isSneaking() || mc.player.movementInput.moveForward == 0.0f && mc.player.movementInput.moveStrafe == 0.0f) || !mc.player.onGround || !mc.player.collidedHorizontally) {
