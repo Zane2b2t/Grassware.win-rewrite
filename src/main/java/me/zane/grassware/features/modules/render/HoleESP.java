@@ -1,6 +1,5 @@
 package me.zane.grassware.features.modules.render;
 
-import com.mojang.realmsclient.gui.ChatFormatting;
 import me.zane.grassware.GrassWare;
 import me.zane.grassware.event.bus.EventListener;
 import me.zane.grassware.event.events.Render3DPreEvent;
@@ -99,7 +98,6 @@ public class HoleESP extends Module {
             final double shaderTop = raw.minY + size * height.getValue();
             final double legacyTop = raw.maxY - 1.0 + size;
 
-            // --- Fade ---
             if (mode.getValue().equals("Fade")) {
                 final int index = holePos.isBedrock() ? 1 : 0;
                 final Color color = ClickGui.Instance.getGradient()[index];
@@ -109,11 +107,9 @@ public class HoleESP extends Module {
             }
 
 
-// --- Gradient ---
             else if (mode.getValue().equals("Gradient")) {
                 GradientShader.setup(opacity.getValue());
 
-                // Animate x2 and z2 from x1/z1 toward their max values
                 final double animX2 = x1 * (1.0f - size) + x2 * size;
                 final double animZ2 = z1 * (1.0f - size) + z2 * size;
 
@@ -127,7 +123,6 @@ public class HoleESP extends Module {
             else if (mode.getValue().equals("FadeGradient")) {
                 GradientShader.setup(opacity.getValue());
 
-                // Animate x2 and z2 from x1/z1 toward their max values
                 final double animX2 = x1 * (1.0f - size) + x2 * size;
                 final double animZ2 = z1 * (1.0f - size) + z2 * size;
 
@@ -138,7 +133,6 @@ public class HoleESP extends Module {
 
                 if (floor.getValue()) {
                     GradientShader.setup(floorOpacity.getValue());
-                    // Floor uses animated coordinates too for consistency
                     RenderUtil.boxShader(x1, raw.minY, z1, animX2, raw.minY + 0.001, animZ2);
                     GradientShader.finish();
                 }

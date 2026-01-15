@@ -145,9 +145,7 @@ public class RenderUtil implements MC {
         glShadeModel(GL_SMOOTH);
         glBegin(GL_QUADS);
 
-        // Fade curve: bottom solid → top invisible
 
-        // Front
         glColor4f(1,1,1,1);
         glTexCoord2f(0,0); glVertex3d(bb.minX, bb.minY, bb.minZ);
         glTexCoord2f(1,0); glVertex3d(bb.maxX, bb.minY, bb.minZ);
@@ -155,7 +153,6 @@ public class RenderUtil implements MC {
         glTexCoord2f(1,1); glVertex3d(bb.maxX, bb.maxY, bb.minZ);
         glTexCoord2f(0,1); glVertex3d(bb.minX, bb.maxY, bb.minZ);
 
-        // Back
         glColor4f(1,1,1,1);
         glTexCoord2f(0,0); glVertex3d(bb.minX, bb.minY, bb.maxZ);
         glTexCoord2f(1,0); glVertex3d(bb.maxX, bb.minY, bb.maxZ);
@@ -163,7 +160,6 @@ public class RenderUtil implements MC {
         glTexCoord2f(1,1); glVertex3d(bb.maxX, bb.maxY, bb.maxZ);
         glTexCoord2f(0,1); glVertex3d(bb.minX, bb.maxY, bb.maxZ);
 
-        // Left
         glColor4f(1,1,1,1);
         glTexCoord2f(0,0); glVertex3d(bb.minX, bb.minY, bb.minZ);
         glTexCoord2f(1,0); glVertex3d(bb.minX, bb.minY, bb.maxZ);
@@ -171,7 +167,6 @@ public class RenderUtil implements MC {
         glTexCoord2f(1,1); glVertex3d(bb.minX, bb.maxY, bb.maxZ);
         glTexCoord2f(0,1); glVertex3d(bb.minX, bb.maxY, bb.minZ);
 
-        // Right
         glColor4f(1,1,1,1);
         glTexCoord2f(0,0); glVertex3d(bb.maxX, bb.minY, bb.minZ);
         glTexCoord2f(1,0); glVertex3d(bb.maxX, bb.minY, bb.maxZ);
@@ -202,11 +197,9 @@ public class RenderUtil implements MC {
 
         glBegin(GL_LINES);
 
-        // bottom (alpha = 1)
         glColor4f(1,1,1,1);
         drawBoxEdges(bb.minX, bb.minY, bb.minZ, bb.maxX, bb.minY, bb.maxZ);
 
-        // top (alpha = 0)
         glColor4f(1,1,1,0);
         drawBoxEdges(bb.minX, bb.maxY, bb.minZ, bb.maxX, bb.maxY, bb.maxZ);
 
