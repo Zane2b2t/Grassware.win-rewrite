@@ -236,15 +236,22 @@ public class BlockUtil implements MC {
 
     public static List<BlockPos> getBlocksInRadius(final float range) {
         final List<BlockPos> posses = new ArrayList<>();
-        if (mc.player == null) {
-            return posses;
-        }
-        for (int x = (int) -range; x < range; x++) {
-            for (int y = (int) -range; y < range; y++) {
-                for (int z = (int) -range; z < range; z++) {
-                    final BlockPos position = mc.player.getPosition().add(x, y, z);
-                    if (mc.player.getDistance(position.getX() + 0.5, position.getY() + 1, position.getZ() + 0.5) <= range) {
-                        posses.add(position);
+        if (mc.player == null) return posses;
+
+        final int iRange = (int) range;
+
+        final float rangeSq = range * range;
+        final BlockPos playerPos = mc.player.getPosition();
+
+        for (int x = -iRange; x <= iRange; x++) {
+            for (int y = -iRange; y <= iRange; y++) {
+                for (int z = -iRange; z <= iRange; z++) {
+                    double distSq = ((x + 0.5) * (x + 0.5)) +
+                            ((y + 1.0) * (y + 1.0)) +
+                            ((z + 0.5) * (z + 0.5));
+
+                    if (distSq <= rangeSq) {
+                        posses.add(playerPos.add(x, y, z));
                     }
                 }
             }

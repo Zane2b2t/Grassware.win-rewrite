@@ -190,7 +190,7 @@ public class AutoCrystalRewrite extends Module {
         }
 
     }
-//Basically gets the entityId of the SpawnedObject from the Packet and attacks that ID so we attack instanly
+    //Basically gets the entityId of the SpawnedObject from the Packet and attacks that ID so we attack instanly
     @EventListener
     public void onPredict(PacketEvent.Receive event) {
         if (event.getPacket() instanceof SPacketSpawnObject && this.predict.getValue()) {
@@ -205,11 +205,11 @@ public class AutoCrystalRewrite extends Module {
             crystalPacket.action = ATTACK;
             handleSetDead(crystal); //should those be moved to 131?
             handleFastRemove(crystal);
-          //  if (breakMop.getValue()) {
-                breakMap.put(packet.getEntityID(), breakMap.containsKey(packet.getEntityID()) ? breakMap.get(packet.getEntityID()) + 1 : 1);
-          //  }
+            //  if (breakMop.getValue()) {
+            breakMap.put(packet.getEntityID(), breakMap.containsKey(packet.getEntityID()) ? breakMap.get(packet.getEntityID()) + 1 : 1);
+            //  }
             AutoCrystal.mc.player.connection.sendPacket(crystalPacket);
-             crystals.add(crystal);
+            crystals.add(crystal);
         }
 
 
@@ -221,7 +221,7 @@ public class AutoCrystalRewrite extends Module {
         return breakWallRange.getValue();
     }
 
-//Handlers Code
+    //Handlers Code
     private void handleSetDead(EntityEnderCrystal crystal) {
         (mc.getConnection()).sendPacket(new CPacketUseEntity(crystal));
         if (setDead.getValue().equals("Set Dead") || setDead.getValue().equals("Both"))
@@ -266,90 +266,90 @@ public class AutoCrystalRewrite extends Module {
             enumHand = EnumHand.OFF_HAND;
         }
     }
-//this too much
-@EventListener
-public void onPacketReceive(PacketEvent.Receive event) {
-    if (event.getPacket() instanceof SPacketSpawnObject && mode.getValue().equals("Adaptive")) {
-        SPacketSpawnObject packet = event.getPacket();
-        if (packet.getType() != 51 || !(mc.world.getEntityByID(packet.getEntityID()) instanceof EntityEnderCrystal))
-            return;
-        EntityEnderCrystal crystal = (EntityEnderCrystal) mc.world.getEntityByID(packet.getEntityID());
-        if (crystal == null)
-            return;
-        if (crystals.contains(crystal)) return;
-        if (earlyPredict.getValue() && !predict.getValue()) {
-            CPacketUseEntity packetUseEntity = new CPacketUseEntity();
-            packetUseEntity.entityId = packet.getEntityID();
-            packetUseEntity.action = ATTACK;
-            crystals.add(crystal);
-        }
+    //this too much
+    @EventListener
+    public void onPacketReceive(PacketEvent.Receive event) {
+        if (event.getPacket() instanceof SPacketSpawnObject && mode.getValue().equals("Adaptive")) {
+            SPacketSpawnObject packet = event.getPacket();
+            if (packet.getType() != 51 || !(mc.world.getEntityByID(packet.getEntityID()) instanceof EntityEnderCrystal))
+                return;
+            EntityEnderCrystal crystal = (EntityEnderCrystal) mc.world.getEntityByID(packet.getEntityID());
+            if (crystal == null)
+                return;
+            if (crystals.contains(crystal)) return;
+            if (earlyPredict.getValue() && !predict.getValue()) {
+                CPacketUseEntity packetUseEntity = new CPacketUseEntity();
+                packetUseEntity.entityId = packet.getEntityID();
+                packetUseEntity.action = ATTACK;
+                crystals.add(crystal);
+            }
 
-        final EntityPlayer entityPlayer = target(targetRange.getValue());
-        if (entityPlayer == null)
-            return;
-        final float selfDamage = BlockUtil.calculateEntityDamage(crystal, mc.player);
-        if (selfDamage > maximumDamage.getValue()) {
-            return;
-        }
-        final float enemyDamage = BlockUtil.calculateEntityDamage(crystal, entityPlayer);
-        if (enemyDamage < minimumDamage.getValue()) {
-            return;
-        }
+            final EntityPlayer entityPlayer = target(targetRange.getValue());
+            if (entityPlayer == null)
+                return;
+            final float selfDamage = BlockUtil.calculateEntityDamage(crystal, mc.player);
+            if (selfDamage > maximumDamage.getValue()) {
+                return;
+            }
+            final float enemyDamage = BlockUtil.calculateEntityDamage(crystal, entityPlayer);
+            if (enemyDamage < minimumDamage.getValue()) {
+                return;
+            }
 
-        if (selfDamage > mc.player.getHealth() + mc.player.getAbsorptionAmount()) {
-            return;
-        }
-        (mc.getConnection()).sendPacket(new CPacketUseEntity(crystal));
-        if (predict.getValue() && !earlyPredict.getValue()) {
-            CPacketUseEntity packetUseEntity = new CPacketUseEntity();
-            packetUseEntity.entityId = packet.getEntityID();
-            packetUseEntity.action = ATTACK;
-            crystals.add(crystal);
-        }
-        swingHand();
-        handleSetDead(crystal);
-        handleFastRemove(crystal);
-        breakTime = System.currentTimeMillis();
-        try {
-            breakMap.put(crystal.getEntityId(), System.currentTimeMillis());
-        } catch (Exception ignored) {
-        }
-        if (bongo.getValue() && lastPos != null && lastPos == placedPos || (mode.getValue().equals("Sequential")) && lastPos != null && lastPos == currentPos) {
-            mc.getConnection().sendPacket(new CPacketPlayerTryUseItemOnBlock(lastPos, EnumFacing.UP, enumHand, 0.5f, 0.5f, 0.5f));
-        }
-    }
-    if (event.getPacket() instanceof SPacketDestroyEntities) {
-        SPacketDestroyEntities packet = event.getPacket();
-        for (int id : packet.getEntityIDs()) {
+            if (selfDamage > mc.player.getHealth() + mc.player.getAbsorptionAmount()) {
+                return;
+            }
+            (mc.getConnection()).sendPacket(new CPacketUseEntity(crystal));
+            if (predict.getValue() && !earlyPredict.getValue()) {
+                CPacketUseEntity packetUseEntity = new CPacketUseEntity();
+                packetUseEntity.entityId = packet.getEntityID();
+                packetUseEntity.action = ATTACK;
+                crystals.add(crystal);
+            }
+            swingHand();
+            handleSetDead(crystal);
+            handleFastRemove(crystal);
+            breakTime = System.currentTimeMillis();
             try {
-                if (breakMap.containsKey(id) || breakMap.containsKey(packet.getEntityIDs()) && breakMap.get(id) > 1500) {
-                    breakMap.remove(id);
-                    continue;
-                }
-                if (!fastRemove.getValue()) continue;
-                if (!breakMap.containsKey(id)) continue;
-                mc.world.removeEntityFromWorld(id);
+                breakMap.put(crystal.getEntityId(), System.currentTimeMillis());
             } catch (Exception ignored) {
             }
+            if (bongo.getValue() && lastPos != null && lastPos == placedPos || (mode.getValue().equals("Sequential")) && lastPos != null && lastPos == currentPos) {
+                mc.getConnection().sendPacket(new CPacketPlayerTryUseItemOnBlock(lastPos, EnumFacing.UP, enumHand, 0.5f, 0.5f, 0.5f));
+            }
         }
-    }
-            if (event.getPacket() instanceof SPacketSoundEffect && soundRemove.getValue()) {
-                final SPacketSoundEffect packet = (SPacketSoundEffect) event.getPacket();
-                if (packet.getCategory() == SoundCategory.BLOCKS && packet.getSound() == SoundEvents.ENTITY_GENERIC_EXPLODE) {
-                    mc.addScheduledTask(() -> {
-                        for (Entity entity : mc.world.loadedEntityList) {
-                            if (entity instanceof EntityEnderCrystal && entity.getDistanceSq(packet.getX(), packet.getY(), packet.getZ()) < 36) {
-                                entity.setDead();
-                                if (setDead.getValue().equals("Both")) {
-                                    mc.world.removeEntity(entity);
-                                    mc.world.removeEntityDangerously(entity);
-                                }
-                            }
-                        }
-                    });
+        if (event.getPacket() instanceof SPacketDestroyEntities) {
+            SPacketDestroyEntities packet = event.getPacket();
+            for (int id : packet.getEntityIDs()) {
+                try {
+                    if (breakMap.containsKey(id) || breakMap.containsKey(packet.getEntityIDs()) && breakMap.get(id) > 1500) {
+                        breakMap.remove(id);
+                        continue;
+                    }
+                    if (!fastRemove.getValue()) continue;
+                    if (!breakMap.containsKey(id)) continue;
+                    mc.world.removeEntityFromWorld(id);
+                } catch (Exception ignored) {
                 }
             }
         }
+        if (event.getPacket() instanceof SPacketSoundEffect && soundRemove.getValue()) {
+            final SPacketSoundEffect packet = (SPacketSoundEffect) event.getPacket();
+            if (packet.getCategory() == SoundCategory.BLOCKS && packet.getSound() == SoundEvents.ENTITY_GENERIC_EXPLODE) {
+                mc.addScheduledTask(() -> {
+                    for (Entity entity : mc.world.loadedEntityList) {
+                        if (entity instanceof EntityEnderCrystal && entity.getDistanceSq(packet.getX(), packet.getY(), packet.getZ()) < 36) {
+                            entity.setDead();
+                            if (setDead.getValue().equals("Both")) {
+                                mc.world.removeEntity(entity);
+                                mc.world.removeEntityDangerously(entity);
+                            }
+                        }
+                    }
+                });
+            }
+        }
+    }
     @EventListener
     public void onPacketSend(PacketEvent.Send event) {
         CPacketUseEntity packet;
@@ -363,7 +363,7 @@ public void onPacketReceive(PacketEvent.Receive event) {
             handleCPacketUseEntity(event);
         }
     }
-     //TODO: Expand this when we make breakCrystal
+    //TODO: Expand this when we make breakCrystal
 
     //Calc Code
     public EntityEnderCrystal getCrystal(BlockPos pos) {
@@ -378,33 +378,44 @@ public void onPacketReceive(PacketEvent.Receive event) {
         }
         return null;
     }
-// istg im not spending all that time commenting again. this time its much more simple
+    // istg im not spending all that time commenting again. this time its much more simple
     private EntityEnderCrystal crystal(final EntityPlayer entityPlayer) {
+        EntityEnderCrystal bestCrystal = null;
+        float maxDamage = 0.0f;
         final TreeMap<Float, EntityEnderCrystal> map = new TreeMap<>(); // Create a TreeMap to store the damage and crystal entity
 // Filter all loaded entities to get only Ender Crystals within the BreakRange
-        mc.world.loadedEntityList.stream().filter(entity -> entity instanceof EntityEnderCrystal && !(mc.player.getDistance(entity) > breakRange(entity))).map(entity -> (EntityEnderCrystal) entity).forEach(entityEnderCrystal -> {
+        for (Entity entity : mc.world.loadedEntityList) {
+            if (!(entity instanceof EntityEnderCrystal)) continue;
+            if (mc.player.getDistanceSq(entity) > breakRange(entity) * breakRange(entity)) continue;
+
+            EntityEnderCrystal entityEnderCrystal = (EntityEnderCrystal) entity;
+
             final float selfDamage = BlockUtil.calculateEntityDamage(entityEnderCrystal, mc.player);
             if (selfDamage > maximumDamage.getValue()) {
-                return;
+                continue;
             }
             final float enemyDamage = BlockUtil.calculateEntityDamage(entityEnderCrystal, entityPlayer);
             if (enemyDamage < minimumDamage.getValue()) {
-                return;
+                continue;
             }
 
             if (breakEfficient.getValue() && selfDamage > enemyDamage) {
-                return;
+                continue;
             }
 
             final float damage = enemyDamage - (selfDamage * 0.5f); // more efficient to value self damage less - cubic
             if (selfDamage > mc.player.getHealth() + mc.player.getAbsorptionAmount()) {
-                return;
+                continue;
             }
-            map.put(damage, entityEnderCrystal);
-        }  ); //NOO SAD FACE IS BAD!!!!!11! );
 
-        if (!map.isEmpty()) {
-            return map.lastEntry().getValue();
+            if (bestCrystal == null || damage > maxDamage) {
+                maxDamage = damage;
+                bestCrystal = entityEnderCrystal;
+            }
+        } //NOO SAD FACE IS BAD!!!!!11! );
+
+        if (bestCrystal != null) {
+            return bestCrystal;
         }
 
         return null;} //omg smile so good!!!
@@ -425,111 +436,121 @@ public void onPacketReceive(PacketEvent.Receive event) {
     }
 
     private BlockPos pos(final EntityPlayer entityPlayer) {
+        BlockPos bestPos = null;
+        float maxDiff = -9999.0f;
         //loop through all blocks in the targetrange radius
-        return BlockUtil.getBlocksInRadius(targetRange.getValue()).stream()
-                .filter(pos -> {
-                    //remove fire from the pos if the setting is enabled. this prevents multiplacing in the end since we can't place crystals on fire. another pos will be chosen. but with this the fire will be gone before that happens
-                    if (fireBreaker.getValue() && mc.world.getBlockState(pos.up()).getBlock() instanceof BlockFire) {
-                        attackFire(pos);
-                    }
+        for (BlockPos pos : BlockUtil.getBlocksInRadius(targetRange.getValue())) {
+            //remove fire from the pos if the setting is enabled. this prevents multiplacing in the end since we can't place crystals on fire. another pos will be chosen. but with this the fire will be gone before that happens
+            if (fireBreaker.getValue() && mc.world.getBlockState(pos.up()).getBlock() instanceof BlockFire) {
+                attackFire(pos);
+            }
 
-                    //some extra checks for hitboxes nd shit. that's why its optional it has lots of un-needed stuff
-                    if (second.getValue())
-                        if (!BlockUtil.canPlaceCrystal(pos, true)) return false;
+            //some extra checks for hitboxes nd shit. that's why its optional it has lots of un-needed stuff
+            if (second.getValue())
+                if (!BlockUtil.canPlaceCrystal(pos, true)) continue;
 
-                    //if the pos is valid (has 1 or 2 air blcks abve it depending on the 1.13+ setting
-                    if (!BlockUtil.valid(pos, updated.getValue())) return false;
+            //if the pos is valid (has 1 or 2 air blcks abve it depending on the 1.13+ setting
+            if (!BlockUtil.valid(pos, updated.getValue())) continue;
 
 
-                    //range checks for walls
-                    if (mc.world.rayTraceBlocks(mc.player.getPositionVector().add(0, mc.player.eyeHeight, 0), new Vec3d(pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5), false, true, false) != null) {
-                        if (mc.player.getPosition().add(0, mc.player.eyeHeight, 0).distanceSq(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5) > placeWallRange.getValue() * placeWallRange.getValue()) {
-                            return false;
-                        }
-                    }
-                    //range checks for visible
-                    if (mc.player.getPosition().add(0, mc.player.eyeHeight, 0).distanceSq(pos) > placeRange.getValue() * placeRange.getValue()) {
-                        return false;
-                    }
+            //range checks for walls
+            if (mc.world.rayTraceBlocks(mc.player.getPositionVector().add(0, mc.player.eyeHeight, 0), new Vec3d(pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5), false, true, false) != null) {
+                if (mc.player.getPosition().add(0, mc.player.eyeHeight, 0).distanceSq(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5) > placeWallRange.getValue() * placeWallRange.getValue()) {
+                    continue;
+                }
+            }
+            //range checks for visible
+            if (mc.player.getPosition().add(0, mc.player.eyeHeight, 0).distanceSq(pos) > placeRange.getValue() * placeRange.getValue()) {
+                continue;
+            }
 
-                    //checks if player hitboxes are blocking the pos
-                    if (!mc.world.getEntitiesWithinAABB(EntityPlayer.class, new AxisAlignedBB(pos.add(0.5, 1.0, 0.5))).isEmpty()) {
-                        return false;
-                    }
-                    // Check for dropped items on the pos
-                    if (!mc.world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos.add(0.5, 1.0, 0.5))).isEmpty()) {
-                        return false;
-                    }
-                    // Check for arrows on the pos
-                    if (!mc.world.getEntitiesWithinAABB(EntityArrow.class, new AxisAlignedBB(pos.add(0.5, 1.0, 0.5))).isEmpty()) {
-                        return false;
-                    }
-                    //doesn't need explaination
-                    float selfDamage = BlockUtil.calculatePosDamage(pos, mc.player);
-                    if (selfDamage > maximumDamage.getValue()) {
-                        return false;
-                    }
+            //checks if player hitboxes are blocking the pos
+            if (!mc.world.getEntitiesWithinAABB(EntityPlayer.class, new AxisAlignedBB(pos.add(0.5, 1.0, 0.5))).isEmpty()) {
+                continue;
+            }
+            // Check for dropped items on the pos
+            if (!mc.world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos.add(0.5, 1.0, 0.5))).isEmpty()) {
+                continue;
+            }
+            // Check for arrows on the pos
+            if (!mc.world.getEntitiesWithinAABB(EntityArrow.class, new AxisAlignedBB(pos.add(0.5, 1.0, 0.5))).isEmpty()) {
+                continue;
+            }
+            //doesn't need explaination
+            float selfDamage = BlockUtil.calculatePosDamage(pos, mc.player);
+            if (selfDamage > maximumDamage.getValue()) {
+                continue;
+            }
 
-                    float enemyDamage = BlockUtil.calculatePosDamage(pos, entityPlayer);
-                    if (enemyDamage < minimumDamage.getValue()) {
-                        return false;
-                    }
+            float enemyDamage = BlockUtil.calculatePosDamage(pos, entityPlayer);
+            if (enemyDamage < minimumDamage.getValue()) {
+                continue;
+            }
 
-                    if (placeEfficient.getValue() && selfDamage > enemyDamage) {
-                        return false;
-                    }
+            if (placeEfficient.getValue() && selfDamage > enemyDamage) {
+                continue;
+            }
 
-                    if (selfDamage > mc.player.getHealth() + mc.player.getAbsorptionAmount()) {
-                        return false;
-                    }
+            if (selfDamage > mc.player.getHealth() + mc.player.getAbsorptionAmount()) {
+                continue;
+            }
 
-                    //antistuck rebreak, if a crystal existed for half the amount of antistuckticks and rebreakstuck setting is on, attempt to un-stuck the crystal by rebreaking it once.
-                    List<EntityEnderCrystal> crystals = mc.world.getEntitiesWithinAABB(EntityEnderCrystal.class,
-                            new AxisAlignedBB(pos.add(-1, 0, -1), pos.add(2, 3, 2)));
-                    for (EntityEnderCrystal crystal : crystals) {
-                        if (crystal.ticksExisted >= antiStuckTicks.getValue() / 2 && rebreakStuck.getValue()) {
-                            int crystalId = crystal.getEntityId();
-                            if (!attackedCrystalIds.contains(crystalId)) {
-                                EntityUtil.breakCrystal(crystal, rotating, true, strictDir.getValue(), breakRange(crystal));
-                                handleSetDead(crystal);
-                                handleFastRemove(crystal);
-                                attackedCrystalIds.add(crystalId);
-                            }
-                        }
+            //antistuck rebreak, if a crystal existed for half the amount of antistuckticks and rebreakstuck setting is on, attempt to un-stuck the crystal by rebreaking it once.
+            List<EntityEnderCrystal> crystals = mc.world.getEntitiesWithinAABB(EntityEnderCrystal.class,
+                    new AxisAlignedBB(pos.add(-1, 0, -1), pos.add(2, 3, 2)));
+            boolean stuck = false;
+            for (EntityEnderCrystal crystal : crystals) {
+                if (crystal.ticksExisted >= antiStuckTicks.getValue() / 2 && rebreakStuck.getValue()) {
+                    int crystalId = crystal.getEntityId();
+                    if (!attackedCrystalIds.contains(crystalId)) {
+                        EntityUtil.breakCrystal(crystal, rotating, true, strictDir.getValue(), breakRange(crystal));
+                        handleSetDead(crystal);
+                        handleFastRemove(crystal);
+                        attackedCrystalIds.add(crystalId);
                     }
-                    //antistuck replace, if a crystal has existed on the pos for more than antistuckticks then the ac will chose a different pos
+                }
+            }
+            //antistuck replace, if a crystal has existed on the pos for more than antistuckticks then the ac will chose a different pos
 
-                    if (antiStuck.getValue()) {
-                        for (EntityEnderCrystal crystal : crystals) {
-                            if (crystal.ticksExisted > antiStuckTicks.getValue()) {
-                                return false;
-                            }
-                        }
+            if (antiStuck.getValue()) {
+                for (EntityEnderCrystal crystal : crystals) {
+                    if (crystal.ticksExisted > antiStuckTicks.getValue()) {
+                        stuck = true;
+                        break;
                     }
+                }
+            }
+            if (stuck) continue;
 
-                    return true;
-                })
-                .max(Comparator.comparingDouble(pos -> {
-                    float enemyDamage = BlockUtil.calculatePosDamage(pos, entityPlayer);
-                    float selfDamage = BlockUtil.calculatePosDamage(pos, mc.player);
-                    return enemyDamage - selfDamage;
-                }))
-                .orElse(null);
+            float diff = enemyDamage - selfDamage;
+            if (bestPos == null || diff > maxDiff) {
+                bestPos = pos;
+                maxDiff = diff;
+            }
+        }
+        return bestPos;
     }
 
     private EntityPlayer target(final float range) {
         final TreeMap<Float, EntityPlayer> map = new TreeMap<>();
-        mc.world.playerEntities.stream().filter(e -> !e.equals(mc.player) && !e.isDead).forEach(entityPlayer -> {
+        EntityPlayer bestPlayer = null;
+        float bestDamage = 0.0f;
+        for (EntityPlayer entityPlayer : mc.world.playerEntities) {
+            if (entityPlayer.equals(mc.player) || entityPlayer.isDead) continue;
+
             if (entityPlayer.getHealth() <= 0)
-                return;
+                continue;
             final double distance = mc.player.getPosition().add(0, mc.player.eyeHeight, 0).distanceSq(entityPlayer.getPosition());
             if (distance <= range * range && !GrassWare.friendManager.isFriend(entityPlayer.getName())) {
                 float enemyDamage = BlockUtil.calculatePosDamage(entityPlayer.getPosition(), entityPlayer);
-                map.put(enemyDamage, entityPlayer);
+                if (bestPlayer == null || enemyDamage > bestDamage) {
+                    bestDamage = enemyDamage;
+                    bestPlayer = entityPlayer;
+                }
             }
-        });
-        if (!map.isEmpty()) {
-            return map.lastEntry().getValue();
+        }
+        if (bestPlayer != null) {
+            return bestPlayer;
         }
         return null;} //zane like smile ;}
 

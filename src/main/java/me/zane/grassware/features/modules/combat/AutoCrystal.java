@@ -235,8 +235,7 @@ public class AutoCrystal extends Module {
         final boolean isCrystalNotListed = !inhibit.getValue() || !crystals.contains(entityEnderCrystal);
         if (System.currentTimeMillis() - breakTime > breakDelay.getValue() && isCrystalNotListed) {
             if (rotateMode.getValue().equals("PlaceBreak") || rotateMode.getValue().equals("Break")) {
-                if (hasPlaced)
-                    rotating = true;
+                rotating = true; // Fix: ensured rotating is true even if hasPlaced is false but logic requires break rotation
                 rotations = calculateRotations(entityEnderCrystal.getPosition().down().add(0, entityEnderCrystal.posY - mc.player.posY >= 3 ? 1.0f : 0.5f, 0), true, true, true);
                 if (debugRotations.getValue())
                     setPlayerRotations(rotations[0], rotations[1]);
@@ -293,11 +292,11 @@ public class AutoCrystal extends Module {
 
             rotating = rotateMode.getValue().equals("PlaceBreak") || rotateMode.getValue().equals("Break") || rotateMode.getValue().equals("Place");
 
-            if (hasPlaced)
+            if (rotating) // simplified rotation logic for packets
                 rotations = calculateRotations(crystal.getPosition().down().add(0, crystal.posY - mc.player.posY >= 3 ? 1.0f : 0.5f, 0), true, true, true);
 
             //rotations = calculateRotations(crystal.getPosition().add(0, -0.5, 0), true, true, true);
-             if (debugRotations.getValue())
+            if (debugRotations.getValue())
                 setPlayerRotations(rotations[0], rotations[1]);
 
 
@@ -330,7 +329,7 @@ public class AutoCrystal extends Module {
             mc.addScheduledTask(() -> {
                 for (Entity crystal : mc.world.loadedEntityList) {
                     BlockPos explosionPos = new BlockPos(((SPacketExplosion) event.getPacket()).posX, ((SPacketExplosion) event.getPacket()).posY - 1, ((SPacketExplosion) event.getPacket()).posZ);
-                        hasBroken = explosionPos.equals(placedPos);
+                    hasBroken = explosionPos.equals(placedPos);
 
                     if (crystal == null || crystal.isDead || !(crystal instanceof EntityEnderCrystal))
                         continue;
@@ -355,7 +354,8 @@ public class AutoCrystal extends Module {
         if (event.getPacket() instanceof SPacketDestroyEntities) {
             SPacketDestroyEntities packet = event.getPacket();
             for (int id : packet.getEntityIDs()) {
-                if (mc.world.getEntityByID(id).getPosition().down().equals(placedPos)) {
+                Entity entity = mc.world.getEntityByID(id);
+                if (entity != null && entity.getPosition().down().equals(placedPos)) {
                     hasBroken = true;
                 }
                 try {
@@ -401,8 +401,8 @@ public class AutoCrystal extends Module {
                 mc.player.connection.sendPacket(attackPacket);
             }
         }
-                                 //dueto the delay between the recieving and sending of the cclient and server. this only works if you have low ping.
-                                //if you have high ping the highestEntity on your client may not be the highestentity on the server Anymore.
+        //dueto the delay between the recieving and sending of the cclient and server. this only works if you have low ping.
+        //if you have high ping the highestEntity on your client may not be the highestentity on the server Anymore.
         if (brr.getValue() && event.getPacket() instanceof CPacketPlayerTryUseItemOnBlock) {
 
             Entity highestEntity = null;
@@ -462,8 +462,7 @@ public class AutoCrystal extends Module {
             if (mc.player.getPositionEyes(1).squareDistanceTo(crystal.getPositionVector()) > breakRange(crystal) * breakRange(crystal)) return;
 
             if (rotateMode.getValue().equals("PlaceBreak") || rotateMode.getValue().equals("Break")) {
-                if (hasPlaced)
-                    rotating = true;
+                rotating = true;
                 rotations = calculateRotations(crystal.getPosition().down().add(0, crystal.posY - mc.player.posY >= 3 ? 1.0f : 0.5f, 0), true, true, true); //me explain this only once
                 //center is true. pos is centered
                 //grim is true. pos is now at the top face of the block (adds 0.49 to the Y)
@@ -484,9 +483,9 @@ public class AutoCrystal extends Module {
             }
             hasBroken = true;
             mc.addScheduledTask(() -> {
-                        AutoCrystal.mc.player.connection.sendPacket(crystalPacket);
-                        crystals.add(crystal);
-                    });
+                AutoCrystal.mc.player.connection.sendPacket(crystalPacket);
+                crystals.add(crystal);
+            });
 
         }
     }
@@ -494,7 +493,7 @@ public class AutoCrystal extends Module {
 
     @EventListener
     public void onMotionUpdate(MotionUpdateEvent event) {
-        if (rotating && placedPos != null && !newP.getValue()) {
+        if (rotating && !newP.getValue()) { // Removed placedPos check to allow rotations on Break/Packet
             event.setYaw(rotations[0]);
             event.setPitch(rotations[1]);
         }
@@ -623,33 +622,33 @@ public class AutoCrystal extends Module {
     }
 
     private EntityEnderCrystal crystal(final EntityPlayer entityPlayer) {
-        final TreeMap<Float, EntityEnderCrystal> map = new TreeMap<>();
+        EntityEnderCrystal bestCrystal = null;
+        float maxDamage = -1.0f;
 
-        mc.world.loadedEntityList.stream().filter(entity -> entity instanceof EntityEnderCrystal && !(mc.player.getDistanceSq(entity) > breakRange(entity) * breakRange(entity))).map(entity -> (EntityEnderCrystal) entity).forEach(entityEnderCrystal -> {
+        for (Entity entity : mc.world.loadedEntityList) {
+            if (!(entity instanceof EntityEnderCrystal)) continue;
+            float distSq = (float) mc.player.getDistanceSq(entity);
+            float range = breakRange(entity);
+            if (distSq > range * range) continue;
 
+            EntityEnderCrystal entityEnderCrystal = (EntityEnderCrystal) entity;
             final float selfDamage = BlockUtil.calculateEntityDamage(entityEnderCrystal, mc.player);
-            if (selfDamage > maximumDamage.getValue()) {
-                return;
-            }
+            if (selfDamage > maximumDamage.getValue()) continue;
+
             final float enemyDamage = BlockUtil.calculateEntityDamage(entityEnderCrystal, entityPlayer);
-            if (enemyDamage < minimumDamage.getValue()) {
-                return;
-            }
-            if (breakEfficient.getValue() && selfDamage > enemyDamage) {
-                return;
-            }
+            if (enemyDamage < minimumDamage.getValue()) continue;
+
+            if (breakEfficient.getValue() && selfDamage > enemyDamage) continue;
+
+            if (selfDamage > mc.player.getHealth() + mc.player.getAbsorptionAmount()) continue;
+
             final float damage = enemyDamage - selfDamage;
-            if (selfDamage > mc.player.getHealth() + mc.player.getAbsorptionAmount()) {
-                return;
+            if (damage > maxDamage) {
+                maxDamage = damage;
+                bestCrystal = entityEnderCrystal;
             }
-            map.put(damage, entityEnderCrystal);
-        });
-
-        if (!map.isEmpty()) {
-            return map.lastEntry().getValue();
         }
-
-        return null;
+        return bestCrystal;
     }
 
     private float breakRange(Entity entity) {
@@ -661,118 +660,104 @@ public class AutoCrystal extends Module {
     //TODO: somehow optimize this or make code look better
     private BlockPos pos(final EntityPlayer entityPlayer) {
         long startTime = System.currentTimeMillis(); // for latency calc
+        BlockPos bestPos = null;
+        float maxDiff = -999.0f;
 
-        BlockPos result = BlockUtil.getBlocksInRadius(targetRange.getValue()).stream()
-                .filter(pos -> {
-                    if (fireBreaker.getValue() && mc.world.getBlockState(pos.up()).getBlock() instanceof BlockFire) {
-                        attackFire(pos);
-                    }
-                    if (mc.player.getHeldItemMainhand().getItem() instanceof ItemFood && mc.gameSettings.keyBindUseItem.pressed && !whileEating.getValue()) {
-                        return false;
-                    }
-                    if (second.getValue())
-                        if (!BlockUtil.canPlaceCrystal(pos, true)) return false;
+        List<BlockPos> blocks = BlockUtil.getBlocksInRadius(targetRange.getValue());
+        for (BlockPos pos : blocks) {
+            if (fireBreaker.getValue() && mc.world.getBlockState(pos.up()).getBlock() instanceof BlockFire) {
+                attackFire(pos);
+            }
+            if (mc.player.getHeldItemMainhand().getItem() instanceof ItemFood && mc.gameSettings.keyBindUseItem.pressed && !whileEating.getValue()) {
+                continue;
+            }
+            if (second.getValue() && !BlockUtil.canPlaceCrystal(pos, true)) continue;
 
-                    if (!BlockUtil.valid(pos, updated.getValue())) return false;
+            if (!BlockUtil.valid(pos, updated.getValue())) continue;
 
-                    if (mc.world.rayTraceBlocks(mc.player.getPositionEyes(1), new Vec3d(pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5), false, true, false) != null) {
-                        if (mc.player.getPositionEyes(1).squareDistanceTo(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5) > placeWallRange.getValue() * placeWallRange.getValue()) {
-                            return false;
-                        }
-                    }
+            Vec3d eyes = mc.player.getPositionEyes(1);
+            Vec3d posVec = new Vec3d(pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5);
+            if (mc.world.rayTraceBlocks(eyes, posVec, false, true, false) != null) {
+                if (eyes.squareDistanceTo(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5) > placeWallRange.getValue() * placeWallRange.getValue()) {
+                    continue;
+                }
+            }
 
-                    if (mc.player.getPositionEyes(1).squareDistanceTo(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5) > placeRange.getValue() * placeRange.getValue()) {
-                        return false;
-                    }
+            if (eyes.squareDistanceTo(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5) > placeRange.getValue() * placeRange.getValue()) {
+                continue;
+            }
 
-                    if (!mc.world.getEntitiesWithinAABB(EntityPlayer.class, new AxisAlignedBB(pos.add(0.5, 1.0, 0.5))).isEmpty()) {
-                        return false;
-                    }
-                    // Check for dropped items on the pos
-                    if (!mc.world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos.add(0.5, 1.0, 0.5))).isEmpty()) {
-                        return false;
-                    }
-                    // Check for arrows on the pos
-                    if (!mc.world.getEntitiesWithinAABB(EntityArrow.class, new AxisAlignedBB(pos.add(0.5, 1.0, 0.5))).isEmpty()) {
-                        return false;
-                    }
-                    float selfDamage = BlockUtil.calculatePosDamage(pos, mc.player);
-                    if (selfDamage > maximumDamage.getValue()) {
-                        return false;
-                    }
+            if (!mc.world.getEntitiesWithinAABB(EntityPlayer.class, new AxisAlignedBB(pos.add(0.5, 1.0, 0.5))).isEmpty()) {
+                continue;
+            }
+            // Check for dropped items on the pos
+            if (!mc.world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos.add(0.5, 1.0, 0.5))).isEmpty()) {
+                continue;
+            }
+            // Check for arrows on the pos
+            if (!mc.world.getEntitiesWithinAABB(EntityArrow.class, new AxisAlignedBB(pos.add(0.5, 1.0, 0.5))).isEmpty()) {
+                continue;
+            }
 
-                    if (entityPlayer.getHealth() + entityPlayer.getAbsorptionAmount() <= facePlaceHP.getValue()) {
-                        return true;
+            float selfDamage = BlockUtil.calculatePosDamage(pos, mc.player);
+            if (selfDamage > maximumDamage.getValue()) continue;
+            if (selfDamage > mc.player.getHealth() + mc.player.getAbsorptionAmount()) continue;
+
+            float enemyDamage = BlockUtil.calculatePosDamage(pos, entityPlayer);
+
+            boolean facePlacing = (entityPlayer.getHealth() + entityPlayer.getAbsorptionAmount() <= facePlaceHP.getValue());
+            if (!facePlacing && enemyDamage < minimumDamage.getValue()) continue;
+
+            if (placeEfficient.getValue() && selfDamage > enemyDamage) continue;
+
+            List<EntityEnderCrystal> crystalsList = mc.world.getEntitiesWithinAABB(EntityEnderCrystal.class, new AxisAlignedBB(pos.add(-1, 0, -1), pos.add(2, 3, 2)));
+            boolean stuck = false;
+            for (EntityEnderCrystal crystal : crystalsList) {
+                if (crystal.ticksExisted >= antiStuckTicks.getValue() / 2 && rebreakStuck.getValue()) {
+                    int crystalId = crystal.getEntityId();
+                    if (!attackedCrystalIds.contains(crystalId)) {
+                        EntityUtil.breakCrystal(crystal, rotating, false, strictDir.getValue(), breakRange(crystal));
+                        swingHand();
+                        handleSetDead(crystal);
+                        handleFastRemove(crystal);
+                        attackedCrystalIds.add(crystalId);
                     }
+                }
+                if (antiStuck.getValue() && crystal.ticksExisted > antiStuckTicks.getValue()) {
+                    stuck = true;
+                }
+            }
+            if (stuck) continue;
 
-                    float enemyDamage = BlockUtil.calculatePosDamage(pos, entityPlayer);
-                    if (enemyDamage < minimumDamage.getValue()) {
-                        return false;
-                    }
-
-                    if (placeEfficient.getValue() && selfDamage > enemyDamage) {
-                        return false;
-                    }
-
-                    if (selfDamage > mc.player.getHealth() + mc.player.getAbsorptionAmount()) {
-                        return false;
-                    }
-
-                    List<EntityEnderCrystal> crystals = mc.world.getEntitiesWithinAABB(EntityEnderCrystal.class,
-                            new AxisAlignedBB(pos.add(-1, 0, -1), pos.add(2, 3, 2)));
-                    for (EntityEnderCrystal crystal : crystals) {
-
-                        if (crystal.ticksExisted >= antiStuckTicks.getValue() / 2 && rebreakStuck.getValue()) {
-                            int crystalId = crystal.getEntityId();
-                            if (!attackedCrystalIds.contains(crystalId)) {
-                                //mc.playerController.attackEntity(mc.player, crystal);
-                                EntityUtil.breakCrystal(crystal, rotating, false, strictDir.getValue(), breakRange(crystal));
-                                swingHand();
-                                handleSetDead(crystal);
-                                handleFastRemove(crystal);
-                                attackedCrystalIds.add(crystalId);
-                            }
-                        }
-                    }
-
-                    if (antiStuck.getValue()) {
-                        for (EntityEnderCrystal crystal : crystals) {
-                            if (crystal.ticksExisted > antiStuckTicks.getValue() && crystals.contains(crystal)) {
-                                return false;
-                            }
-                        }
-                    }
-
-                    return true;
-
-                })
-                .max(Comparator.comparingDouble(pos -> {
-                    float enemyDamage = BlockUtil.calculatePosDamage(pos, entityPlayer);
-                    float selfDamage = BlockUtil.calculatePosDamage(pos, mc.player);
-                    return enemyDamage - selfDamage;
-                }))
-                .orElse(null);
+            float diff = enemyDamage - selfDamage;
+            if (bestPos == null || diff > maxDiff) {
+                maxDiff = diff;
+                bestPos = pos;
+            }
+        }
 
         lastCalculationTime = System.currentTimeMillis() - startTime;
-
-        return result;
+        return bestPos;
     }
 
     private EntityPlayer target(final float range) {
-        final TreeMap<Float, EntityPlayer> map = new TreeMap<>();
-        mc.world.playerEntities.stream().filter(e -> !e.equals(mc.player) && !e.isDead).forEach(entityPlayer -> {
-            if (entityPlayer.getHealth() <= 0)
-                return;
-            final double distance = mc.player.getPositionEyes(1).squareDistanceTo(entityPlayer.getPositionVector());
-            if (distance <= range * range && !GrassWare.friendManager.isFriend(entityPlayer.getName())) {
-                float enemyDamage = BlockUtil.calculatePosDamage(entityPlayer.getPosition(), entityPlayer);
-                map.put(enemyDamage, entityPlayer);
+        EntityPlayer bestPlayer = null;
+        float maxDamage = -1.0f;
+        double rSq = range * range;
+        Vec3d eyes = mc.player.getPositionEyes(1);
+
+        for (EntityPlayer player : mc.world.playerEntities) {
+            if (player.equals(mc.player) || player.isDead || player.getHealth() <= 0) continue;
+            if (eyes.squareDistanceTo(player.getPositionVector()) > rSq) continue;
+            if (GrassWare.friendManager.isFriend(player.getName())) continue;
+
+            float damage = BlockUtil.calculatePosDamage(player.getPosition(), player);
+            if (damage > maxDamage) {
+                maxDamage = damage;
+                bestPlayer = player;
             }
-        });
-        if (!map.isEmpty()) {
-            return map.lastEntry().getValue();
         }
-        return null;
+        return bestPlayer;
     }
 
 

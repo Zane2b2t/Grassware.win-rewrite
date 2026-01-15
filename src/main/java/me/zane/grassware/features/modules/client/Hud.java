@@ -25,6 +25,7 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class Hud extends Module {
     private final ArrayList<Module> modules = new ArrayList<>();
+    private final BooleanSetting shader = register("Shader", true);
     private final BooleanSetting watermark = register("Watermark", false);
     private final BooleanSetting welcomer = register("Welcomer", false);
     private final BooleanSetting moduleList = register("Module List", false);
@@ -64,6 +65,12 @@ public class Hud extends Module {
     }
 
     private void registerHudText(final String text, final float x, final float y, final boolean gray) {
+        if (!shader.getValue()) {
+            Color color = gray ? Color.GRAY : ClickGui.Instance.getColor();
+            GrassWare.textManager.renderString(text, x, y, color);
+            return;
+        }
+
         if (gray) {
             GrassWare.textManager.renderString(text, x, y, Color.GRAY);
             BlackShader.setup();
@@ -79,55 +86,67 @@ public class Hud extends Module {
             GrassWare.textManager.renderStringShadowOnly(text, x, y);
         }
 
-            GradientShader.setup();
-            GrassWare.textManager.renderStringNoShadow(text, x, y, ClickGui.Instance.getColor());
-            GradientShader.finish();
+        GradientShader.setup();
+        GrassWare.textManager.renderStringNoShadow(text, x, y, ClickGui.Instance.getColor());
+        GradientShader.finish();
     }
 
     @EventListener
     public void onRenderHotbar(final RenderHotbarEvent event) {
         if (!customHotbar.getValue()) {
-                     return;
-               }
-                 final ScaledResolution scaledResolution = event.scaledResolution;
-                 final float centerX = scaledResolution.getScaledWidth() / 2.0f;
-                final float height = scaledResolution.getScaledHeight();
-                 GradientShader.setup();
-                float x = -81.0f;
-                 for (int i = 0; i < 9; i++) {
-                     RenderUtil.texturedOutline(centerX + x, height - 18.0f, centerX + x + 18.0f, height);
-                     x += 18.0f;
-               }
-                 GradientShader.finish();
+            return;
+        }
+        final ScaledResolution scaledResolution = event.scaledResolution;
+        final float centerX = scaledResolution.getScaledWidth() / 2.0f;
+        final float height = scaledResolution.getScaledHeight();
 
-                 x = -81.0f;
-                  for (int i = 0; i < 9; i++) {
-                       if (mc.player.inventory.currentItem == i) {
-                           RenderUtil.rect(centerX + x + 1, height - 17.0f, centerX + x + 17.0f, height - 1, new Color(0, 0, 0, 150));
-                       }
-                      final ItemStack itemStack = mc.player.inventory.getStackInSlot(i);
-                      glPushMatrix();
-                      glClear(256);
-                      RenderHelper.enableStandardItemLighting();
-                      glEnable(GL_DEPTH_TEST);
-                      glEnable(GL_BLEND);
-                      mc.getRenderItem().zLevel = -150.0f;
-                      mc.getRenderItem().renderItemAndEffectIntoGUI(itemStack, (int) (centerX + x + 1.0f), (int) (height - 17.0f));
-                      mc.getRenderItem().renderItemOverlays(mc.fontRenderer, itemStack, (int) (centerX + x + 1.0f), (int) (height - 17.0f));
-                      mc.getRenderItem().zLevel = 0.0f;
-                      RenderHelper.disableStandardItemLighting();
-                      glDisable(GL_BLEND);
-                      glDisable(GL_DEPTH_TEST);
-                      glPopMatrix();
-                      x += 18.0f;
-                 }
-                  event.setCancelled(true);
-             }
+        if (shader.getValue()) {
+            GradientShader.setup();
+        } else {
+            Color c = ClickGui.Instance.getColor();
+            glColor4f(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f, c.getAlpha() / 255f);
+        }
 
-            @EventListener
-            public void onRenderPotionEffects(final RenderPotionEffectsEvent event) {
-                if (moduleList.getValue()) {
-                    event.setCancelled(true);
-                }
+        float x = -81.0f;
+        for (int i = 0; i < 9; i++) {
+            RenderUtil.texturedOutline(centerX + x, height - 18.0f, centerX + x + 18.0f, height);
+            x += 18.0f;
+        }
+
+        if (shader.getValue()) {
+            GradientShader.finish();
+        } else {
+            glColor4f(1f, 1f, 1f, 1f);
+        }
+
+        x = -81.0f;
+        for (int i = 0; i < 9; i++) {
+            if (mc.player.inventory.currentItem == i) {
+                RenderUtil.rect(centerX + x + 1, height - 17.0f, centerX + x + 17.0f, height - 1, new Color(0, 0, 0, 150));
             }
- }
+            final ItemStack itemStack = mc.player.inventory.getStackInSlot(i);
+            glPushMatrix();
+            glClear(256);
+            RenderHelper.enableStandardItemLighting();
+            glEnable(GL_DEPTH_TEST);
+            glEnable(GL_BLEND);
+            mc.getRenderItem().zLevel = -150.0f;
+            mc.getRenderItem().renderItemAndEffectIntoGUI(itemStack, (int) (centerX + x + 1.0f), (int) (height - 17.0f));
+            mc.getRenderItem().renderItemOverlays(mc.fontRenderer, itemStack, (int) (centerX + x + 1.0f), (int) (height - 17.0f));
+            mc.getRenderItem().zLevel = 0.0f;
+            RenderHelper.disableStandardItemLighting();
+            glDisable(GL_BLEND);
+            glDisable(GL_DEPTH_TEST);
+            glPopMatrix();
+            x += 18.0f;
+        }
+        event.setCancelled(true);
+    }
+
+    @EventListener
+    public void onRenderPotionEffects(final RenderPotionEffectsEvent event) {
+        if (moduleList.getValue()) {
+            event.setCancelled(true);
+        }
+    }
+}
