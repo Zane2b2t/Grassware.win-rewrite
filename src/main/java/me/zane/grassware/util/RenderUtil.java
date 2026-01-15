@@ -131,6 +131,102 @@ public class RenderUtil implements MC {
         glPopMatrix();
     }
 
+    public static void boxFadeGradientShader(double minX, double minY, double minZ,
+                                             double maxX, double maxY, double maxZ) {
+        AxisAlignedBB bb = new AxisAlignedBB(minX, minY, minZ, maxX, maxY, maxZ)
+                .offset(RenderUtil.renderOffset());
+
+        bindBlank();
+        glPushMatrix();
+        glEnable(GL_BLEND);
+        glDisable(GL_DEPTH_TEST);
+        glDisable(GL_CULL_FACE);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glShadeModel(GL_SMOOTH);
+        glBegin(GL_QUADS);
+
+        // Fade curve: bottom solid → top invisible
+
+        // Front
+        glColor4f(1,1,1,1);
+        glTexCoord2f(0,0); glVertex3d(bb.minX, bb.minY, bb.minZ);
+        glTexCoord2f(1,0); glVertex3d(bb.maxX, bb.minY, bb.minZ);
+        glColor4f(1,1,1,0);
+        glTexCoord2f(1,1); glVertex3d(bb.maxX, bb.maxY, bb.minZ);
+        glTexCoord2f(0,1); glVertex3d(bb.minX, bb.maxY, bb.minZ);
+
+        // Back
+        glColor4f(1,1,1,1);
+        glTexCoord2f(0,0); glVertex3d(bb.minX, bb.minY, bb.maxZ);
+        glTexCoord2f(1,0); glVertex3d(bb.maxX, bb.minY, bb.maxZ);
+        glColor4f(1,1,1,0);
+        glTexCoord2f(1,1); glVertex3d(bb.maxX, bb.maxY, bb.maxZ);
+        glTexCoord2f(0,1); glVertex3d(bb.minX, bb.maxY, bb.maxZ);
+
+        // Left
+        glColor4f(1,1,1,1);
+        glTexCoord2f(0,0); glVertex3d(bb.minX, bb.minY, bb.minZ);
+        glTexCoord2f(1,0); glVertex3d(bb.minX, bb.minY, bb.maxZ);
+        glColor4f(1,1,1,0);
+        glTexCoord2f(1,1); glVertex3d(bb.minX, bb.maxY, bb.maxZ);
+        glTexCoord2f(0,1); glVertex3d(bb.minX, bb.maxY, bb.minZ);
+
+        // Right
+        glColor4f(1,1,1,1);
+        glTexCoord2f(0,0); glVertex3d(bb.maxX, bb.minY, bb.minZ);
+        glTexCoord2f(1,0); glVertex3d(bb.maxX, bb.minY, bb.maxZ);
+        glColor4f(1,1,1,0);
+        glTexCoord2f(1,1); glVertex3d(bb.maxX, bb.maxY, bb.maxZ);
+        glTexCoord2f(0,1); glVertex3d(bb.maxX, bb.maxY, bb.minZ);
+
+        glEnd();
+        glShadeModel(GL_FLAT);
+        glEnable(GL_CULL_FACE);
+        glEnable(GL_DEPTH_TEST);
+        glDisable(GL_BLEND);
+        glPopMatrix();
+    }
+
+    public static void outlineFadeGradientShader(double minX, double minY, double minZ,
+                                                 double maxX, double maxY, double maxZ) {
+
+        AxisAlignedBB bb = new AxisAlignedBB(minX, minY, minZ, maxX, maxY, maxZ)
+                .offset(renderOffset());
+
+        glPushMatrix();
+        glDisable(GL_DEPTH_TEST);
+        glDisable(GL_TEXTURE_2D);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glLineWidth(1.5f);
+
+        glBegin(GL_LINES);
+
+        // bottom (alpha = 1)
+        glColor4f(1,1,1,1);
+        drawBoxEdges(bb.minX, bb.minY, bb.minZ, bb.maxX, bb.minY, bb.maxZ);
+
+        // top (alpha = 0)
+        glColor4f(1,1,1,0);
+        drawBoxEdges(bb.minX, bb.maxY, bb.minZ, bb.maxX, bb.maxY, bb.maxZ);
+
+        glEnd();
+
+        glEnable(GL_TEXTURE_2D);
+        glEnable(GL_DEPTH_TEST);
+        glDisable(GL_BLEND);
+        glPopMatrix();
+    }
+
+    private static void drawBoxEdges(double x1, double y, double z1, double x2, double y2, double z2) {
+        glVertex3d(x1,y,z1); glVertex3d(x2,y,z1);
+        glVertex3d(x2,y,z1); glVertex3d(x2,y,z2);
+        glVertex3d(x2,y,z2); glVertex3d(x1,y,z2);
+        glVertex3d(x1,y,z2); glVertex3d(x1,y,z1);
+    }
+
+
+
 
     public static void renderLine(Vec3d vec, Vec3d vec1) {
         final Vec3d offset = renderOffset();
