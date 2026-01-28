@@ -316,40 +316,8 @@ public class BlockUtil implements MC {
         }
         return new float[]{yaw, pitch};
     }
-    private float[] calculateRotationsVector(Vec3d target) {
-        // Get player's eye position
-        Vec3d eyesPos = new Vec3d(
-                mc.player.posX,
-                mc.player.posY + mc.player.getEyeHeight(),
-                mc.player.posZ
-        );
 
-        // Calculate vector from eyes to target
-        double diffX = target.x - eyesPos.x;
-        double diffY = target.y - eyesPos.y;
-        double diffZ = target.z - eyesPos.z;
 
-        // Calculate yaw
-        float yaw = (float) Math.toDegrees(Math.atan2(diffZ, diffX)) - 90f;
-        yaw = MathHelper.wrapDegrees(yaw); // Normalize to -180 to 180
-
-        // Calculate pitch
-        double diffXZ = Math.sqrt(diffX * diffX + diffZ * diffZ);
-        float pitch = (float) -Math.toDegrees(Math.atan2(diffY, diffXZ));
-        pitch = MathHelper.wrapDegrees(pitch); // Normalize to -90 to 90
-
-        return new float[] { yaw, pitch };
-    }
-    public static float[] getRotationForVector(final Vec3d vec) {
-        double x = vec.x;
-        double y = vec.y;
-        double z = vec.z;
-        double pitchRad = Math.asin(-y);
-        double yawRad = Math.atan2(-x, z);
-        float pitch = (float) (pitchRad * (180.0 / Math.PI));
-        float yaw = (float) (yawRad * (180.0 / Math.PI));
-        return new float[]{yaw, pitch};
-    }
     public static EnumFacing getStrictDirection(BlockPos placedPos, float[] rotations, double placeRange) {
 //        Vec3d placeVector = BlockUtil.getVectorForRotation(rotations);
 
@@ -386,4 +354,64 @@ public class BlockUtil implements MC {
         return facing;
     }
 
+
+    private static final Vec3i[] OFFSETS_VECI = new Vec3i[]{
+            new Vec3i(1, 0, 0),
+            new Vec3i(-1, 0, 0),
+            new Vec3i(0, 0, 1),
+            new Vec3i(0, 0, -1),
+            new Vec3i(0, -1, 0)
+    };
+
+    public static boolean isInHole(EntityPlayer player) {
+        int x = MathHelper.floor(player.posX);
+        int y = MathHelper.floor(player.posY);
+        int z = MathHelper.floor(player.posZ);
+
+        for (Vec3i v : OFFSETS_VECI) {
+            BlockPos pos = new BlockPos(x + v.getX(), y + v.getY(), z + v.getZ());
+            IBlockState state = player.world.getBlockState(pos);
+            Block block = state.getBlock();
+
+            if (state.getMaterial().isReplaceable()
+                    || !(block == Blocks.OBSIDIAN || block == Blocks.BEDROCK)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+    public static List<BlockPos> getSurroundPoses(EntityPlayer player) {
+        AxisAlignedBB bb = player.getEntityBoundingBox();
+
+        int minX = MathHelper.floor(bb.minX);
+        int maxX = MathHelper.floor(bb.maxX);
+        int minZ = MathHelper.floor(bb.minZ);
+        int maxZ = MathHelper.floor(bb.maxZ);
+        int y = MathHelper.floor(bb.minY);
+
+        Set<BlockPos> surround = new HashSet<>();
+
+        for (int x = minX; x <= maxX; x++) {
+            surround.add(new BlockPos(x, y, minZ - 1));
+            surround.add(new BlockPos(x, y, maxZ + 1));
+        }
+
+        for (int z = minZ; z <= maxZ; z++) {
+            surround.add(new BlockPos(minX - 1, y, z));
+            surround.add(new BlockPos(maxX + 1, y, z));
+        }
+
+        return new ArrayList<>(surround);
+    }
+
+
+    private static int calcLength(double decimal, boolean negative) {
+        if (negative) {
+            return decimal > 0.3 ? 1 : 0;
+        } else {
+            return decimal < 0.7 ? 1 : 0;
+        }
+    }
 }

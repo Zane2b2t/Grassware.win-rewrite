@@ -10,11 +10,9 @@ uniform float offset;
 uniform float mix;
 
 void main() {
-    // Mask from blank texture (must be non-zero to draw)
     float mask = texture2D(texture, gl_TexCoord[0].xy).a;
     if (mask == 0.0) discard;
 
-    // ===== Original gradient math =====
     float distance = sqrt(gl_FragCoord.x * gl_FragCoord.x + gl_FragCoord.y * gl_FragCoord.y) + offset;
     float distance2 = sqrt((gl_FragCoord.x - 1920.0) * (gl_FragCoord.x - 1920.0) + gl_FragCoord.y * gl_FragCoord.y) + offset;
     float distance3 = sqrt((gl_FragCoord.x - 1080.0) * (gl_FragCoord.x - 1080.0) + (gl_FragCoord.y - 1080.0) * (gl_FragCoord.y - 1080.0)) + offset;
@@ -36,10 +34,6 @@ void main() {
     float g = rgb.g  * distance + rgb1.g * inv + rgb2.g * distance2 + rgb3.g * distance3;
     float b = rgb.b  * distance + rgb1.b * inv + rgb2.b * distance2 + rgb3.b * distance3;
 
-    // ===== THE FIX =====
-    // gl_Color.a = vertical fade from geometry
-    // mix        = shader opacity
-    // mask       = blank texture mask
     float finalAlpha = mix * gl_Color.a * mask;
 
     gl_FragColor = vec4(r, g, b, finalAlpha);

@@ -36,36 +36,47 @@ public class HoleESP extends Module {
     private final ArrayList<Hole> renderHoles = new ArrayList<>();
     private final ICamera camera = new Frustum();
 
-    private boolean differentRenderType(final HoleManager.HolePos pos) {
-        return GrassWare.holeManager.getHoles().stream()
-                .filter(h -> h.getPos().equals(pos.getPos()))
-                .anyMatch(h -> !h.getHoleType().equals(pos.getHoleType()));
-    }
-
-    private boolean holesContains(final HoleManager.HolePos pos) {
-        return renderHoles.stream().anyMatch(h -> h.holePos.getPos().equals(pos.getPos()));
+    private Hole getRenderHole(HoleManager.HolePos pos) {
+        for (Hole h : renderHoles) {
+            if (h.holePos.getPos().equals(pos.getPos())) {
+                return h;
+            }
+        }
+        return null;
     }
 
     @EventListener
     public void onRender3D(final Render3DPreEvent event) {
-        camera.setPosition(Objects.requireNonNull(mc.getRenderViewEntity()).posX,
-                mc.getRenderViewEntity().posY, mc.getRenderViewEntity().posZ);
+        camera.setPosition(
+                Objects.requireNonNull(mc.getRenderViewEntity()).posX,
+                mc.getRenderViewEntity().posY,
+                mc.getRenderViewEntity().posZ
+        );
 
-        GrassWare.threadManager.invokeThread(() -> GrassWare.holeManager.loadHoles(range.getValue()));
+        GrassWare.threadManager.invokeThread(() ->
+                GrassWare.holeManager.loadHoles(range.getValue())
+        );
 
         for (HoleManager.HolePos holePos : GrassWare.holeManager.getHoles()) {
-            final boolean diff = differentRenderType(holePos);
-            if (!holesContains(holePos) || diff) {
+            Hole existing = getRenderHole(holePos);
+
+            if (existing == null) {
+                renderHoles.add(new Hole(holePos));
+                continue;
+            }
+
+            if (!existing.holePos.getHoleType().equals(holePos.getHoleType())) {
+                renderHoles.remove(existing);
                 renderHoles.add(new Hole(holePos));
             }
         }
-
-        renderHoles.removeIf(h -> !GrassWare.holeManager.holeManagerContains(h.holePos.getPos()) && h.size <= 0.05f);
 
         for (Hole h : new ArrayList<>(renderHoles)) {
             h.out = !GrassWare.holeManager.holeManagerContains(h.holePos.getPos());
             h.render();
         }
+
+        renderHoles.removeIf(h -> h.out && h.size <= 0.05f);
     }
 
     public class Hole {
@@ -82,13 +93,18 @@ public class HoleESP extends Module {
         }
 
         public void render() {
-            size = MathUtil.lerp(size, out ? 0.0f : 1.0f, 0.02f * EventManager.deltaTime * speed.getValue() / 100.0f);
+            size = MathUtil.lerp(
+                    size,
+                    out ? 0.0f : 1.0f,
+                    0.02f * EventManager.deltaTime * speed.getValue() / 100.0f
+            );
 
             final AxisAlignedBB raw = new AxisAlignedBB(holePos.getPos());
             if (!camera.isBoundingBoxInFrustum(raw.grow(2.0))) return;
 
             double x1 = raw.minX, x2 = raw.maxX;
             double z1 = raw.minZ, z2 = raw.maxZ;
+
             if (holePos.isDouble()) {
                 if (holePos.isWestDouble()) x1 -= 1.0;
                 else z1 -= 1.0;
@@ -106,7 +122,6 @@ public class HoleESP extends Module {
                 RenderUtil.renderGradientLine(x1, raw.minY, z1, x2, legacyTop, z2, color);
             }
 
-
             else if (mode.getValue().equals("Gradient")) {
                 GradientShader.setup(opacity.getValue());
 
@@ -118,7 +133,6 @@ public class HoleESP extends Module {
 
                 GradientShader.finish();
             }
-
 
             else if (mode.getValue().equals("FadeGradient")) {
                 GradientShader.setup(opacity.getValue());

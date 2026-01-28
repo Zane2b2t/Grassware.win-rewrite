@@ -30,6 +30,7 @@ public class Hud extends Module {
     private final BooleanSetting welcomer = register("Welcomer", false);
     private final BooleanSetting moduleList = register("Module List", false);
     private final BooleanSetting customHotbar = register("Custom Hotbar", false);
+    public BooleanSetting debug = register("Debug", false);
 
 
     @EventListener

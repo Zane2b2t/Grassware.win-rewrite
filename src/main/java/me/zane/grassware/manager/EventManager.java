@@ -41,6 +41,9 @@ public class EventManager extends Feature {
             final Render3DEvent render3dEvent = new Render3DEvent(event.getPartialTicks());
             GrassWare.eventBus.invoke(render3dEvent);
 
+            final Render3DPostEvent render3DPostEvent = new Render3DPostEvent(event.getPartialTicks());
+            GrassWare.eventBus.invoke(render3DPostEvent);
+
             deltaTime = System.currentTimeMillis() - lastFrame;
             lastFrame = System.currentTimeMillis();
 

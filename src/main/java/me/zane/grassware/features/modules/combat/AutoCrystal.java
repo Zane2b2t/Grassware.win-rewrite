@@ -90,6 +90,10 @@ public class AutoCrystal extends Module {
 
     private final BooleanSetting inhibit = register("Inhibit", false);
     private final IntSetting packetAmount = register("PacketAmount", 1, 1, 20);
+
+    private final ModeSetting boxMode = register("BoxType", "Box", Arrays.asList("Box", "Fade"));
+    private final FloatSetting maxHeight = register("Height", 1.0f, 0.0f, 3.0f).invokeVisibility(z -> boxMode.getValue().equals("Fade"));
+
     private final FloatSetting opacity = register("Opacity", 0.5f, 0.1f, 1.0f);
     private final FloatSetting defualtOpacityVal = register("DOV", 0.5f, 0.1f, 1.0f);
     private final BooleanSetting renderRing = register("Ring", false); //for some reason this is banga langa. when disabled it renders ring. when enabled it doesn't?
@@ -112,9 +116,8 @@ public class AutoCrystal extends Module {
     public static AutoCrystal Instance = new AutoCrystal();
     private final Set<Integer> attackedCrystalIds = new HashSet<>(); //this only used for stuck crystals. not inhibit
     private long lastCalculationTime = 0;
-    private long lastPlacedTime = -1; // For fade-in timing
-    private BlockPos initialPlacedPos = null; // Store the initial placed position for multiblock fade
-    private Map<BlockPos, Long> placedBlockTimestamps = new ConcurrentHashMap<>(); // For multiblock fade
+    private long lastPlacedTime = -1;
+
     @Override
     public void onDisable() {
         crystals.clear();
@@ -493,7 +496,7 @@ public class AutoCrystal extends Module {
 
     @EventListener
     public void onMotionUpdate(MotionUpdateEvent event) {
-        if (rotating && !newP.getValue()) { // Removed placedPos check to allow rotations on Break/Packet
+        if (rotating && !newP.getValue()) {
             event.setYaw(rotations[0]);
             event.setPitch(rotations[1]);
         }
@@ -581,7 +584,10 @@ public class AutoCrystal extends Module {
     public void onRender3D(final Render3DEvent event) {
         if (placedPos == null && lastPos == null) return;
         BlockPos renderPos = (placedPos != null) ? placedPos : lastPos;
-        if (mc.player.getHeldItemOffhand().getItem().equals(Items.END_CRYSTAL) || mc.player.getHeldItemMainhand().getItem().equals(Items.END_CRYSTAL)) {
+
+        if (mc.player.getHeldItemOffhand().getItem().equals(Items.END_CRYSTAL)
+                || mc.player.getHeldItemMainhand().getItem().equals(Items.END_CRYSTAL)) {
+
             float currentOpacity = defualtOpacityVal.getValue();
 
             if (fadeIn.getValue()) {
@@ -593,7 +599,7 @@ public class AutoCrystal extends Module {
 
                 if (lastPlacedTime != -1) {
                     long elapsedTime = System.currentTimeMillis() - lastPlacedTime;
-                    float fadeDuration = 500.0f; // milliseconds for fade-in duration (adjust as needed)
+                    float fadeDuration = 500.0f;
                     float progress = Math.min(1.0f, elapsedTime / fadeDuration);
                     currentOpacity = MathUtil.lerp(0.0f, defualtOpacityVal.getValue(), progress);
                 }
@@ -607,19 +613,31 @@ public class AutoCrystal extends Module {
             if (placedPos == null) {
                 currentOpacity = MathUtil.lerp(opacity.getValue(), 0.0f, 0.05f);
             }
+
             opacity.setValue(Math.max(currentOpacity, 0.0f));
+
             GradientShader.setup(opacity.getValue());
-            RenderUtil.boxShader(renderPos);
+            if (boxMode.getValue().equals("Box")) {
+                RenderUtil.boxShader(renderPos);
+            } else {
+                RenderUtil.boxFadeGradientShaderSimple(renderPos, maxHeight.getValue(), true);
+            }
             GradientShader.finish();
 
             GradientShader.setup(opacity.getValue());
-            RenderUtil.outlineShader(renderPos);
+            if (boxMode.getValue().equals("Box")) {
+                RenderUtil.outlineShader(renderPos);
+            } else {
+                RenderUtil.outlineFadeGradientShaderSimple(renderPos, maxHeight.getValue(), true);
+            }
             GradientShader.finish();
+
             if (placedPos != null) {
                 lastPos = placedPos;
             }
         }
     }
+
 
     private EntityEnderCrystal crystal(final EntityPlayer entityPlayer) {
         EntityEnderCrystal bestCrystal = null;

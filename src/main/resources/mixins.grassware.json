@@ -17,7 +17,6 @@
     "MixinRenderArmor",
     "ICPacketUseEntity",
     "IEntityRenderer",
-    "MixinLayerHeldItem",
-    "MixinRenderItem"
+    "MixinLayerHeldItem"
   ]
 }

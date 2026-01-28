@@ -131,6 +131,108 @@ public class RenderUtil implements MC {
         glPopMatrix();
     }
 
+    public static void boxFadeGradientShaderSimple(BlockPos pos, double maxHeight, boolean topToBottom) {
+        double minX = pos.getX();
+        double minZ = pos.getZ();
+        double maxX = minX + 1.0;
+        double maxZ = minZ + 1.0;
+
+        double height = Math.max(0.0, maxHeight);
+
+        double topY = pos.getY() + 1.0;
+        double minY = topY - height;
+        double maxY = topY;
+
+        AxisAlignedBB bb = new AxisAlignedBB(minX, minY, minZ, maxX, maxY, maxZ)
+                .offset(RenderUtil.renderOffset());
+
+        bindBlank();
+        glPushMatrix();
+        glEnable(GL_BLEND);
+        glDisable(GL_DEPTH_TEST);
+        glDisable(GL_CULL_FACE);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glShadeModel(GL_SMOOTH);
+        glBegin(GL_QUADS);
+
+        float bottomA = topToBottom ? 0f : 1f;
+        float topA = topToBottom ? 1f : 0f;
+
+        glColor4f(1f, 1f, 1f, bottomA);
+        glVertex3d(bb.minX, bb.minY, bb.minZ);
+        glVertex3d(bb.maxX, bb.minY, bb.minZ);
+        glColor4f(1f, 1f, 1f, topA);
+        glVertex3d(bb.maxX, bb.maxY, bb.minZ);
+        glVertex3d(bb.minX, bb.maxY, bb.minZ);
+
+        glColor4f(1f, 1f, 1f, bottomA);
+        glVertex3d(bb.minX, bb.minY, bb.maxZ);
+        glVertex3d(bb.maxX, bb.minY, bb.maxZ);
+        glColor4f(1f, 1f, 1f, topA);
+        glVertex3d(bb.maxX, bb.maxY, bb.maxZ);
+        glVertex3d(bb.minX, bb.maxY, bb.maxZ);
+
+        glColor4f(1f, 1f, 1f, bottomA);
+        glVertex3d(bb.minX, bb.minY, bb.minZ);
+        glVertex3d(bb.minX, bb.minY, bb.maxZ);
+        glColor4f(1f, 1f, 1f, topA);
+        glVertex3d(bb.minX, bb.maxY, bb.maxZ);
+        glVertex3d(bb.minX, bb.maxY, bb.minZ);
+
+        glColor4f(1f, 1f, 1f, bottomA);
+        glVertex3d(bb.maxX, bb.minY, bb.minZ);
+        glVertex3d(bb.maxX, bb.minY, bb.maxZ);
+        glColor4f(1f, 1f, 1f, topA);
+        glVertex3d(bb.maxX, bb.maxY, bb.maxZ);
+        glVertex3d(bb.maxX, bb.maxY, bb.minZ);
+
+        glEnd();
+        glShadeModel(GL_FLAT);
+        glEnable(GL_CULL_FACE);
+        glEnable(GL_DEPTH_TEST);
+        glDisable(GL_BLEND);
+        glPopMatrix();
+    }
+
+    public static void outlineFadeGradientShaderSimple(BlockPos pos, double maxHeight, boolean topToBottom) {
+        double minX = pos.getX();
+        double minZ = pos.getZ();
+        double maxX = minX + 1.0;
+        double maxZ = minZ + 1.0;
+
+        double height = Math.max(0.0, maxHeight);
+
+        double topY = pos.getY() + 1.0;
+        double minY = topY - height;
+        double maxY = topY;
+
+        AxisAlignedBB bb = new AxisAlignedBB(minX, minY, minZ, maxX, maxY, maxZ)
+                .offset(renderOffset());
+
+        glPushMatrix();
+        glDisable(GL_DEPTH_TEST);
+        glDisable(GL_TEXTURE_2D);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glLineWidth(1.5f);
+
+        glBegin(GL_LINES);
+
+        glColor4f(1f, 1f, 1f, topToBottom ? 1f : 0f);
+        drawBoxEdges(bb.minX, bb.maxY, bb.minZ, bb.maxX, bb.maxY, bb.maxZ);
+
+        glColor4f(1f, 1f, 1f, topToBottom ? 0f : 1f);
+        drawBoxEdges(bb.minX, bb.minY, bb.minZ, bb.maxX, bb.minY, bb.maxZ);
+
+        glEnd();
+
+        glEnable(GL_TEXTURE_2D);
+        glEnable(GL_DEPTH_TEST);
+        glDisable(GL_BLEND);
+        glPopMatrix();
+    }
+
+
     public static void boxFadeGradientShader(double minX, double minY, double minZ,
                                              double maxX, double maxY, double maxZ) {
         AxisAlignedBB bb = new AxisAlignedBB(minX, minY, minZ, maxX, maxY, maxZ)

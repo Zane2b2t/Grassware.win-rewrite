@@ -3,7 +3,7 @@
     "modid": "grassware.win",
     "name": "Grassware.win",
     "description": "Prefix is !",
-    "version": "v1.1",
+    "version": "v1.2",
     "mcversion": "1.12.2",
     "mixins": "mixins.grassware.json",
     "logoFile": "grassware.png",

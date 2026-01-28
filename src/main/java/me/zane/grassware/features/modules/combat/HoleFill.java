@@ -5,6 +5,7 @@ import me.zane.grassware.event.bus.EventListener;
 import me.zane.grassware.event.events.PacketEvent;
 import me.zane.grassware.event.events.Render3DEvent;
 import me.zane.grassware.event.events.UpdatePlayerWalkingEvent;
+import me.zane.grassware.event.events.MotionUpdateEvent;
 import me.zane.grassware.features.modules.Module;
 import me.zane.grassware.features.setting.impl.BooleanSetting;
 import me.zane.grassware.features.setting.impl.FloatSetting;
@@ -19,7 +20,6 @@ import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.culling.ICamera;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.network.play.client.CPacketPlayer;
 import net.minecraft.network.play.server.SPacketBlockChange;
 import net.minecraft.network.play.server.SPacketMultiBlockChange;
 import net.minecraft.util.EnumFacing;
@@ -42,9 +42,20 @@ public class HoleFill extends Module {
     private final ICamera camera = new Frustum();
     private final Map<BlockPos, Float> filledPositions = new HashMap<>();
     private final FloatSetting shrinkSpeed = register("ShrinkSpeed", 0.5f, 0.0f, 1.0f);
+    private boolean rotating = false;
+    private float[] rotations = null;
 
     float[] rots;
     private static final float OFFSET = 0.5f;
+
+    @EventListener
+    public void onMotionUpdate(MotionUpdateEvent event) {
+        if (rotating && rots != null) {
+            event.setYaw(rots[0]);
+            event.setPitch(rots[1]);
+        }
+    }
+
     @EventListener
     public void onUpdate(final UpdatePlayerWalkingEvent event) {
         if (mc.player == null || mc.world == null) return;
@@ -118,21 +129,22 @@ public class HoleFill extends Module {
         EnumFacing facing = EnumFacing.UP;
         int prevSlot = mc.player.inventory.currentItem;
         Surround.Instance.swap(obsidianSlot);
-        if (rotate.getValue()) {
-            rots = BlockUtil.calculateRotations(pos, false, false, true);
-            mc.player.connection.sendPacket(new CPacketPlayer.Rotation(rots[0], rots[1], mc.player.onGround));
+        try {
+            if (rotate.getValue()) {
+                rots = BlockUtil.calculateRotations(pos, false, false, true);
+                rotating = true;
+            }
+            if (strictDir.getValue()) {
+                facing = BlockUtil.getStrictDirection(pos, rots, range.getValue()); //TODO: fix placing blocks with packet so we can use strictdir
+                if (facing == null) return;
+            }
+            BlockUtil.placeBlock(pos, EnumHand.MAIN_HAND, true, mc.player.isSneaking());
+            //(mc.getConnection()).sendPacket(new CPacketPlayerTryUseItemOnBlock(pos, facing, EnumHand.MAIN_HAND, OFFSET, OFFSET, OFFSET));
+        } finally {
+            rotating = false;
+            rots = null;
+            Surround.Instance.swap(prevSlot);
         }
-        if (strictDir.getValue()) {
-            facing = BlockUtil.getStrictDirection(pos, rots, range.getValue()); //TODO: fix placing blocks with packet so we can use strictdir
-            if (facing == null) return;
-        }
-        BlockUtil.placeBlock(pos, EnumHand.MAIN_HAND, true, mc.player.isSneaking());
-        //(mc.getConnection()).sendPacket(new CPacketPlayerTryUseItemOnBlock(pos, facing, EnumHand.MAIN_HAND, OFFSET, OFFSET, OFFSET));
-
-        if (rotate.getValue()) {
-            mc.player.connection.sendPacket(new CPacketPlayer.Rotation(mc.player.rotationYaw, mc.player.rotationPitch, mc.player.onGround));
-        }
-        Surround.Instance.swap(prevSlot);
     }
 
     @EventListener
